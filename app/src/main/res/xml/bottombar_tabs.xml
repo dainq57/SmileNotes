@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tabs>
+    <tab
+        icon="@drawable/ic_home"
+        id="@+id/tab_home"
+        title="Home"/>
+    <tab
+        icon="@drawable/ic_write"
+        id="@+id/tab_write"
+        title="Wrtie" />
+    <tab
+        icon="@drawable/ic_search"
+        id="@+id/tab_search"
+        title="Seacrh"/>
+    <tab
+        icon="@drawable/ic_notifications"
+        id="@+id/tab_notifications"
+        title="Notifications"/>
+    <tab
+        icon="@drawable/ic_settings"
+        id="@+id/tab_settings"
+        title="Settings"/>
+</tabs>
