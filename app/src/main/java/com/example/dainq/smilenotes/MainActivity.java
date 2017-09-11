@@ -89,7 +89,7 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
     private void replaceFragment(BaseFragment fragment) {
         mFragment = getSupportFragmentManager().beginTransaction();
         mFragment.replace(R.id.fragment, fragment);
-        mFragment.addToBackStack(null);
+//        mFragment.addToBackStack(null);
         mFragment.commit();
     }
 }
