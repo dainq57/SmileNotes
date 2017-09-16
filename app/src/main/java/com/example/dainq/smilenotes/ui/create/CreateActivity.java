@@ -1,12 +1,12 @@
 package com.example.dainq.smilenotes.ui.create;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.example.dainq.smilenotes.R;
 import com.example.dainq.smilenotes.common.BaseActivity;
+import com.example.dainq.smilenotes.common.Constant;
 
 public class CreateActivity extends BaseActivity implements View.OnClickListener {
     private CustomViewPager mPager;
@@ -32,7 +32,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void initViewPager() {
-        mPosition = 0;
+        mPosition = Constant.STEP_CREATE_FIRST;
 
         mAdapter = new CreateAdapter(this);
         mPager = (CustomViewPager) findViewById(R.id.viewpager);
@@ -49,6 +49,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         mTextViewSteps = (TextView) findViewById(R.id.create_txt_step);
 
         showHideButton();
+        setStep();
     }
 
     @Override
@@ -68,32 +69,38 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void showHideButton() {
-        if (mPosition == 0) {
+        if (mPosition == Constant.STEP_CREATE_FIRST) {
             mButtonPrevious.setVisibility(View.GONE);
         } else {
             mButtonPrevious.setVisibility(View.VISIBLE);
         }
 
-        if (mPosition == 2) {
+        if (mPosition == Constant.STEP_CREATE_THIRD) {
             mButtonNext.setText("save");
         } else {
             mButtonNext.setText("next");
         }
     }
 
+    private void setStep() {
+        mTextViewSteps.setText("step " + (mPosition + 1) + "/" + (Constant.STEP_CREATE_THIRD + 1));
+    }
+
     private void nextPage() {
-        if (mPosition < 2) {
+        if (mPosition < Constant.STEP_CREATE_THIRD) {
             mPosition++;
             mPager.setCurrentItem(mPosition);
             showHideButton();
+            setStep();
         }
     }
 
     private void previousPage() {
-        if (mPosition > 0) {
+        if (mPosition > Constant.STEP_CREATE_FIRST) {
             mPosition--;
             mPager.setCurrentItem(mPosition);
             showHideButton();
+            setStep();
         }
     }
 }
