@@ -5,10 +5,6 @@
         id="@+id/tab_home"
         title="Home"/>
     <tab
-        icon="@drawable/ic_write"
-        id="@+id/tab_write"
-        title="Wrtie" />
-    <tab
         icon="@drawable/ic_search"
         id="@+id/tab_search"
         title="Seacrh"/>

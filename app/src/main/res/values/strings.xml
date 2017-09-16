@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">SmileNotes</string>
+
+    <string name="first">First</string>
+    <string name="second">Second</string>
+    <string name="thrid">Third</string>
 </resources>

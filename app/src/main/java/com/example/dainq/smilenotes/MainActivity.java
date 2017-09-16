@@ -1,13 +1,16 @@
 package com.example.dainq.smilenotes;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.support.annotation.IdRes;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
+import android.view.View;
 
 import com.example.dainq.smilenotes.common.BaseActivity;
 import com.example.dainq.smilenotes.common.BaseFragment;
-import com.example.dainq.smilenotes.ui.create.NewNoteFragment;
+import com.example.dainq.smilenotes.ui.create.CreateActivity;
 import com.example.dainq.smilenotes.ui.home.HomeFragment;
 import com.example.dainq.smilenotes.ui.notifications.NotificationFragment;
 import com.example.dainq.smilenotes.ui.search.SearchFragment;
@@ -16,15 +19,16 @@ import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.BottomBarTab;
 import com.roughike.bottombar.OnTabSelectListener;
 
-public class MainActivity extends BaseActivity implements OnTabSelectListener {
+public class MainActivity extends BaseActivity implements OnTabSelectListener, View.OnClickListener {
     private BottomBarTab mNotificationTab;
 
     private FragmentTransaction mFragment;
     private HomeFragment mHomeFragment;
     private NotificationFragment mNotificationFragment;
     private SettingsFragment mSettingsFragment;
-    private NewNoteFragment mNewNoteFragment;
     private SearchFragment mSearchFragment;
+
+    private FloatingActionButton mFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,12 +44,14 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
         mHomeFragment = new HomeFragment();
         mNotificationFragment = new NotificationFragment();
         mSettingsFragment = new SettingsFragment();
-        mNewNoteFragment = new NewNoteFragment();
         mSearchFragment = new SearchFragment();
 
         mFragment = getSupportFragmentManager().beginTransaction();
         mFragment.add(R.id.fragment, mHomeFragment);
         mFragment.commit();
+
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setOnClickListener(this);
     }
 
     private void initBottomView() {
@@ -61,10 +67,6 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
         switch (tabId) {
             case R.id.tab_home:
                 replaceFragment(mHomeFragment);
-                break;
-
-            case R.id.tab_write:
-                replaceFragment(mNewNoteFragment);
                 break;
 
             case R.id.tab_search:
@@ -91,5 +93,21 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
         mFragment.replace(R.id.fragment, fragment);
 //        mFragment.addToBackStack(null);
         mFragment.commit();
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.fab:
+                startCreate();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void startCreate() {
+        Intent intent = new Intent(this, CreateActivity.class);
+        startActivity(intent);
     }
 }

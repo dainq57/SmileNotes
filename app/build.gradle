@@ -18,6 +18,12 @@ android {
         }
     }
 }
+repositories {
+    maven { url "https://jitpack.io" }
+    maven { // this is for realm-db
+        url 'http://oss.jfrog.org/artifactory/oss-snapshot-local'
+    }
+}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -28,6 +34,6 @@ dependencies {
     //Bottom bar
     compile 'com.roughike:bottom-bar:2.3.1'
     //Show chart
-//    compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
+    compile 'com.github.PhilJay:MPAndroidChart-Realm:v2.0.2@aar'
     testCompile 'junit:junit:4.12'
 }
