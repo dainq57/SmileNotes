@@ -4,12 +4,198 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:paddingStart="16dp">
+
+        <TextView
+            style="@style/TextTitleStepCreate"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Step 1: Personal information" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Frist View"
-        android:textColor="@android:color/black"
-        android:textSize="28sp" />
+        android:orientation="vertical"
+        android:paddingEnd="24dp"
+        android:paddingStart="24dp">
+
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingStart="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:text="Phân loại"
+            android:textStyle="bold|italic" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="3px"
+            android:layout_weight="1"
+            android:background="@color/bottom_background" />
+    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Loại khách hàng " />
+
+            <Spinner
+                android:id="@+id/spinner_type_customer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="textStart" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
+
+            <TextView
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="Mã ADA " />
+
+            <EditText
+                android:id="@+id/create_edit_ada"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_weight="1"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingStart="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:text="Thông tin cơ bản"
+                android:textStyle="bold|italic" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="3px"
+                android:layout_weight="1"
+                android:background="@color/bottom_background" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
+
+            <TextView
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="Họ tên " />
+
+            <EditText
+                android:id="@+id/create_edit_name"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_weight="1"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
+
+            <TextView
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="Ngày sinh " />
+
+            <EditText
+                android:id="@+id/create_edit_date_of_birth"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="32dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Số điên thoại " />
+
+            <EditText
+                android:id="@+id/create_edit_phonenumber"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
+
+            <TextView
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="Địa chỉ " />
+
+            <EditText
+                android:id="@+id/create_edit_address"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="32dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
+
+            <TextView
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="Lý do quen biết " />
+
+            <EditText
+                android:id="@+id/create_edit_reason"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="32dp" />
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>
