@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingEnd="12dp"
+    android:paddingStart="12dp">
+
+    <LinearLayout
+        android:id="@+id/create_header_problem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:text="Các vấn đề"
+            android:textStyle="bold|italic"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="3px"
+            android:layout_weight="1"
+            android:background="@color/listview_divider_color"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Vấn đề cần giúp đỡ "/>
+
+        <EditText
+            android:id="@+id/create_edit_problem"
+            style="@style/EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Phương pháp giải quyết"/>
+
+        <EditText
+            android:id="@+id/create_edit_solution"
+            style="@style/EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ghi chú"/>
+
+        <EditText
+            android:id="@+id/create_edit_note"
+            style="@style/EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"/>
+    </LinearLayout>
+</LinearLayout>

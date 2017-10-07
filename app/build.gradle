@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "com.example.dainq.smilenotes"
+        applicationId "nq.dai.smilenotes"
         minSdkVersion 21
         targetSdkVersion 25
         versionCode 1
@@ -30,10 +30,10 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    compile files('libs/realm-android-0.86.1.jar')
     compile 'com.android.support:appcompat-v7:25.2.0'
-    //Bottom bar
+    compile "com.daimajia.swipelayout:library:1.2.0@aar"
+    compile 'im.dacer:AndroidCharts:1.0.4'
     compile 'com.roughike:bottom-bar:2.3.1'
-    //Show chart
-    compile 'com.github.PhilJay:MPAndroidChart-Realm:v2.0.2@aar'
-    testCompile 'junit:junit:4.12'
+    compile 'de.hdodenhof:circleimageview:2.1.0'
 }

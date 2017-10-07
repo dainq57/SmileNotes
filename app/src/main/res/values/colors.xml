@@ -2,9 +2,30 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-    
+    <color name="colorAccent">#FF5722</color>
+    <color name="transparent">@android:color/transparent</color>
+
+    <!--Common-->
     <color name="white">#ffffff</color>
-    <color name="white_background">#fafafa</color>
-    <color name="bottom_background">#e2e1e1</color>
+    <color name="color_new_white">#fafafa</color>
+    <color name="color_text">#252525</color>
+
+    <!--Setting-->
+    <color name="listview_divider_color">#e6e6e6</color>
+
+    <!--PieChart-->
+    <color name="color_piechart_level_1">#FFD54F</color>
+    <color name="color_piechart_level_2">#81C784</color>
+    <color name="color_piechart_level_3">#E57373</color>
+    <color name="color_piechart_level_4">#42A5F5</color>
+
+    <!--Home-->
+    <color name="border_color">#c8c8c8</color>
+    <color name="home_title_color">#fcf0f4</color>
+
+    <!--Spinner-->
+    <color name="spinner_selected_item">#499ebd</color>
+    <color name="spinner_non_selected_item">#252525</color>
+    <color name="drop_down_window_color">#fafafa</color>
+    <color name="drop_down_stroke_color">#a8a8a8</color>
 </resources>

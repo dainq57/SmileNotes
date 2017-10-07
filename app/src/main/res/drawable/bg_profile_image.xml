@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <bitmap android:src="@drawable/mask_profile_256x256"
+            android:tint="#c6c6c6">
+        </bitmap>
+    </item>
+
+    <item>
+        <bitmap
+            android:src="@drawable/default_caller_id_256"
+            android:tint="#f4f4f4">
+        </bitmap>
+    </item>
+</layer-list>

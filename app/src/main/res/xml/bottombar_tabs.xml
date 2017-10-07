@@ -3,17 +3,17 @@
     <tab
         icon="@drawable/ic_home"
         id="@+id/tab_home"
-        title="Home"/>
+        title="Trang chủ"/>
     <tab
         icon="@drawable/ic_search"
         id="@+id/tab_search"
-        title="Seacrh"/>
+        title="Tìm kiếm"/>
     <tab
         icon="@drawable/ic_notifications"
         id="@+id/tab_notifications"
-        title="Notifications"/>
+        title="Thông báo"/>
     <tab
         icon="@drawable/ic_settings"
         id="@+id/tab_settings"
-        title="Settings"/>
+        title="Cài đặt"/>
 </tabs>

@@ -1,7 +1,59 @@
 <resources>
     <string name="app_name">SmileNotes</string>
 
-    <string name="first">First</string>
-    <string name="second">Second</string>
-    <string name="thrid">Third</string>
+    <!--Setting-->
+    <string name="setting_type_birthday">Sinh nhật</string>
+    <string name="setting_type_event">Sự kiện</string>
+    <string name="setting_type_help">Trợ giúp</string>
+    <string name="setting_type_information">Về chúng tôi</string>
+
+    <!--Spinner-->
+    <string name="home_spinner_position_0">5</string>
+    <string name="home_spinner_position_1">10</string>
+    <string name="home_spinner_position_2">20</string>
+    <string name="home_spinner_position_3">All</string>
+
+    <string name="create_spinner_type_0">Tiềm năng</string>
+    <string name="create_spinner_type_1">Tiêu dùng lẻ</string>
+    <string name="create_spinner_type_2">Tiêu dùng tích cực</string>
+    <string name="create_spinner_type_3">NPP mới</string>
+    <string name="create_spinner_type_4">NPP tích cực</string>
+
+    <string name="list_spinner_type_0">Tiềm năng</string>
+    <string name="list_spinner_type_1">Tiềm năng tháng</string>
+    <string name="list_spinner_type_2">Tiêu dùng</string>
+    <string name="list_spinner_type_3">Nhà phân phối</string>
+    <string name="list_spinner_type_4">Tất cả</string>
+
+    <!--Validate-->
+    <string name="validate_ada">Mã ADA không thể để trống</string>
+    <string name="validate_name">Họ tên không thể để trống</string>
+    <string name="validate_phone">SĐT không thể để trống</string>
+    <string name="validate_address">Địa chỉ không thể để trống</string>
+    <string name="toast_validate_string">Các thông tin (*) không thể bỏ trống</string>
+    <string name="save_success">Lưu thành công!</string>
+    <string name="phone_number_is_wrong">Số điện thoại không đúng!</string>
+    <string name="action_settings">Settings</string>
+
+    <!--Tab info-->
+    <string name="tab_info">THÔNG TIN</string>
+    <string name="tab_problem">VẤN ĐỀ</string>
+    <string name="tab_plan">KẾ HOẠCH</string>
+
+    <!--Title activity-->
+    <string name="title_create_new_customer">THÊM KHÁCH HÀNG MỚI</string>
+    <string name="ada_code">Mã ADA: %s</string>
+    <string name="save">LƯU</string>
+    <string name="cancel">HỦY</string>
+    <string name="update">CẬP NHẬT</string>
+    <string name="update_info">CẬP NHẬT THÔNG TIN</string>
+
+    <!--Search-->
+    <string name="search_hint">Tên, ADA hoặc SĐT</string>
+
+    <!--Notification-->
+    <string name="notification_birth_day">Thông báo sinh nhật</string>
+    <string name="notification_birth_day_content">Hôm nay là sinh nhật của </string>
+    <string name="notification_event">Sự kiện mới</string>
+    <string name="notification_event_content">Hôm nay bạn có kế hạch với </string>
 </resources>

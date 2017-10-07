@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="array_setting_list">
+        <item>@string/setting_type_birthday</item>
+        <item>@string/setting_type_event</item>
+        <item>@string/setting_type_help</item>
+        <item>@string/setting_type_information</item>
+    </string-array>
+
+    <string-array name="array_spinner_home">
+        <item>@string/home_spinner_position_0</item>
+        <item>@string/home_spinner_position_1</item>
+        <item>@string/home_spinner_position_2</item>
+        <item>@string/home_spinner_position_3</item>
+    </string-array>
+
+    <string-array name="array_spinner_create">
+        <item>@string/create_spinner_type_0</item>
+        <item>@string/create_spinner_type_1</item>
+        <item>@string/create_spinner_type_2</item>
+        <item>@string/create_spinner_type_3</item>
+        <item>@string/create_spinner_type_4</item>
+    </string-array>
+
+    <string-array name="array_spinner_list_customer">
+        <item>@string/list_spinner_type_0</item>
+        <item>@string/list_spinner_type_1</item>
+        <item>@string/list_spinner_type_2</item>
+        <item>@string/list_spinner_type_3</item>
+        <item>@string/list_spinner_type_4</item>
+    </string-array>
+</resources>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="48dp"
+    android:layout_marginTop="?attr/actionBarSize"
+    android:paddingBottom="12dp"
+    android:paddingEnd="24dp"
+    android:paddingStart="24dp"
+    android:paddingTop="12dp"
+    app:layout_collapseMode="parallax">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_avatar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="10dp"
+        android:src="@drawable/bg_profile_image"
+        app:civ_border_color="@color/listview_divider_color"
+        app:civ_border_width="1px"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/profile_avatar"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/profile_ada"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/ada_code"/>
+
+        <RatingBar
+            android:id="@+id/profile_rating"
+            style="@style/customRatingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:rating="3.5"/>
+
+        <FrameLayout
+            android:id="@+id/profile_btn_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_button"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:drawablePadding="3dp"
+                android:drawableStart="@drawable/ic_write"
+                android:gravity="center"
+                android:text="Chỉnh sửa"
+                android:textAllCaps="true"
+                android:textColor="@color/color_new_white"/>
+        </FrameLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -1,41 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.example.dainq.smilenotes.ui.create.CustomViewPager
-        android:id="@+id/viewpager"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="wrap_content"
+        android:background="@color/color_new_white"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp"
+        app:contentInsetStartWithNavigation="0dp"/>
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp">
+        android:layout_height="2px"
+        android:background="@color/listview_divider_color"/>
 
-        <TextView
-            android:id="@+id/create_btn_previous"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:gravity="center"
-            android:text="previous" />
-
-        <TextView
-            android:id="@+id/create_txt_step"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:gravity="center"/>
-
-        <TextView
-            android:id="@+id/create_btn_next"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentEnd="true"
-            android:gravity="center"
-            android:text="next" />
-    </RelativeLayout>
-
+    <include layout="@layout/content_create"/>
 </LinearLayout>
