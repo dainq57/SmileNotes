@@ -70,6 +70,12 @@ public class RealmController {
         realm.commitTransaction();
     }
 
+    public void addCustomer(CustomerObject object) {
+        realm.beginTransaction();
+        realm.copyToRealm(object);
+        realm.commitTransaction();
+    }
+
     //find all objects in the CustomerObject.class
     public RealmResults<CustomerObject> getCustomers() {
         return realm.where(CustomerObject.class).findAll();
@@ -78,6 +84,11 @@ public class RealmController {
     //query a single item with the given id
     public CustomerObject getCustomer(int id) {
         return realm.where(CustomerObject.class).equalTo("id", id).findFirst();
+    }
+
+    public boolean isCustomer(String ada) {
+        CustomerObject results = realm.where(CustomerObject.class).equalTo("ada", ada).findFirst();
+        return results != null;
     }
 
     //check if CustomerObject.class is empty
@@ -111,6 +122,7 @@ public class RealmController {
         return realm.where(CustomerObject.class).findAll();
     }
 
+    //search Customer
     public RealmResults<CustomerObject> searchCustomers(String query) {
         return realm.where(CustomerObject.class)
                 .contains(Constant.CUSTOMER_NAME, query, Case.INSENSITIVE)
@@ -121,8 +133,9 @@ public class RealmController {
                 .findAll();
     }
 
-    public RealmResults<CustomerObject> sortCustomerByDate(String date) {
+    //sortByDate
+    public RealmResults<CustomerObject> sortCustomerByDate(String date, Sort type) {
         return realm.where(CustomerObject.class)
-                .findAllSorted(date, Sort.DESCENDING);
+                .findAllSorted(date, type);
     }
 }

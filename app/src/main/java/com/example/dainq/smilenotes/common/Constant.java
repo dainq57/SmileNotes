@@ -28,6 +28,7 @@ public class Constant {
     public static String CUSTOMER_NAME = "name";
     public static String CUSTOMER_ADA = "ada";
     public static String CUSTOMER_PHONE_NUMBER = "phonenumber";
+    public static String CUSTOMER_DOB = "dateofbirth";
 
     /*regex*/
     public static String regexPhoneNumber = "^0[0-9]{9,10}$";

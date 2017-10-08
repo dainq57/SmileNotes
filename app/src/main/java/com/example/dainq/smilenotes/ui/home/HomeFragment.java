@@ -3,9 +3,13 @@ package com.example.dainq.smilenotes.ui.home;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,9 +30,12 @@ import java.util.ArrayList;
 import im.dacer.androidcharts.PieHelper;
 import im.dacer.androidcharts.PieView;
 import io.realm.RealmResults;
+import io.realm.Sort;
 import nq.dai.smilenotes.R;
 
 public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedListener {
+    private String TAG = "HomeFragment";
+
     private Context mContext;
     private RecyclerView mListCustomer;
     private CustomerAdapter mAdapter;
@@ -40,6 +47,7 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
         mContext = context;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @SuppressLint("InflateParams")
     @Nullable
     @Override
@@ -49,26 +57,23 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
         return view;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void initView(View view) {
         final PieView pieView = (PieView) view.findViewById(R.id.pie_view);
         setPieView(pieView);
 
         mListCustomer = (RecyclerView) view.findViewById(R.id.home_list_customer);
         mListCustomer.setHasFixedSize(true);
+        mListCustomer.setLayoutManager(new LinearLayoutManager(mContext));
 
-        initSpinner(view);
-
-        RealmCustomerAdapter realmAdapter = new RealmCustomerAdapter(mContext, mRealmResult, true);
         mAdapter = new CustomerAdapter(mContext);
         mListCustomer.setAdapter(mAdapter);
 
         mRealmController = RealmController.with(this);
-        mRealmResult = mRealmController.getCustomers();
-        mRealmResult = mRealmController.sortCustomerByDate("dateofbirth");
-        mAdapter.setRealmAdapter(realmAdapter);
-        mAdapter.notifyDataSetChanged();
+        initSpinner(view);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void setPieView(PieView pieView) {
         ArrayList<PieHelper> pieHelperArrayList = new ArrayList<>();
         pieHelperArrayList.add(new PieHelper(20, mContext.getResources().getColor(R.color.color_piechart_level_1, null)));
@@ -121,11 +126,23 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
 
     @Override
     public void onItemSelected(int position) {
-
+        if (position == 0) {
+            sortCustomer(Sort.ASCENDING);
+        } else {
+            sortCustomer(Sort.DESCENDING);
+        }
     }
 
     @Override
     public void onNothingSelected() {
+    }
 
+    private void sortCustomer(Sort type) {
+        mRealmResult = mRealmController.sortCustomerByDate(Constant.CUSTOMER_DOB, type);
+        RealmCustomerAdapter realmAdapter = new RealmCustomerAdapter(mContext, mRealmResult, true);
+        Log.d(TAG, "realmResult: " + mRealmResult.size());
+
+        mAdapter.setRealmAdapter(realmAdapter);
+        mAdapter.notifyDataSetChanged();
     }
 }

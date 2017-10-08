@@ -1,5 +1,7 @@
 package com.example.dainq.smilenotes.model;
 
+import java.util.Date;
+
 import io.realm.RealmObject;
 import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
@@ -14,7 +16,7 @@ public class CustomerObject extends RealmObject {
     private String ada;
 
     private String name;
-    private String dateofbirth;
+    private Date dateofbirth;
     private String phonenumber;
     private String address;
     private String reason;
@@ -55,11 +57,11 @@ public class CustomerObject extends RealmObject {
         this.name = name;
     }
 
-    public String getDateofbirth() {
+    public Date getDateofbirth() {
         return dateofbirth;
     }
 
-    public void setDateofbirth(String dateofbirth) {
+    public void setDateofbirth(Date dateofbirth) {
         this.dateofbirth = dateofbirth;
     }
 

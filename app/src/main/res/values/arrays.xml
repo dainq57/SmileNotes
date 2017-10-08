@@ -10,8 +10,6 @@
     <string-array name="array_spinner_home">
         <item>@string/home_spinner_position_0</item>
         <item>@string/home_spinner_position_1</item>
-        <item>@string/home_spinner_position_2</item>
-        <item>@string/home_spinner_position_3</item>
     </string-array>
 
     <string-array name="array_spinner_create">

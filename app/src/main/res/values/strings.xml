@@ -8,10 +8,8 @@
     <string name="setting_type_information">Về chúng tôi</string>
 
     <!--Spinner-->
-    <string name="home_spinner_position_0">5</string>
-    <string name="home_spinner_position_1">10</string>
-    <string name="home_spinner_position_2">20</string>
-    <string name="home_spinner_position_3">All</string>
+    <string name="home_spinner_position_0">Tăng dần</string>
+    <string name="home_spinner_position_1">Giảm dần</string>
 
     <string name="create_spinner_type_0">Tiềm năng</string>
     <string name="create_spinner_type_1">Tiêu dùng lẻ</string>

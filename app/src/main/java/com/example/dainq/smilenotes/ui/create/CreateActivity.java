@@ -30,6 +30,7 @@ import com.example.dainq.smilenotes.ui.notifications.NotificationScheduler;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 import io.realm.Realm;
@@ -41,6 +42,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
     private EditText mADA;
     private EditText mName;
     private TextView mDateOfBirth;
+    private Date mValueDate;
     private EditText mPhoneNumber;
     private EditText mAddress;
     private EditText mReason;
@@ -50,6 +52,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
 
     private boolean isSave;
     private Realm mRealm;
+    private RealmController mRealmController;
     private CustomerObject mCustomer;
 
     private DatePickerDialog mDialogDateOfBirth;
@@ -94,6 +97,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         mSolution = (EditText) findViewById(R.id.create_edit_solution);
         mNote = (EditText) findViewById(R.id.create_edit_note);
 
+        mRealmController = RealmController.with(this);
         mRealm = RealmController.with(this).getRealm();
         mRatingBar = (RatingBar) findViewById(R.id.create_rating_bar);
 
@@ -117,7 +121,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
             mSpinner.setSelection(mCustomer.getLevel());
             mADA.setText(mCustomer.getAda());
             mName.setText(mCustomer.getName());
-            mDateOfBirth.setText(mCustomer.getDateofbirth());
+            mDateOfBirth.setText(mCustomer.getDateofbirth().toString());
             mPhoneNumber.setText(mCustomer.getPhonenumber());
             mAddress.setText(mCustomer.getAddress());
             mReason.setText(mCustomer.getReason());
@@ -246,6 +250,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
                 newDate.set(year, monthOfYear, dayOfMonth);
                 mDateOfBirth.setText(dateFormat.format(newDate.getTime()));
 
+                mValueDate = newDate.getTime();
                 mDateDOB = dayOfMonth;
                 mMonthDOB = monthOfYear;
             }
@@ -296,7 +301,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         customer.setLevel(mLevel);
         customer.setAda(mADA.getText().toString());
         customer.setName(mName.getText().toString());
-        customer.setDateofbirth(mDateOfBirth.getText().toString());
+        customer.setDateofbirth(mValueDate);
         customer.setPhonenumber(mPhoneNumber.getText().toString());
         customer.setAddress(mAddress.getText().toString());
         customer.setReason(mReason.getText().toString());
@@ -304,9 +309,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         customer.setSolution(mSolution.getText().toString());
         customer.setNote(mNote.getText().toString());
 
-        mRealm.beginTransaction();
-        mRealm.copyToRealm(customer);
-        mRealm.commitTransaction();
+        mRealmController.addCustomer(customer);
 
         NotificationScheduler.scheduleRepeatingRTCNotification(this, "0", "1");
     }
@@ -335,7 +338,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         mCustomer.setLevel(mLevel);
         mCustomer.setAda(mADA.getText().toString());
         mCustomer.setName(mName.getText().toString());
-        mCustomer.setDateofbirth(mDateOfBirth.getText().toString());
+        mCustomer.setDateofbirth(mValueDate);
         mCustomer.setPhonenumber(mPhoneNumber.getText().toString());
         mCustomer.setAddress(mAddress.getText().toString());
         mCustomer.setReason(mReason.getText().toString());
@@ -351,7 +354,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         bundle.putInt(Constant.NOTIFICATION_TYPE, Constant.NOTIFICATION_BIRTH_DAY);
         intent.putExtras(bundle);
 
-        NotificationScheduler.scheduleRepeatingElapsedNotification(this);
+//        NotificationScheduler.scheduleRepeatingElapsedNotification(this);
     }
 
 //    private void setNotification(Context context, long time) {

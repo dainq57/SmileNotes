@@ -46,7 +46,7 @@ public class ProfileInfoFragment extends BaseFragment {
     }
 
     private void onUpdate() {
-        mDateOfBirth.setText(mCustomer.getDateofbirth());
+        mDateOfBirth.setText(mCustomer.getDateofbirth().toString());
         mPhoneNumber.setText(mCustomer.getPhonenumber());
         mAddress.setText(mCustomer.getAddress());
         mReason.setText(mCustomer.getReason());
