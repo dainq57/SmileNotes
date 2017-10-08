@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
-            android:text="Các vấn đề"
+            android:text="@string/some_problem"
             android:textStyle="bold|italic"/>
 
         <View
@@ -39,7 +39,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Vấn đề cần giúp đỡ "/>
+            android:text="@string/help_problem"/>
 
         <EditText
             android:id="@+id/create_edit_problem"
@@ -60,7 +60,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Phương pháp giải quyết"/>
+            android:text="@string/resolver"/>
 
         <EditText
             android:id="@+id/create_edit_solution"
@@ -81,10 +81,31 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Ghi chú"/>
+            android:text="@string/note"/>
 
         <EditText
             android:id="@+id/create_edit_note"
+            style="@style/EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/need_product"/>
+
+        <EditText
+            android:id="@+id/create_edit_product_need"
             style="@style/EditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

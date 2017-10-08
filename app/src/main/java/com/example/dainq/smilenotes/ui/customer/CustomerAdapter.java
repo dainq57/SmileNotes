@@ -1,8 +1,11 @@
 package com.example.dainq.smilenotes.ui.customer;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -67,11 +70,7 @@ public class CustomerAdapter extends RealmRecyclerViewAdapter<CustomerObject> {
             @Override
             public void onClick(View v) {
                 Log.d(CustomerAdapter.class.getSimpleName() + "-dainq", "remove customer: " + customer.getName());
-                mRealm.beginTransaction();
-                CustomerObject customerObject = mRealmController.getCustomer(customer.getId());
-                customerObject.removeFromRealm();
-                mRealm.commitTransaction();
-                notifyDataSetChanged();
+                confirmDelete(customer.getId());
             }
         });
     }
@@ -82,6 +81,32 @@ public class CustomerAdapter extends RealmRecyclerViewAdapter<CustomerObject> {
             return getRealmAdapter().getCount();
         }
         return 0;
+    }
+
+    private void confirmDelete(final int id){
+        final AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(mContext, android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(mContext);
+        }
+        builder.setTitle(R.string.title_dialog_delete)
+                .setMessage(R.string.dialog_delete_content)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                        mRealmController.deleteCustomer(id);
+                        notifyDataSetChanged();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                        dialog.dismiss();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
 //    private class CustomerFilter extends Filter {

@@ -11,6 +11,7 @@ import com.example.dainq.smilenotes.model.CustomerObject;
 import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 public class RealmController {
 
@@ -59,6 +60,13 @@ public class RealmController {
     public void clearAll() {
         realm.beginTransaction();
         realm.clear(CustomerObject.class);
+        realm.commitTransaction();
+    }
+
+    public void deleteCustomer(int id) {
+        realm.beginTransaction();
+        CustomerObject customerObject = getCustomer(id);
+        customerObject.removeFromRealm();
         realm.commitTransaction();
     }
 
@@ -111,5 +119,10 @@ public class RealmController {
                 .or()
                 .contains(Constant.CUSTOMER_PHONE_NUMBER, query)
                 .findAll();
+    }
+
+    public RealmResults<CustomerObject> sortCustomerByDate(String date) {
+        return realm.where(CustomerObject.class)
+                .findAllSorted(date, Sort.DESCENDING);
     }
 }

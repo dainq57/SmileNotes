@@ -56,4 +56,12 @@
     <string name="notification_birth_day_content">Hôm nay là sinh nhật của </string>
     <string name="notification_event">Sự kiện mới</string>
     <string name="notification_event_content">Hôm nay bạn có kế hạch với </string>
+    <string name="some_problem">Các vấn đề</string>
+    <string name="help_problem">Vấn đề cần giúp đỡ</string>
+    <string name="resolver">Phương pháp giải quyết</string>
+    <string name="note">Ghi chú</string>
+    <string name="need_product">Sản phẩm cần dùng</string>
+    <string name="account_special">Tài khoản ân tình</string>
+    <string name="title_dialog_delete">Xoá khách hàng</string>
+    <string name="dialog_delete_content">Thông tin về khách hàng sẽ bị xoá, bạn có chắc chắn xoá khách hàng này?</string>
 </resources>

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,24 +12,29 @@ import android.view.ViewGroup;
 
 import com.example.dainq.smilenotes.common.BaseFragment;
 import com.example.dainq.smilenotes.common.Constant;
-import com.example.dainq.smilenotes.common.Utility;
+import com.example.dainq.smilenotes.controller.realm.RealmController;
+import com.example.dainq.smilenotes.controller.realm.RealmCustomerAdapter;
+import com.example.dainq.smilenotes.model.CustomerObject;
 import com.example.dainq.smilenotes.ui.common.spinner.OnSpinnerItemSelectedListener;
 import com.example.dainq.smilenotes.ui.common.spinner.SingleSpinnerLayout;
 import com.example.dainq.smilenotes.ui.common.spinner.SpinnerItem;
+import com.example.dainq.smilenotes.ui.customer.CustomerAdapter;
 import com.example.dainq.smilenotes.ui.customer.ListCustomerActivity;
-import com.example.dainq.smilenotes.ui.customer.mCustomerAdapter;
 
 import java.util.ArrayList;
 
 import im.dacer.androidcharts.PieHelper;
 import im.dacer.androidcharts.PieView;
+import io.realm.RealmResults;
 import nq.dai.smilenotes.R;
 
 public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedListener {
     private Context mContext;
     private RecyclerView mListCustomer;
-    private mCustomerAdapter mAdapter;
+    private CustomerAdapter mAdapter;
     private SingleSpinnerLayout mSpinner;
+    private RealmResults<CustomerObject> mRealmResult;
+    private RealmController mRealmController;
 
     public HomeFragment(Context context) {
         mContext = context;
@@ -52,12 +56,17 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
         mListCustomer = (RecyclerView) view.findViewById(R.id.home_list_customer);
         mListCustomer.setHasFixedSize(true);
 
-        mAdapter = new mCustomerAdapter(mContext, Utility.createList(20, "Khach hang"));
-        mAdapter.setHasStableIds(true);
-        mListCustomer.setLayoutManager(new LinearLayoutManager(mContext));
+        initSpinner(view);
+
+        RealmCustomerAdapter realmAdapter = new RealmCustomerAdapter(mContext, mRealmResult, true);
+        mAdapter = new CustomerAdapter(mContext);
         mListCustomer.setAdapter(mAdapter);
 
-        initSpinner(view);
+        mRealmController = RealmController.with(this);
+        mRealmResult = mRealmController.getCustomers();
+        mRealmResult = mRealmController.sortCustomerByDate("dateofbirth");
+        mAdapter.setRealmAdapter(realmAdapter);
+        mAdapter.notifyDataSetChanged();
     }
 
     private void setPieView(PieView pieView) {
