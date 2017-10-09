@@ -43,7 +43,7 @@
 
         <EditText
             android:id="@+id/create_edit_problem"
-            style="@style/EditText"
+            style="@style/EditText.Big"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"/>
@@ -64,7 +64,7 @@
 
         <EditText
             android:id="@+id/create_edit_solution"
-            style="@style/EditText"
+            style="@style/EditText.Big"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"/>
@@ -85,7 +85,7 @@
 
         <EditText
             android:id="@+id/create_edit_note"
-            style="@style/EditText"
+            style="@style/EditText.Big"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"/>
@@ -106,7 +106,7 @@
 
         <EditText
             android:id="@+id/create_edit_product_need"
-            style="@style/EditText"
+            style="@style/EditText.Big"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"/>

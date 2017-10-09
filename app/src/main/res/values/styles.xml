@@ -73,6 +73,10 @@
         <item name="android:gravity">end</item>
     </style>
 
+    <style name="EditText.Big">
+        <item name="android:gravity">start</item>
+    </style>
+
     <style name="TextAppearance.WinsetDropDownItem.Selected">
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>

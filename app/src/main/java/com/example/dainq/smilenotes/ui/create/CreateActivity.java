@@ -49,6 +49,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
     private EditText mProblem;
     private EditText mSolution;
     private EditText mNote;
+    private EditText mProductNeed;
 
     private boolean isSave;
     private Realm mRealm;
@@ -96,6 +97,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         mProblem = (EditText) findViewById(R.id.create_edit_problem);
         mSolution = (EditText) findViewById(R.id.create_edit_solution);
         mNote = (EditText) findViewById(R.id.create_edit_note);
+        mProductNeed = (EditText) findViewById(R.id.create_edit_product_need);
 
         mRealmController = RealmController.with(this);
         mRealm = RealmController.with(this).getRealm();
@@ -128,6 +130,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
             mProblem.setText(mCustomer.getProblem());
             mSolution.setText(mCustomer.getSolution());
             mNote.setText(mCustomer.getNote());
+            mProductNeed.setText(mCustomer.getProduct());
         }
     }
 
@@ -269,6 +272,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
     public void onNothingSelected() {
     }
 
+    //auto incre id when add customer
     private int createId() {
         return mIdKey + 1;
     }
@@ -298,16 +302,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         mPref.edit().putInt(Constant.KEY_ID_CUSTOMER, id).apply();
 
         customer.setId(id);
-        customer.setLevel(mLevel);
-        customer.setAda(mADA.getText().toString());
-        customer.setName(mName.getText().toString());
-        customer.setDateofbirth(mValueDate);
-        customer.setPhonenumber(mPhoneNumber.getText().toString());
-        customer.setAddress(mAddress.getText().toString());
-        customer.setReason(mReason.getText().toString());
-        customer.setProblem(mProblem.getText().toString());
-        customer.setSolution(mSolution.getText().toString());
-        customer.setNote(mNote.getText().toString());
+        setData(customer);
 
         mRealmController.addCustomer(customer);
 
@@ -334,18 +329,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
 
     private void edit() {
         mRealm.beginTransaction();
-
-        mCustomer.setLevel(mLevel);
-        mCustomer.setAda(mADA.getText().toString());
-        mCustomer.setName(mName.getText().toString());
-        mCustomer.setDateofbirth(mValueDate);
-        mCustomer.setPhonenumber(mPhoneNumber.getText().toString());
-        mCustomer.setAddress(mAddress.getText().toString());
-        mCustomer.setReason(mReason.getText().toString());
-        mCustomer.setProblem(mProblem.getText().toString());
-        mCustomer.setSolution(mSolution.getText().toString());
-        mCustomer.setNote(mNote.getText().toString());
-
+        setData(mCustomer);
         mRealm.commitTransaction();
 
         Intent intent = new Intent(this, NotificationReceiver.class);
@@ -355,6 +339,20 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         intent.putExtras(bundle);
 
 //        NotificationScheduler.scheduleRepeatingElapsedNotification(this);
+    }
+
+    private void setData(CustomerObject object){
+        object.setLevel(mLevel);
+        object.setAda(mADA.getText().toString());
+        object.setName(mName.getText().toString());
+        object.setDateofbirth(mValueDate);
+        object.setPhonenumber(mPhoneNumber.getText().toString());
+        object.setAddress(mAddress.getText().toString());
+        object.setReason(mReason.getText().toString());
+        object.setProblem(mProblem.getText().toString());
+        object.setSolution(mSolution.getText().toString());
+        object.setNote(mNote.getText().toString());
+        object.setProduct(mProductNeed.getText().toString());
     }
 
 //    private void setNotification(Context context, long time) {

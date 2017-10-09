@@ -24,6 +24,7 @@ public class CustomerObject extends RealmObject {
     private String problem;
     private String solution;
     private String note;
+    private String product;
 
     public int getId() {
         return id;
@@ -111,5 +112,13 @@ public class CustomerObject extends RealmObject {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getProduct() {
+        return product;
+    }
+
+    public void setProduct(String product) {
+        this.product = product;
     }
 }

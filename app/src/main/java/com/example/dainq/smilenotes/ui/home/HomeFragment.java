@@ -145,4 +145,10 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
         mAdapter.setRealmAdapter(realmAdapter);
         mAdapter.notifyDataSetChanged();
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mAdapter.notifyDataSetChanged();
+    }
 }

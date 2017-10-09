@@ -31,12 +31,6 @@ public class CustomerAdapter extends RealmRecyclerViewAdapter<CustomerObject> {
         mContext = context;
     }
 
-    public CustomerAdapter(Context context, RealmResults<CustomerObject> realmResults) {
-        mContext = context;
-        mRealmResult = realmResults;
-
-    }
-
     @Override
     public CustomerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.item_customer, parent, false);

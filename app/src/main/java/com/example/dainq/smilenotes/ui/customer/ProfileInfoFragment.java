@@ -65,8 +65,10 @@ public class ProfileInfoFragment extends BaseFragment {
         mDateOfBirth = (TextView) view.findViewById(R.id.create_edit_date_of_birth);
         mPhoneNumber = (EditText) view.findViewById(R.id.create_edit_phonenumber);
         mPhoneNumber.setEnabled(false);
+
         mAddress = (EditText) view.findViewById(R.id.create_edit_address);
         mAddress.setEnabled(false);
+
         mReason = (EditText) view.findViewById(R.id.create_edit_reason);
         mReason.setEnabled(false);
     }

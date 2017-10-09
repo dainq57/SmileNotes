@@ -104,7 +104,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new ProfileInfoFragment(this, mCustomer), getString(R.string.tab_info));
-        adapter.addFragment(new ProfileProblemFragment(this), getString(R.string.tab_problem));
+        adapter.addFragment(new ProfileProblemFragment(this, mCustomer), getString(R.string.tab_problem));
         adapter.addFragment(new ProfilePlanFragment(this), getString(R.string.tab_plan));
         viewPager.setAdapter(adapter);
     }
