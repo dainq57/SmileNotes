@@ -1,4 +1,4 @@
-package com.example.dainq.smilenotes.controller.realm;
+package com.example.dainq.smilenotes.ui.common.realm;
 
 import android.content.Context;
 import android.view.View;

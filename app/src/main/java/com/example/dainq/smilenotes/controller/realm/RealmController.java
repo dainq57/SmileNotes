@@ -7,6 +7,10 @@ import android.support.v4.app.Fragment;
 
 import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.model.CustomerObject;
+import com.example.dainq.smilenotes.model.MeetingObject;
+import com.example.dainq.smilenotes.model.ProductObject;
+
+import java.util.Date;
 
 import io.realm.Case;
 import io.realm.Realm;
@@ -14,7 +18,6 @@ import io.realm.RealmResults;
 import io.realm.Sort;
 
 public class RealmController {
-
     private static RealmController instance;
     private final Realm realm;
 
@@ -56,6 +59,17 @@ public class RealmController {
         realm.refresh();
     }
 
+    public void close() {
+        if (realm.isInTransaction()) {
+            realm.cancelTransaction();
+        }
+
+        if (!realm.isClosed()) {
+            realm.close();
+        }
+    }
+
+    /*---------------------CUSTOMER-------------------------*/
     //clear all objects from CustomerObject.class
     public void clearAll() {
         realm.beginTransaction();
@@ -63,16 +77,11 @@ public class RealmController {
         realm.commitTransaction();
     }
 
+    //delete customer by Id
     public void deleteCustomer(int id) {
         realm.beginTransaction();
         CustomerObject customerObject = getCustomer(id);
         customerObject.removeFromRealm();
-        realm.commitTransaction();
-    }
-
-    public void addCustomer(CustomerObject object) {
-        realm.beginTransaction();
-        realm.copyToRealm(object);
         realm.commitTransaction();
     }
 
@@ -81,13 +90,34 @@ public class RealmController {
         return realm.where(CustomerObject.class).findAll();
     }
 
-    //query a single item with the given id
-    public CustomerObject getCustomer(int id) {
-        return realm.where(CustomerObject.class).equalTo("id", id).findFirst();
+    //add new customer
+    public void addCustomer(CustomerObject object) {
+        realm.beginTransaction();
+        realm.copyToRealm(object);
+        realm.commitTransaction();
     }
 
-    public boolean isCustomer(String ada) {
-        CustomerObject results = realm.where(CustomerObject.class).equalTo("ada", ada).findFirst();
+    //query a single item with the given id
+    public CustomerObject getCustomer(int id) {
+        return realm.where(CustomerObject.class).equalTo(Constant.KEY_ID_CUSTOMER, id).findFirst();
+    }
+
+    //query a count item with the given level
+    public int getCountCustomer(int type) {
+        RealmResults<CustomerObject> results;
+        results = queryedCustomers(type);
+        return results.size();
+    }
+
+    public int getCountCustomer(String date, Date start, Date end) {
+        RealmResults<CustomerObject> results;
+        results = queryedCustomers(date, start, end);
+        return results.size();
+    }
+
+    //check ada is exit
+    public boolean isExit(String ada) {
+        CustomerObject results = realm.where(CustomerObject.class).equalTo(Constant.CUSTOMER_ADA, ada).findFirst();
         return results != null;
     }
 
@@ -98,7 +128,7 @@ public class RealmController {
 
     //query example
     public RealmResults<CustomerObject> queryedCustomers(int key) {
-        if (key == Constant.CUSTOMER_TYPE_NEW || key == Constant.CUSTOMER_TYPE_NEW_MONTH) {
+        if (key == Constant.CUSTOMER_TYPE_NEW ) {
             return realm.where(CustomerObject.class)
                     .equalTo(Constant.KEY_LEVEL_CUSTOMER, Constant.CUSTOMER_LEVEL_0)
                     .findAll();
@@ -119,10 +149,16 @@ public class RealmController {
                     .equalTo(Constant.KEY_LEVEL_CUSTOMER, Constant.CUSTOMER_LEVEL_4)
                     .findAll();
         }
-        return realm.where(CustomerObject.class).findAll();
+        return getCustomers();
     }
 
-    //search Customer
+    public RealmResults<CustomerObject> queryedCustomers(String date, Date start, Date end) {
+        return realm.where(CustomerObject.class)
+                .equalTo(Constant.KEY_LEVEL_CUSTOMER, Constant.CUSTOMER_LEVEL_0)
+                .between(date, start, end)
+                .findAll();
+    }
+
     public RealmResults<CustomerObject> searchCustomers(String query) {
         return realm.where(CustomerObject.class)
                 .contains(Constant.CUSTOMER_NAME, query, Case.INSENSITIVE)
@@ -133,9 +169,77 @@ public class RealmController {
                 .findAll();
     }
 
-    //sortByDate
-    public RealmResults<CustomerObject> sortCustomerByDate(String date, Sort type) {
-        return realm.where(CustomerObject.class)
-                .findAllSorted(date, type);
+
+    /*-----------------------PLAN---------------------*/
+    public void addPlan(MeetingObject object) {
+        realm.beginTransaction();
+        realm.copyToRealm(object);
+        realm.commitTransaction();
+    }
+
+    //query a single item with the given id
+    private MeetingObject getMetting(int id) {
+        return realm.where(MeetingObject.class).equalTo(Constant.KEY_ID_CUSTOMER, id).findFirst();
+    }
+
+    public RealmResults<MeetingObject> getMeetingOfCustomer(int id) {
+        return realm.where(MeetingObject.class).equalTo(Constant.KEY_ID_PLAN, id).findAll();
+    }
+
+    public void deleteMeeting(int id) {
+        realm.beginTransaction();
+        MeetingObject object = getMetting(id);
+        object.removeFromRealm();
+        realm.commitTransaction();
+    }
+
+    //check if CustomerObject.class is empty
+    public boolean hasPlans() {
+        return !realm.allObjects(MeetingObject.class).isEmpty();
+    }
+
+    public void removeAllPlan(final RealmResults<MeetingObject> realmResults) {
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realmResults.clear();
+            }
+        });
+    }
+
+
+    /*----------------------PRODUCT------------------*/
+    public void addProduct(ProductObject object) {
+        realm.beginTransaction();
+        realm.copyToRealm(object);
+        realm.commitTransaction();
+    }
+
+    private ProductObject getProduct(int id) {
+        return realm.where(ProductObject.class).equalTo(Constant.KEY_ID_CUSTOMER, id).findFirst();
+    }
+
+    public RealmResults<ProductObject> getProductOfCustomer(int id) {
+        return realm.where(ProductObject.class).equalTo(Constant.KEY_ID_PRODUCT, id).findAll();
+    }
+
+    public void deleteProduct(int id) {
+        realm.beginTransaction();
+        ProductObject object = getProduct(id);
+        object.removeFromRealm();
+        realm.commitTransaction();
+    }
+
+    public RealmResults<ProductObject> getProductBetween(Date start, Date end, Sort type) {
+        return realm.where(ProductObject.class).between(Constant.PRODUCT_USE_DATE, start, end).findAllSorted(Constant.PRODUCT_USE_DATE, type);
+    }
+
+    public void removeAllProduct(final RealmResults<ProductObject> realmResults) {
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realmResults.clear();
+            }
+        });
     }
 }

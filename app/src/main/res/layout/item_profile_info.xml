@@ -20,74 +20,92 @@
             android:gravity="center_vertical">
 
             <TextView
+                style="@style/TextAppearance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="5dp"
                 android:text="Phân loại"
+                android:textAllCaps="true"
                 android:textStyle="bold|italic"/>
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="3px"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
                 android:background="@color/listview_divider_color"/>
+
+            <!--<ImageView-->
+            <!--android:id="@+id/create_filter_dropdown"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/tw_expander_close_mtrl_alpha"/>-->
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Loại khách hàng "/>
+            android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:orientation="vertical">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp">
 
-                <com.example.dainq.smilenotes.ui.common.spinner.SingleSpinnerLayout
-                    android:id="@+id/create_spinner_type"
-                    android:layout_width="wrap_content"
-                    android:layout_height="20dp"
-                    android:layout_marginEnd="-12dp"
-                    android:gravity="end"
-                    android:textAlignment="gravity"/>
-
-                <RatingBar
-                    android:id="@+id/create_rating_bar"
-                    style="@style/customRatingBar"
-                    android:layout_width="wrap_content"
+                <TextView
+                    style="@style/TextAppearance"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:layout_marginTop="2dp"
-                    android:numStars="5"/>
+                    android:layout_weight="1"
+                    android:text="Loại khách hàng "/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:orientation="vertical">
+
+                    <com.example.dainq.smilenotes.ui.common.spinner.SingleSpinnerLayout
+                        android:id="@+id/create_spinner_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        android:layout_marginEnd="-12dp"
+                        android:gravity="end"
+                        android:textAlignment="gravity"/>
+
+                    <RatingBar
+                        android:id="@+id/create_rating_bar"
+                        style="@style/customRatingBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginTop="2dp"
+                        android:numStars="5"/>
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp">
-
-            <TextView
-                android:layout_width="@dimen/create_title_width"
+            <LinearLayout
+                android:id="@+id/create_filter_ada"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Mã ADA *"/>
+                android:gravity="center_vertical"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp">
 
-            <EditText
-                android:id="@+id/create_edit_ada"
-                style="@style/EditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                <TextView
+                    style="@style/TextAppearance"
+                    android:layout_width="@dimen/create_title_width"
+                    android:layout_height="wrap_content"
+                    android:text="Mã ADA"/>
+
+                <EditText
+                    android:id="@+id/create_edit_ada"
+                    style="@style/EditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
@@ -105,119 +123,140 @@
             android:gravity="center_vertical">
 
             <TextView
+                style="@style/TextAppearance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="5dp"
                 android:text="Thông tin cơ bản"
+                android:textAllCaps="true"
                 android:textStyle="bold|italic"/>
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="3px"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
                 android:background="@color/listview_divider_color"/>
+
+            <!--<ImageView-->
+            <!--android:id="@+id/create_info_dropdown"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/tw_expander_close_mtrl_alpha"/>-->
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/create_name"
+            android:id="@+id/create_content_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp">
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="@dimen/create_title_width"
+            <LinearLayout
+                android:id="@+id/create_name"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Họ tên *"/>
+                android:gravity="center_vertical"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp">
 
-            <EditText
-                android:id="@+id/create_edit_name"
-                style="@style/EditText"
-                android:layout_width="0dp"
+                <TextView
+                    style="@style/TextAppearance"
+                    android:layout_width="@dimen/create_title_width"
+                    android:layout_height="wrap_content"
+                    android:text="Họ tên *"/>
+
+                <EditText
+                    android:id="@+id/create_edit_name"
+                    style="@style/EditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
-        </LinearLayout>
+                android:gravity="center_vertical"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp">
+                <TextView
+                    style="@style/TextAppearance"
+                    android:layout_width="@dimen/create_title_width"
+                    android:layout_height="wrap_content"
+                    android:text="Ngày sinh "/>
 
-            <TextView
-                android:layout_width="@dimen/create_title_width"
+                <TextView
+                    android:id="@+id/create_edit_date_of_birth"
+                    style="@style/EditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Ngày sinh "/>
+                android:gravity="center_vertical"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp">
 
-            <TextView
-                android:id="@+id/create_edit_date_of_birth"
-                style="@style/EditText"
-                android:layout_width="0dp"
+                <TextView
+                    style="@style/TextAppearance"
+                    android:layout_width="@dimen/create_title_width"
+                    android:layout_height="wrap_content"
+                    android:text="Số điên thoại *"/>
+
+                <EditText
+                    android:id="@+id/create_edit_phonenumber"
+                    style="@style/EditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="phone"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
-        </LinearLayout>
+                android:gravity="center_vertical"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp">
+                <TextView
+                    style="@style/TextAppearance"
+                    android:layout_width="@dimen/create_title_width"
+                    android:layout_height="wrap_content"
+                    android:text="Địa chỉ *"/>
 
-            <TextView
-                android:layout_width="@dimen/create_title_width"
+                <EditText
+                    android:id="@+id/create_edit_address"
+                    style="@style/EditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Số điên thoại *"/>
+                android:gravity="center_vertical"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp">
 
-            <EditText
-                android:id="@+id/create_edit_phonenumber"
-                style="@style/EditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:inputType="phone"/>
-        </LinearLayout>
+                <TextView
+                    style="@style/TextAppearance"
+                    android:layout_width="@dimen/create_title_width"
+                    android:layout_height="wrap_content"
+                    android:text="Lý do quen biết "/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp">
-
-            <TextView
-                android:layout_width="@dimen/create_title_width"
-                android:layout_height="wrap_content"
-                android:text="Địa chỉ *"/>
-
-            <EditText
-                android:id="@+id/create_edit_address"
-                style="@style/EditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp">
-
-            <TextView
-                android:layout_width="@dimen/create_title_width"
-                android:layout_height="wrap_content"
-                android:text="Lý do quen biết "/>
-
-            <EditText
-                android:id="@+id/create_edit_reason"
-                style="@style/EditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                <EditText
+                    android:id="@+id/create_edit_reason"
+                    style="@style/EditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

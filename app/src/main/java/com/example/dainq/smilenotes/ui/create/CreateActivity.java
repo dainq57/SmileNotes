@@ -2,20 +2,28 @@ package com.example.dainq.smilenotes.ui.create;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 
 import com.example.dainq.smilenotes.common.BaseActivity;
 import com.example.dainq.smilenotes.common.Constant;
@@ -26,23 +34,23 @@ import com.example.dainq.smilenotes.ui.common.spinner.OnSpinnerItemSelectedListe
 import com.example.dainq.smilenotes.ui.common.spinner.SingleSpinnerLayout;
 import com.example.dainq.smilenotes.ui.common.spinner.SpinnerItem;
 import com.example.dainq.smilenotes.ui.notifications.NotificationReceiver;
-import com.example.dainq.smilenotes.ui.notifications.NotificationScheduler;
+import com.soundcloud.android.crop.Crop;
 
-import java.text.SimpleDateFormat;
+import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
-import io.realm.Realm;
+import de.hdodenhof.circleimageview.CircleImageView;
 import nq.dai.smilenotes.R;
 
 public class CreateActivity extends BaseActivity implements View.OnClickListener, OnSpinnerItemSelectedListener {
+    private static final String TAG = "CreateActivity";
 
     private int mLevel;
     private EditText mADA;
     private EditText mName;
     private TextView mDateOfBirth;
-    private Date mValueDate;
+    private Date dateOfBirth;
     private EditText mPhoneNumber;
     private EditText mAddress;
     private EditText mReason;
@@ -50,11 +58,13 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
     private EditText mSolution;
     private EditText mNote;
     private EditText mProductNeed;
+    private LinearLayout mAdaLayout;
+    private CircleImageView mAvatar;
+    private Uri mUri;
 
     private boolean isSave;
-    private Realm mRealm;
-    private RealmController mRealmController;
     private CustomerObject mCustomer;
+    private RealmController mRealmController;
 
     private DatePickerDialog mDialogDateOfBirth;
     private RatingBar mRatingBar;
@@ -65,8 +75,8 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
     private SingleSpinnerLayout mSpinner;
     private int mCustomerId;
 
-    private int mDateDOB;
-    private int mMonthDOB;
+    /*PLAN*/
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,12 +91,15 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         isSave = false;
         mAction = getAction();
 
+        mAdaLayout = (LinearLayout) findViewById(R.id.create_filter_ada);
         TextView mButtonSave = (TextView) findViewById(R.id.create_btn_save);
         mButtonSave.setOnClickListener(this);
 
         TextView mButtonCancel = (TextView) findViewById(R.id.create_btn_cancel);
         mButtonCancel.setOnClickListener(this);
 
+        mAvatar = (CircleImageView) findViewById(R.id.create_avatar);
+        mAvatar.setOnClickListener(this);
         mADA = (EditText) findViewById(R.id.create_edit_ada);
         mName = (EditText) findViewById(R.id.create_edit_name);
         mDateOfBirth = (TextView) findViewById(R.id.create_edit_date_of_birth);
@@ -100,7 +113,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         mProductNeed = (EditText) findViewById(R.id.create_edit_product_need);
 
         mRealmController = RealmController.with(this);
-        mRealm = RealmController.with(this).getRealm();
+
         mRatingBar = (RatingBar) findViewById(R.id.create_rating_bar);
 
         initDialogDateOfBirth();
@@ -117,13 +130,14 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
             mButtonSave.setText(R.string.update);
             getSupportActionBar().setTitle(R.string.update_info);
 
-            RealmController mRealmController = RealmController.with(this);
             mCustomer = mRealmController.getCustomer(mCustomerId);
 
             mSpinner.setSelection(mCustomer.getLevel());
             mADA.setText(mCustomer.getAda());
             mName.setText(mCustomer.getName());
-            mDateOfBirth.setText(mCustomer.getDateofbirth().toString());
+
+            String date = Utility.dateToString(mCustomer.getDateofbirth());
+            mDateOfBirth.setText(date);
             mPhoneNumber.setText(mCustomer.getPhonenumber());
             mAddress.setText(mCustomer.getAddress());
             mReason.setText(mCustomer.getReason());
@@ -131,6 +145,11 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
             mSolution.setText(mCustomer.getSolution());
             mNote.setText(mCustomer.getNote());
             mProductNeed.setText(mCustomer.getProduct());
+
+            String avatar = mCustomer.getAvatar();
+            if (avatar != null) {
+                mAvatar.setImageBitmap(Utility.decodeImage(avatar));
+            }
         }
     }
 
@@ -176,9 +195,9 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         switch (view.getId()) {
             case R.id.create_btn_save:
                 if (mAction == Constant.ACTION_CREATE) {
-                    onSave();
+                    saveCustomer();
                 } else {
-                    onEdit();
+                    editCustomer();
                 }
                 break;
 
@@ -189,6 +208,15 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
             case R.id.create_edit_date_of_birth:
                 mDialogDateOfBirth.show();
                 break;
+
+            case R.id.create_avatar:
+                if (!Utility.checkPermissionForReadExtertalStorage(this)) {
+                    Utility.requestPermission(this);
+                } else {
+                    Crop.pickImage(this);
+                }
+                break;
+
             default:
                 break;
         }
@@ -196,15 +224,52 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        String title, content;
+        if (mAction == Constant.ACTION_CREATE) {
+            title = getResources().getString(R.string.title_dialog_back_create);
+            content = getResources().getString(R.string.dialog_content_create);
+        } else {
+            title = getResources().getString(R.string.title_dialog_back_edit);
+            content = getResources().getString(R.string.dialog_content_edit);
+        }
+        confirmDialog(title, content);
     }
 
+    private void confirmDialog(String title, String content) {
+        final AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(this);
+        }
+        builder.setTitle(title)
+                .setMessage(content)
+                .setPositiveButton(R.string.sure, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        CreateActivity.this.finish();
+                    }
+                })
+                .setNegativeButton(R.string.nope, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                        dialog.dismiss();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
 
     private int validate() {
         if (isEmpty()) {
             return Constant.VALIDATE_EMPTY;
         }
 
+        if (mLevel > Constant.CUSTOMER_LEVEL_2) {
+            String ada = mADA.getText().toString();
+            if (adaIsExit() && !ada.equals(mCustomer.getAda())) {
+                return Constant.VALIDATE_ADA;
+            }
+        }
         String number = mPhoneNumber.getText().toString();
         if (!isPhoneNumber(number)) {
             return Constant.VALIDATE_PHONE;
@@ -214,12 +279,10 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
 
     private boolean isEmpty() {
         String name = mName.getText().toString();
-        String ada = mADA.getText().toString();
         String phone = mPhoneNumber.getText().toString();
         String address = mAddress.getText().toString();
 
-        return (Utility.isEmptyString(ada)
-                || Utility.isEmptyString(name)
+        return (Utility.isEmptyString(name)
                 || Utility.isEmptyString(phone)
                 || Utility.isEmptyString(address));
 
@@ -227,6 +290,11 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
 
     private boolean isPhoneNumber(String string) {
         return string.matches(Constant.regexPhoneNumber);
+    }
+
+    private boolean adaIsExit() {
+        String ada = mADA.getText().toString();
+        return mRealmController.isExit(ada);
     }
 
     private void makeToast(int val) {
@@ -241,21 +309,22 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         if (val == Constant.VALIDATE_PHONE) {
             Toast.makeText(this, R.string.phone_number_is_wrong, Toast.LENGTH_SHORT).show();
         }
+
+        if (val == Constant.VALIDATE_ADA) {
+            Toast.makeText(this, R.string.ada_is_exit, Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void initDialogDateOfBirth() {
-        final SimpleDateFormat dateFormat = new SimpleDateFormat(Constant.FORMAT_DATE, Locale.US);
         Calendar calendar = Calendar.getInstance();
         mDialogDateOfBirth = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
-                mDateOfBirth.setText(dateFormat.format(newDate.getTime()));
-
-                mValueDate = newDate.getTime();
-                mDateDOB = dayOfMonth;
-                mMonthDOB = monthOfYear;
+                dateOfBirth = newDate.getTime();
+                String dateSet = Utility.dateToString(dateOfBirth);
+                mDateOfBirth.setText(dateSet);
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 
@@ -266,15 +335,15 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
     public void onItemSelected(int position) {
         mLevel = position;
         mRatingBar.setRating(position + 1);
+        if (mLevel < Constant.CUSTOMER_LEVEL_3) {
+            mAdaLayout.setVisibility(View.GONE);
+        } else {
+            mAdaLayout.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void onNothingSelected() {
-    }
-
-    //auto incre id when add customer
-    private int createId() {
-        return mIdKey + 1;
     }
 
     private void saveCustomer() {
@@ -286,34 +355,23 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
             isSave = false;
         }
         makeToast(val);
-    }
-
-    private void onSave() {
-        saveCustomer();
         if (isSave) {
-            onBackPressed();
+            CreateActivity.this.finish();
         }
     }
 
     private void save() {
         CustomerObject customer = new CustomerObject();
-        int id = createId();
+        int id = Utility.createId(mIdKey);
         Log.d(CreateActivity.class.getSimpleName() + "-dainq", " put id: " + id);
         mPref.edit().putInt(Constant.KEY_ID_CUSTOMER, id).apply();
 
+        Calendar dateCreate = Calendar.getInstance();
         customer.setId(id);
+        customer.setDatecreate(dateCreate.getTime());
         setData(customer);
 
         mRealmController.addCustomer(customer);
-
-        NotificationScheduler.scheduleRepeatingRTCNotification(this, "0", "1");
-    }
-
-    private void onEdit() {
-        editCustomer();
-        if (isSave) {
-            onBackPressed();
-        }
     }
 
     private void editCustomer() {
@@ -325,27 +383,37 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
             isSave = false;
         }
         makeToast(val);
+        if (isSave) {
+            CreateActivity.this.finish();
+        }
     }
 
     private void edit() {
-        mRealm.beginTransaction();
+        mRealmController.getRealm().beginTransaction();
         setData(mCustomer);
-        mRealm.commitTransaction();
+        mRealmController.getRealm().commitTransaction();
 
         Intent intent = new Intent(this, NotificationReceiver.class);
         Bundle bundle = new Bundle();
         bundle.putString(Constant.CUSTOMER_NAME, mCustomer.getName());
         bundle.putInt(Constant.NOTIFICATION_TYPE, Constant.NOTIFICATION_BIRTH_DAY);
         intent.putExtras(bundle);
-
-//        NotificationScheduler.scheduleRepeatingElapsedNotification(this);
     }
 
-    private void setData(CustomerObject object){
+    private void setData(CustomerObject object) {
         object.setLevel(mLevel);
-        object.setAda(mADA.getText().toString());
+        if (mLevel > Constant.CUSTOMER_LEVEL_2) {
+            String ada = mADA.getText().toString();
+            if (!Utility.isEmptyString(ada)) {
+                object.setAda(mADA.getText().toString());
+            }
+        }
+        if (mUri != null) {
+            String avatar = Utility.convertImage(this, mUri);
+            object.setAvatar(avatar);
+        }
         object.setName(mName.getText().toString());
-        object.setDateofbirth(mValueDate);
+        object.setDateofbirth(dateOfBirth);
         object.setPhonenumber(mPhoneNumber.getText().toString());
         object.setAddress(mAddress.getText().toString());
         object.setReason(mReason.getText().toString());
@@ -355,17 +423,51 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         object.setProduct(mProductNeed.getText().toString());
     }
 
-//    private void setNotification(Context context, long time) {
-//        Intent intent = new Intent(context, NotificationReceiver.class);
-//        Bundle bundle = new Bundle();
-//        bundle.putString(Constant.CUSTOMER_NAME, mCustomer.getName());
-//        bundle.putInt(Constant.NOTIFICATION_TYPE, Constant.NOTIFICATION_BIRTH_DAY);
-//        intent.putExtras(bundle);
-//
-//        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-//
-//        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-//        am.setExact(1, time, pendingIntent);
-//        Log.d("dainq", " Notification create");
-//    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Log.v(TAG, "Permission: " + permissions[0] + "was " + grantResults[0]);
+            //resume tasks needing this permission
+            Crop.pickImage(this);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent result) {
+        if (requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
+            beginCrop(result.getData());
+        } else if (requestCode == Crop.REQUEST_CROP) {
+            handleCrop(resultCode, result);
+        }
+
+        super.onActivityResult(requestCode, resultCode, result);
+    }
+
+    private void beginCrop(Uri source) {
+        Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));
+        Crop.of(source, destination).asSquare().start(this);
+    }
+
+    private void handleCrop(int resultCode, Intent result) {
+        if (resultCode == RESULT_OK) {
+            mAvatar.setImageDrawable(null);
+            mUri = Crop.getOutput(result);
+            mAvatar.setImageURI(mUri);
+        } else if (resultCode == Crop.RESULT_ERROR) {
+            Toast.makeText(this, Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        mRealmController = new RealmController(this);
+        super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        mRealmController.close();
+        super.onDestroy();
+    }
 }

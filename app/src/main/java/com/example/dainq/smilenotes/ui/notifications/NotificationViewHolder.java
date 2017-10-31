@@ -6,6 +6,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+
 import nq.dai.smilenotes.R;
 
 public class NotificationViewHolder extends RecyclerView.ViewHolder {

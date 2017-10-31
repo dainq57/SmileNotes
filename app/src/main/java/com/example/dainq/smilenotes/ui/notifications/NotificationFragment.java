@@ -11,11 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+
 import com.example.dainq.smilenotes.common.BaseFragment;
 import com.example.dainq.smilenotes.common.Utility;
 
 import nq.dai.smilenotes.R;
-
 
 public class NotificationFragment extends BaseFragment {
     private Context mContext;

@@ -9,13 +9,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingTop="20dp">
+
+        <include layout="@layout/profile_add_avatar"/>
 
         <include layout="@layout/item_profile_info"/>
 
-        <include layout="@layout/item_prodile_problem"/>
-
-        <include layout="@layout/item_profile_plan"/>
+        <include layout="@layout/item_profile_problem"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -27,6 +28,7 @@
 
             <TextView
                 android:id="@+id/create_btn_cancel"
+                style="@style/TextAppearance"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="1dp"
@@ -37,6 +39,7 @@
 
             <TextView
                 android:id="@+id/create_btn_save"
+                style="@style/TextAppearance"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="1dp"

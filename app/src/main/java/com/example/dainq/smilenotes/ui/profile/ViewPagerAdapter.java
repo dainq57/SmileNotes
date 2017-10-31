@@ -1,4 +1,4 @@
-package com.example.dainq.smilenotes.ui.customer;
+package com.example.dainq.smilenotes.ui.profile;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,6 +28,10 @@ class ViewPagerAdapter extends FragmentPagerAdapter {
     public void addFragment(Fragment fragment, String title) {
         mFragmentList.add(fragment);
         mFragmentTitleList.add(title);
+    }
+
+    public void removeFragment(Fragment fragment) {
+        mFragmentList.remove(fragment);
     }
 
     @Override

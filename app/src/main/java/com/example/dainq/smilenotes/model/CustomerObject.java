@@ -5,16 +5,18 @@ import java.util.Date;
 import io.realm.RealmObject;
 import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.RealmClass;
 
+@RealmClass
 public class CustomerObject extends RealmObject {
 
-    @Index
+    @PrimaryKey
     private int id;
     private int level;
-
-    @PrimaryKey
     private String ada;
+    private Date datecreate;
 
+    private String avatar;
     private String name;
     private Date dateofbirth;
     private String phonenumber;
@@ -48,6 +50,14 @@ public class CustomerObject extends RealmObject {
 
     public void setAda(String ada) {
         this.ada = ada;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public String getName() {
@@ -120,5 +130,13 @@ public class CustomerObject extends RealmObject {
 
     public void setProduct(String product) {
         this.product = product;
+    }
+
+    public Date getDatecreate() {
+        return datecreate;
+    }
+
+    public void setDatecreate(Date datecreate) {
+        this.datecreate = datecreate;
     }
 }

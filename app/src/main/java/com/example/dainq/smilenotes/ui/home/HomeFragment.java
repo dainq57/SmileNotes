@@ -3,8 +3,11 @@ package com.example.dainq.smilenotes.ui.home;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,41 +16,56 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.dainq.smilenotes.common.BaseFragment;
 import com.example.dainq.smilenotes.common.Constant;
+import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.controller.realm.RealmController;
-import com.example.dainq.smilenotes.controller.realm.RealmCustomerAdapter;
-import com.example.dainq.smilenotes.model.CustomerObject;
+import com.example.dainq.smilenotes.model.ProductObject;
 import com.example.dainq.smilenotes.ui.common.spinner.OnSpinnerItemSelectedListener;
 import com.example.dainq.smilenotes.ui.common.spinner.SingleSpinnerLayout;
 import com.example.dainq.smilenotes.ui.common.spinner.SpinnerItem;
-import com.example.dainq.smilenotes.ui.customer.CustomerAdapter;
-import com.example.dainq.smilenotes.ui.customer.ListCustomerActivity;
+import com.example.dainq.smilenotes.ui.profile.customer.ListCustomerActivity;
+import com.example.dainq.smilenotes.ui.profile.product.ProductAdapter;
+import com.example.dainq.smilenotes.ui.profile.product.RealmProductAdapter;
+import com.soundcloud.android.crop.Crop;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import im.dacer.androidcharts.PieHelper;
 import im.dacer.androidcharts.PieView;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import nq.dai.smilenotes.R;
 
-public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedListener {
+public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedListener, View.OnClickListener {
     private String TAG = "HomeFragment";
 
     private Context mContext;
-    private RecyclerView mListCustomer;
-    private CustomerAdapter mAdapter;
-    private SingleSpinnerLayout mSpinner;
-    private RealmResults<CustomerObject> mRealmResult;
+    private ProductAdapter mAdapter;
     private RealmController mRealmController;
+
+    private TextView mCPotentialMonth;
+    private TextView mCPotential;
+    private TextView mCConsumer;
+    private TextView mCDistribution;
+    private CircleImageView mAvatarUser;
+    private TextView mTextNotResults;
+    private RecyclerView mListCustomer;
+    private SingleSpinnerLayout mSpinner;
+
+    private SharedPreferences mPref;
 
     public HomeFragment(Context context) {
         mContext = context;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @SuppressLint("InflateParams")
     @Nullable
     @Override
@@ -57,20 +75,26 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
         return view;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
+    public CircleImageView getAvatarUser() {
+        return mAvatarUser;
+    }
+
     private void initView(View view) {
         final PieView pieView = (PieView) view.findViewById(R.id.pie_view);
         setPieView(pieView);
+        initSummaryView(view);
 
         mListCustomer = (RecyclerView) view.findViewById(R.id.home_list_customer);
         mListCustomer.setHasFixedSize(true);
         mListCustomer.setLayoutManager(new LinearLayoutManager(mContext));
 
-        mAdapter = new CustomerAdapter(mContext);
+        mAdapter = new ProductAdapter(mContext);
         mListCustomer.setAdapter(mAdapter);
 
         mRealmController = RealmController.with(this);
         initSpinner(view);
+
+        mTextNotResults = (TextView) view.findViewById(R.id.home_list_not_results);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -103,6 +127,51 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
         });
     }
 
+    private void initSummaryView(View view) {
+        LinearLayout customerPotentialMonth = (LinearLayout) view.findViewById(R.id.home_customer_potential_month);
+        customerPotentialMonth.setOnClickListener(this);
+
+        LinearLayout customerPotential = (LinearLayout) view.findViewById(R.id.home_customer_potential);
+        customerPotential.setOnClickListener(this);
+
+        LinearLayout customerConsumer = (LinearLayout) view.findViewById(R.id.home_customer_consumer);
+        customerConsumer.setOnClickListener(this);
+
+        LinearLayout customerDistribution = (LinearLayout) view.findViewById(R.id.home_customer_distribution);
+        customerDistribution.setOnClickListener(this);
+
+        mCPotentialMonth = (TextView) view.findViewById(R.id.home_customer_potential_month_number);
+        mCPotential = (TextView) view.findViewById(R.id.home_customer_potential_number);
+        mCConsumer = (TextView) view.findViewById(R.id.home_customer_consumer_number);
+        mCDistribution = (TextView) view.findViewById(R.id.home_customer_distribution_number);
+
+        mAvatarUser = (CircleImageView) view.findViewById(R.id.home_avatar_user);
+        mAvatarUser.setOnClickListener(this);
+        mPref = getActivity().getSharedPreferences(Constant.PREF_USER, Context.MODE_PRIVATE);
+    }
+
+    private void countNumberCustomer() {
+        //Need change to potential of month
+        Calendar calendar = Calendar.getInstance();
+        Date end = calendar.getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd");
+        String day = dateFormat.format(end);
+        int temp = Integer.parseInt(day);
+        //get start date before from today
+        calendar.add(Calendar.DAY_OF_MONTH, -(temp - 1));
+        Date start = calendar.getTime();
+
+        int potetialMonth = mRealmController.getCountCustomer(Constant.CUSTOMER_DATE_CREATE, start, end);
+        int potetial = mRealmController.getCountCustomer(Constant.CUSTOMER_TYPE_NEW);
+        int consumer = mRealmController.getCountCustomer(Constant.CUSTOMER_TYPE_CONSUMER);
+        int distribution = mRealmController.getCountCustomer(Constant.CUSTOMER_TYPE_DISTRIBUTION);
+
+        mCPotentialMonth.setText(potetialMonth > 10 ? ("" + potetialMonth) : ("0" + potetialMonth));
+        mCPotential.setText(potetial > 10 ? ("" + potetial) : ("0" + potetial));
+        mCConsumer.setText(consumer > 10 ? ("" + consumer) : ("0" + consumer));
+        mCDistribution.setText(distribution > 10 ? ("" + distribution) : ("0" + distribution));
+    }
+
     private void openListCustomer(int id) {
         Bundle bundle = new Bundle();
         bundle.putInt(Constant.KEY_LEVEL_CUSTOMER, id);
@@ -120,35 +189,105 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
             mSpinner.setSpinnerList(SpinnerItem.getSpinnerItem(menuItem));
             mSpinner.setOnSpinnerItemSelectedListener(this);
             mSpinner.getSpinner().setDropDownHorizontalOffset(mContext.getResources().getDimensionPixelSize(R.dimen.dropdown_offset_vertical));
-            mSpinner.setSelection(0);
         }
     }
 
     @Override
     public void onItemSelected(int position) {
-        if (position == 0) {
-            sortCustomer(Sort.ASCENDING);
-        } else {
-            sortCustomer(Sort.DESCENDING);
-        }
+        Log.d("dainq ", "spinner " + position);
+        sortCustomerBetween(position);
     }
 
     @Override
     public void onNothingSelected() {
     }
 
-    private void sortCustomer(Sort type) {
-        mRealmResult = mRealmController.sortCustomerByDate(Constant.CUSTOMER_DOB, type);
-        RealmCustomerAdapter realmAdapter = new RealmCustomerAdapter(mContext, mRealmResult, true);
+    private void sortCustomerBetween(int type) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        Date start = calendar.getTime();
+
+        //Seclect list in 1 week or 1 month from today
+        if (type == 0) {
+            calendar.add(Calendar.DAY_OF_MONTH, 7);
+        } else {
+            calendar.add(Calendar.DAY_OF_MONTH, 30);
+        }
+        Date end = calendar.getTime();
+        RealmResults<ProductObject> mRealmResult = mRealmController.getProductBetween(start, end, Sort.ASCENDING);
         Log.d(TAG, "realmResult: " + mRealmResult.size());
 
-        mAdapter.setRealmAdapter(realmAdapter);
-        mAdapter.notifyDataSetChanged();
+        if (!mRealmResult.isEmpty()) {
+            RealmProductAdapter realmAdapter = new RealmProductAdapter(mContext, mRealmResult, true);
+            mAdapter.setRealmAdapter(realmAdapter);
+            mAdapter.notifyDataSetChanged();
+            mTextNotResults.setVisibility(View.GONE);
+        } else {
+            mTextNotResults.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mAdapter.notifyDataSetChanged();
+        mRealmController = new RealmController(mContext);
+        Log.d("dainq ", " onResume");
+        mSpinner.setSelection(0);
+        sortCustomerBetween(0);
+        countNumberCustomer();
+        String avatar = mPref.getString(Constant.PREF_USER_AVATAR, "");
+        if (avatar != null) {
+            mAvatarUser.setImageBitmap(Utility.decodeImage(avatar));
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.home_customer_potential:
+                openListCustomer(Constant.CUSTOMER_TYPE_NEW);
+                break;
+            case R.id.home_customer_potential_month:
+                openListCustomer(Constant.CUSTOMER_TYPE_NEW_MONTH);
+                break;
+            case R.id.home_customer_consumer:
+                openListCustomer(Constant.CUSTOMER_TYPE_CONSUMER);
+                break;
+            case R.id.home_customer_distribution:
+                openListCustomer(Constant.CUSTOMER_TYPE_DISTRIBUTION);
+                break;
+            case R.id.home_avatar_user:
+                if (!Utility.checkPermissionForReadExtertalStorage(getActivity())) {
+                    Utility.requestPermission(getActivity());
+                } else {
+                    Crop.pickImage(getActivity());
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Log.v("dainq", "Permission: " + permissions[0] + "was " + grantResults[0]);
+            //resume tasks needing this permission
+            Crop.pickImage(getActivity());
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        mRealmController.close();
+        super.onDestroy();
     }
 }

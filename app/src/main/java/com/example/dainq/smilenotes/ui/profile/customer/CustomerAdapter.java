@@ -1,4 +1,4 @@
-package com.example.dainq.smilenotes.ui.customer;
+package com.example.dainq.smilenotes.ui.profile.customer;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,18 +14,21 @@ import android.view.ViewGroup;
 
 import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.controller.realm.RealmController;
-import com.example.dainq.smilenotes.controller.realm.RealmRecyclerViewAdapter;
 import com.example.dainq.smilenotes.model.CustomerObject;
+import com.example.dainq.smilenotes.model.MeetingObject;
+import com.example.dainq.smilenotes.model.ProductObject;
+import com.example.dainq.smilenotes.ui.common.realm.RealmRecyclerViewAdapter;
+import com.example.dainq.smilenotes.ui.create.CreateActivity;
+import com.example.dainq.smilenotes.ui.profile.ProfileActivity;
 
-import io.realm.Realm;
 import io.realm.RealmResults;
 import nq.dai.smilenotes.R;
 
 public class CustomerAdapter extends RealmRecyclerViewAdapter<CustomerObject> {
+    private String TAG = "CustomerAdapter";
+
     private Context mContext;
-    private Realm mRealm;
     private RealmController mRealmController;
-    private RealmResults<CustomerObject> mRealmResult;
 
     public CustomerAdapter(Context context) {
         mContext = context;
@@ -33,40 +36,52 @@ public class CustomerAdapter extends RealmRecyclerViewAdapter<CustomerObject> {
 
     @Override
     public CustomerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.item_customer, parent, false);
+        View view;
+        if (mContext instanceof ListCustomerActivity) {
+            view = LayoutInflater.from(mContext).inflate(R.layout.item_customer, parent, false);
+        } else {
+            view = LayoutInflater.from(mContext).inflate(R.layout.item_customer_none_swipe, parent, false);
+        }
         return new CustomerViewHolder(view, mContext);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
-        mRealm = RealmController.getInstance().getRealm();
         mRealmController = new RealmController(mContext);
 
         final CustomerObject customer = getItem(position);
         CustomerViewHolder holder = (CustomerViewHolder) viewHolder;
 
         holder.mName.setText(customer.getName());
-        holder.mAddress.setText(customer.getAddress());
         holder.mRating.setRating(customer.getLevel() + 1);
         holder.mContentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 bundle.putInt(Constant.KEY_ID_CUSTOMER, customer.getId());
-                Log.d(CustomerAdapter.class.getSimpleName() + "-dainq", "customer id: " + customer.getId());
+                Log.d(TAG, "customer id: " + customer.getId());
                 Intent intent = new Intent(mContext, ProfileActivity.class);
                 intent.putExtras(bundle);
                 mContext.startActivity(intent);
             }
         });
 
-        holder.mDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(CustomerAdapter.class.getSimpleName() + "-dainq", "remove customer: " + customer.getName());
-                confirmDelete(customer.getId());
-            }
-        });
+        if (mContext instanceof ListCustomerActivity) {
+            holder.mDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d(TAG, "remove customer: " + customer.getName());
+                    confirmDelete(customer.getId());
+                }
+            });
+
+            holder.mEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startEdit(customer.getId());
+                }
+            });
+        }
     }
 
     @Override
@@ -77,7 +92,17 @@ public class CustomerAdapter extends RealmRecyclerViewAdapter<CustomerObject> {
         return 0;
     }
 
-    private void confirmDelete(final int id){
+    private void startEdit(int id) {
+        Bundle bundle = new Bundle();
+        bundle.putInt(Constant.KEY_ACTION, Constant.ACTION_EDIT);
+        bundle.putInt(Constant.KEY_ID_CUSTOMER, id);
+
+        Intent intent = new Intent(mContext, CreateActivity.class);
+        intent.putExtras(bundle);
+        mContext.startActivity(intent);
+    }
+
+    private void confirmDelete(final int id) {
         final AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder = new AlertDialog.Builder(mContext, android.R.style.Theme_Material_Dialog_Alert);
@@ -86,14 +111,14 @@ public class CustomerAdapter extends RealmRecyclerViewAdapter<CustomerObject> {
         }
         builder.setTitle(R.string.title_dialog_delete)
                 .setMessage(R.string.dialog_delete_content)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        // continue with delete
                         mRealmController.deleteCustomer(id);
+                        deleteAllOfCustomer(id);
                         notifyDataSetChanged();
                     }
                 })
-                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // do nothing
                         dialog.dismiss();
@@ -103,21 +128,12 @@ public class CustomerAdapter extends RealmRecyclerViewAdapter<CustomerObject> {
                 .show();
     }
 
-//    private class CustomerFilter extends Filter {
-//
-//        @Override
-//        protected FilterResults performFiltering(CharSequence constraint) {
-//            FilterResults results = new FilterResults();
-//            if (constraint != null && constraint.length() > 0) {
-//
-//            }
-//
-//            return null;
-//        }
-//
-//        @Override
-//        protected void publishResults(CharSequence constraint, FilterResults results) {
-//
-//        }
-//    }
+    private void deleteAllOfCustomer(int id) {
+        RealmResults<ProductObject> productList = mRealmController.getProductOfCustomer(id);
+        RealmResults<MeetingObject> meetingList = mRealmController.getMeetingOfCustomer(id);
+
+        Log.d(TAG, "dainq product/meeting: " + productList.size() + "/" + meetingList.size());
+        mRealmController.removeAllProduct(productList);
+        mRealmController.removeAllPlan(meetingList);
+    }
 }

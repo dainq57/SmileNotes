@@ -2,10 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="nq.dai.smilenotes">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
+        android:resizeableActivity="false"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
@@ -15,30 +21,28 @@
             android:configChanges="orientation"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.dainq.smilenotes.ui.create.CreateActivity">
-        </activity>
-        <activity android:name="com.example.dainq.smilenotes.ui.customer.ListCustomerActivity">
-        </activity>
-        <activity android:name="com.example.dainq.smilenotes.ui.customer.ProfileActivity">
-        </activity>
+        <activity
+            android:name="com.example.dainq.smilenotes.ui.create.CreateActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.example.dainq.smilenotes.ui.profile.customer.ListCustomerActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.example.dainq.smilenotes.ui.profile.ProfileActivity"
+            android:screenOrientation="portrait"/>
 
-        <receiver
-            android:name="com.example.dainq.smilenotes.ui.notifications.AlarmBootReceiver"
-            android:enabled="false">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name="com.example.dainq.smilenotes.ui.notifications.NotificationReceiver"
-            android:enabled="true"
-            android:exported="false">
-        </receiver>
+        <activity
+            android:name="com.soundcloud.android.crop.CropImageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CustomTheme" />
+
+        <!-- Register the Alarm Receiver -->
+        <receiver android:name="com.example.dainq.smilenotes.ui.notifications.NotificationReceiver" />
     </application>
 
 </manifest>

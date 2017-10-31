@@ -1,4 +1,4 @@
-package com.example.dainq.smilenotes.controller.realm;
+package com.example.dainq.smilenotes.ui.common.realm;
 
 import android.support.v7.widget.RecyclerView;
 

@@ -33,15 +33,23 @@
             android:id="@+id/profile_ada"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/ada_code"/>
+            android:layout_marginBottom="10dp"
+            style="@style/TextAppearance"
+            android:text="@string/ada_code"
+            android:visibility="gone"/>
 
         <RatingBar
             android:id="@+id/profile_rating"
             style="@style/customRatingBar"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/profile_date_create"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:rating="3.5"/>
+            style="@style/TextAppearance"
+            android:layout_marginTop="10dp"/>
 
         <FrameLayout
             android:id="@+id/profile_btn_edit"
@@ -52,15 +60,17 @@
             android:padding="10dp">
 
             <TextView
+                android:id="@+id/profile_text_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:drawablePadding="3dp"
-                android:drawableStart="@drawable/ic_write"
+                style="@style/TextAppearance"
                 android:gravity="center"
                 android:text="Chỉnh sửa"
                 android:textAllCaps="true"
-                android:textColor="@color/color_new_white"/>
+                android:textColor="@color/color_new_white"
+                android:textSize="15sp"/>
         </FrameLayout>
     </LinearLayout>
 </LinearLayout>

@@ -4,34 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingEnd="12dp"
-    android:paddingStart="12dp">
+    android:paddingTop="20dp">
 
-    <LinearLayout
-        android:id="@+id/create_header_problem"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:gravity="center_vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
-            android:text="@string/account_special"
-            android:textStyle="bold|italic"/>
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="3px"
-            android:layout_weight="1"
-            android:background="@color/listview_divider_color"/>
-    </LinearLayout>
+    <include layout="@layout/item_card_add_new"/>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/list_activity_account"
-        android:paddingTop="8dp"
+        android:id="@+id/list_plan_meeting"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"/>
 </LinearLayout>

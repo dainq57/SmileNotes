@@ -1,47 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/profile_card_plan"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_edit_text_border"
-    android:elevation="5dp"
-    android:padding="7dp">
+    android:layout_marginBottom="10dp"
+    android:layout_marginEnd="12dp"
+    android:layout_marginStart="12dp"
+    android:background="@drawable/bg_edit_text_border">
 
     <LinearLayout
+        android:id="@+id/item_plan_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:drawablePadding="5dp"
-                android:drawableStart="@drawable/ic_see"
-                android:text="Thời gian buổi gặp " />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:drawablePadding="5dp"
-                android:drawableStart="@drawable/ic_time_s"
-                android:text="Dự kiến buổi gặp sau" />
-        </RelativeLayout>
+        android:layout_toStartOf="@+id/item_plan_btn_remove"
+        android:orientation="vertical"
+        android:padding="7dp">
 
         <TextView
+            android:id="@+id/item_plan_schedule"
+            style="@style/TextAppearance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:drawablePadding="5dp"
+            android:drawableStart="@drawable/ic_time_s"
+            android:gravity="center_vertical"
+            android:text="Dự kiến buổi gặp sau"
+            android:textColor="@color/colorAccent"/>
+
+        <TextView
+            android:id="@+id/item_plan_time_meeting"
+            style="@style/TextAppearance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerHorizontal="true"
+            android:drawablePadding="5dp"
+            android:drawableStart="@drawable/ic_see_s"
+            android:gravity="center_vertical"
+            android:text="Thời gian buổi gặp "/>
+
+        <TextView
+            android:id="@+id/item_plan_content"
+            style="@style/TextAppearance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:drawablePadding="5dp"
             android:drawableStart="@drawable/ic_mess_s"
             android:ellipsize="end"
-            android:layout_marginTop="7dp"
-            android:maxLines="2"
-            android:text="Nội dung chia sẻ" />
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:text="Nội dung chia sẻ"/>
 
     </LinearLayout>
-</android.support.v7.widget.CardView>
+
+    <FrameLayout
+        android:id="@+id/item_plan_btn_remove"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:padding="7dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_remove_s"/>
+    </FrameLayout>
+</RelativeLayout>

@@ -10,6 +10,6 @@
 
     <include
         android:id="@+id/profile_problem_layout"
-        layout="@layout/item_prodile_problem"/>
+        layout="@layout/item_profile_problem"/>
 
 </android.support.v4.widget.NestedScrollView>

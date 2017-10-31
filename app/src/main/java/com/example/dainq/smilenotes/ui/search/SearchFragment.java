@@ -14,9 +14,9 @@ import android.widget.TextView;
 import com.example.dainq.smilenotes.common.BaseFragment;
 import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.controller.realm.RealmController;
-import com.example.dainq.smilenotes.controller.realm.RealmCustomerAdapter;
 import com.example.dainq.smilenotes.model.CustomerObject;
-import com.example.dainq.smilenotes.ui.customer.CustomerAdapter;
+import com.example.dainq.smilenotes.ui.profile.customer.CustomerAdapter;
+import com.example.dainq.smilenotes.ui.profile.customer.RealmCustomerAdapter;
 
 import io.realm.RealmResults;
 import nq.dai.smilenotes.R;
@@ -84,4 +84,16 @@ public class SearchFragment extends BaseFragment {
             return false;
         }
     };
+
+    @Override
+    public void onResume() {
+        mRealmController = new RealmController(mContext);
+        super.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        mRealmController.close();
+        super.onDestroy();
+    }
 }

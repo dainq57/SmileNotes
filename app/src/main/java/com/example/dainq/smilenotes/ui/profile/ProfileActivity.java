@@ -1,4 +1,4 @@
-package com.example.dainq.smilenotes.ui.customer;
+package com.example.dainq.smilenotes.ui.profile;
 
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -16,10 +16,12 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.dainq.smilenotes.common.Constant;
+import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.controller.realm.RealmController;
 import com.example.dainq.smilenotes.model.CustomerObject;
 import com.example.dainq.smilenotes.ui.create.CreateActivity;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import nq.dai.smilenotes.R;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
@@ -32,6 +34,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private TextView mAda;
     private RatingBar mRating;
     private FrameLayout mButtonEdit;
+    private TextView mDateCreate;
+    private CircleImageView mAvatar;
+
+    private int type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,13 +50,32 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         mAda = (TextView) findViewById(R.id.profile_ada);
         mRating = (RatingBar) findViewById(R.id.profile_rating);
         mButtonEdit = (FrameLayout) findViewById(R.id.profile_btn_edit);
+        mDateCreate = (TextView) findViewById(R.id.profile_date_create);
+        mAvatar = (CircleImageView) findViewById(R.id.profile_avatar);
     }
 
     private void onUpdate() {
         getCustomerObject();
-        mAda.setText(getResources().getString(R.string.ada_code, mCustomer.getAda()));
+        if (mCustomer.getLevel() > Constant.CUSTOMER_LEVEL_2) {
+            String ada = mCustomer.getAda();
+            if (ada == null) {
+                mAda.setText(getResources().getString(R.string.ada_code, ""));
+            } else {
+                mAda.setText(getResources().getString(R.string.ada_code, mCustomer.getAda()));
+            }
+            mAda.setVisibility(View.VISIBLE);
+        } else {
+            mAda.setVisibility(View.GONE);
+        }
         mRating.setRating(mCustomer.getLevel() + 1);
         mButtonEdit.setOnClickListener(this);
+        String date = Utility.dateToString(mCustomer.getDatecreate());
+        mDateCreate.setText(getResources().getString(R.string.date_create, date));
+
+        String avatar = mCustomer.getAvatar();
+        if (avatar != null) {
+            mAvatar.setImageBitmap(Utility.decodeImage(avatar));
+        }
     }
 
     @Override
@@ -75,6 +100,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         mExtras = getIntent().getExtras();
         if (mExtras != null) {
             mId = mExtras.getInt(Constant.KEY_ID_CUSTOMER);
+            type = mExtras.getInt(Constant.KEY_TYPE_PRODILE);
             Log.d(ProfileActivity.class.getSimpleName() + "-dainq", "mId: " + mId);
             mRealmController = RealmController.with(this);
             mCustomer = mRealmController.getCustomer(mId);
@@ -96,6 +122,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private void initViewPager() {
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
+        if (type == Constant.PREF_TYPE_PROFILE) {
+            viewPager.setCurrentItem(3);
+        }
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
@@ -105,7 +134,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new ProfileInfoFragment(this, mCustomer), getString(R.string.tab_info));
         adapter.addFragment(new ProfileProblemFragment(this, mCustomer), getString(R.string.tab_problem));
-        adapter.addFragment(new ProfilePlanFragment(this), getString(R.string.tab_plan));
+        adapter.addFragment(new ProfilePlanFragment(this, mCustomer), getString(R.string.tab_plan));
+        ProfileProductFragment fragmentProduct = new ProfileProductFragment(this, mCustomer);
+        if (mCustomer.getLevel() > Constant.CUSTOMER_LEVEL_0) {
+            adapter.addFragment(fragmentProduct, getString(R.string.tab_product));
+        }
         viewPager.setAdapter(adapter);
     }
 
@@ -128,5 +161,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         Intent intent = new Intent(this, CreateActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        mRealmController.close();
+        super.onDestroy();
     }
 }

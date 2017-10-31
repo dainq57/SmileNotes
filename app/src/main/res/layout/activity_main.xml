@@ -19,7 +19,7 @@
             android:layout_gravity="bottom|end"
             android:layout_marginBottom="12dp"
             android:layout_marginEnd="12dp"
-            android:src="@drawable/ic_write"/>
+            android:src="@drawable/ic_write_s"/>
     </FrameLayout>
 
     <com.roughike.bottombar.BottomBar

@@ -8,8 +8,8 @@
     <string name="setting_type_information">Về chúng tôi</string>
 
     <!--Spinner-->
-    <string name="home_spinner_position_0">Tăng dần</string>
-    <string name="home_spinner_position_1">Giảm dần</string>
+    <string name="home_spinner_position_0">1 tuần</string>
+    <string name="home_spinner_position_1">1 tháng</string>
 
     <string name="create_spinner_type_0">Tiềm năng</string>
     <string name="create_spinner_type_1">Tiêu dùng lẻ</string>
@@ -36,15 +36,18 @@
     <!--Tab info-->
     <string name="tab_info">THÔNG TIN</string>
     <string name="tab_problem">VẤN ĐỀ</string>
-    <string name="tab_plan">KẾ HOẠCH</string>
+    <string name="tab_plan">TK ÂN TÌNH</string>
+    <string name="tab_product">SẢN PHẦM</string>
 
     <!--Title activity-->
     <string name="title_create_new_customer">THÊM KHÁCH HÀNG MỚI</string>
     <string name="ada_code">Mã ADA: %s</string>
     <string name="save">LƯU</string>
+    <string name="delete">XÓA</string>
     <string name="cancel">HỦY</string>
     <string name="update">CẬP NHẬT</string>
     <string name="update_info">CẬP NHẬT THÔNG TIN</string>
+    <string name="list_customer">DANH SÁCH KHÁCH HÀNG</string>
 
     <!--Search-->
     <string name="search_hint">Tên, ADA hoặc SĐT</string>
@@ -54,12 +57,47 @@
     <string name="notification_birth_day_content">Hôm nay là sinh nhật của </string>
     <string name="notification_event">Sự kiện mới</string>
     <string name="notification_event_content">Hôm nay bạn có kế hạch với </string>
+
+    <!--Create-->
     <string name="some_problem">Các vấn đề</string>
     <string name="help_problem">Vấn đề cần giúp đỡ</string>
     <string name="resolver">Phương pháp giải quyết</string>
     <string name="note">Ghi chú</string>
     <string name="need_product">Sản phẩm cần dùng</string>
     <string name="account_special">Tài khoản ân tình</string>
+
+    <!--Dialog-->
     <string name="title_dialog_delete">Xoá khách hàng</string>
+    <string name="title_dialog_back_create">Huỷ tạo khách hàng</string>
+    <string name="title_dialog_back_edit">Huỷ chỉnh sửa</string>
+    <string name="dialog_content_create">Khách hàng sẽ không được tạo mới</string>
+    <string name="dialog_content_edit">Thông tin sẽ được khôi phục như ban đầu</string>
     <string name="dialog_delete_content">Thông tin về khách hàng sẽ bị xoá, bạn có chắc chắn xoá khách hàng này?</string>
+    <string name="customer_need_new_product">KH SẮP HẾT SẢN PHẨM</string>
+    <string name="ada_is_exit">Mã số ADA này đã tồn tại!</string>
+    <string name="new_meeting">Thêm cuộc gặp mới</string>
+    <string name="dialog_delete_meeting_content">Thông tin về cuộc gặp sẽ bị xóa, bạn có chắc chắn xóa?</string>
+    <string name="dialog_delete_meeting_title">Xóa ghi chép cuộc gặp</string>
+    <string name="dialog_title_view">Thông tin cuộc gặp</string>
+    <string name="dialog_title_edit">Sửa thông tin cuộc gặp</string>
+    <string name="edit">SỬA</string>
+    <string name="ok">OK</string>
+    <string name="edit_info">Chỉnh sửa thông tin</string>
+    <string name="add_new_product">Thêm sản phẩm cần dùng</string>
+    <string name="add_new_product_s">Thêm sản phẩm mới</string>
+    <string name="date_create">Ngày tạo: %s</string>
+    <string name="delete_product">Xóa sản phẩm</string>
+    <string name="confirm_delete_product">Xóa sản phẩm này của người dùng?</string>
+    <string name="empty_content_product">Thông tin không được trống!</string>
+    <string name="sure">CÓ</string>
+    <string name="nope">KHÔNG</string>
+
+    <!--Toast-->
+    <string name="create_success">Đã tạo mới!</string>
+    <string name="change_success">Đã lưu thay đổi!</string>
+    <string name="empty_info">Thông tin còn trống!</string>
+    <string name="validate_schedule_time">Ngày dự kiến không được trước ngày đã gặp!</string>
+    <string name="type_product">Loại sản phẩm</string>
+    <string name="time_use">Dự kiến thời gian dùng hết</string>
+    <string name="add_success">Đã thêm mới!</string>
 </resources>

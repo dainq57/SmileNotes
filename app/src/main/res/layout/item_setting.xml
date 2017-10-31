@@ -23,6 +23,7 @@
             android:layout_toStartOf="@+id/setting_switch"
             android:layout_weight="1"
             android:ellipsize="end"
+            style="@style/TextAppearance"
             android:maxLines="1"/>
 
         <android.support.v7.widget.SwitchCompat

@@ -1,4 +1,4 @@
-package com.example.dainq.smilenotes.ui.customer;
+package com.example.dainq.smilenotes.ui.profile;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -10,7 +10,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.dainq.smilenotes.common.BaseFragment;
+import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.model.CustomerObject;
+
+import java.util.Date;
 
 import nq.dai.smilenotes.R;
 
@@ -46,7 +49,11 @@ public class ProfileInfoFragment extends BaseFragment {
     }
 
     private void onUpdate() {
-        mDateOfBirth.setText(mCustomer.getDateofbirth().toString());
+        Date birth = mCustomer.getDateofbirth();
+        if (birth != null) {
+            String date = Utility.dateToString(mCustomer.getDateofbirth());
+            mDateOfBirth.setText(date);
+        }
         mPhoneNumber.setText(mCustomer.getPhonenumber());
         mAddress.setText(mCustomer.getAddress());
         mReason.setText(mCustomer.getReason());
@@ -65,10 +72,8 @@ public class ProfileInfoFragment extends BaseFragment {
         mDateOfBirth = (TextView) view.findViewById(R.id.create_edit_date_of_birth);
         mPhoneNumber = (EditText) view.findViewById(R.id.create_edit_phonenumber);
         mPhoneNumber.setEnabled(false);
-
         mAddress = (EditText) view.findViewById(R.id.create_edit_address);
         mAddress.setEnabled(false);
-
         mReason = (EditText) view.findViewById(R.id.create_edit_reason);
         mReason.setEnabled(false);
     }
