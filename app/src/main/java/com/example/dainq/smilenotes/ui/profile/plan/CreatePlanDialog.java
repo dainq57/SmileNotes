@@ -165,9 +165,7 @@ public class CreatePlanDialog extends DialogFragment implements View.OnClickList
                         btnRightClick();
                     }
 
-                    if (val == Constant.VALIDATE_EMPTY) {
-                        Toast.makeText(getActivity(), R.string.empty_content_product, Toast.LENGTH_SHORT).show();
-                    }
+                    makeToast(val);
                 }
                 break;
 
@@ -196,7 +194,6 @@ public class CreatePlanDialog extends DialogFragment implements View.OnClickList
         } else if (mType == Constant.DIALOG_EDIT) {
             edit();
         }
-        makeToast(mType);
         mAdapter.notifyDataSetChanged();
         dismiss();
     }

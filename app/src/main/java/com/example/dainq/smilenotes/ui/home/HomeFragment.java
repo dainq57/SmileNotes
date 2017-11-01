@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.dainq.smilenotes.common.BaseFragment;
@@ -59,6 +60,17 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
     private TextView mTextNotResults;
     private RecyclerView mListCustomer;
     private SingleSpinnerLayout mSpinner;
+    private PieView mPieView;
+
+    private RelativeLayout mLayoutSumary;
+    private LinearLayout mLayoutPie;
+    private TextView mTxtSumary;
+    private TextView mTxtPie;
+
+    private int potetialMonth;
+    private int potetial;
+    private int consumer;
+    private int distribution;
 
     private SharedPreferences mPref;
 
@@ -66,6 +78,7 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
         mContext = context;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @SuppressLint("InflateParams")
     @Nullable
     @Override
@@ -79,9 +92,9 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
         return mAvatarUser;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void initView(View view) {
-        final PieView pieView = (PieView) view.findViewById(R.id.pie_view);
-        setPieView(pieView);
+        mPieView = (PieView) view.findViewById(R.id.pie_view);
         initSummaryView(view);
 
         mListCustomer = (RecyclerView) view.findViewById(R.id.home_list_customer);
@@ -95,36 +108,14 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
         initSpinner(view);
 
         mTextNotResults = (TextView) view.findViewById(R.id.home_list_not_results);
-    }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private void setPieView(PieView pieView) {
-        ArrayList<PieHelper> pieHelperArrayList = new ArrayList<>();
-        pieHelperArrayList.add(new PieHelper(20, mContext.getResources().getColor(R.color.color_piechart_level_1, null)));
-        pieHelperArrayList.add(new PieHelper(30, mContext.getResources().getColor(R.color.color_piechart_level_2, null)));
-        pieHelperArrayList.add(new PieHelper(10, mContext.getResources().getColor(R.color.color_piechart_level_3, null)));
-        pieHelperArrayList.add(new PieHelper(40, mContext.getResources().getColor(R.color.color_piechart_level_4, null)));
+        mTxtSumary = (TextView) view.findViewById(R.id.home_btn_sumary);
+        mTxtSumary.setOnClickListener(this);
+        mTxtPie = (TextView) view.findViewById(R.id.home_btn_pie);
+        mTxtPie.setOnClickListener(this);
 
-        pieView.setDate(pieHelperArrayList);
-        pieView.setOnPieClickListener(new PieView.OnPieClickListener() {
-            @Override
-            public void onPieClick(int index) {
-                switch (index) {
-                    case 0:
-                        openListCustomer(Constant.CUSTOMER_TYPE_NEW);
-                        break;
-                    case 1:
-                        openListCustomer(Constant.CUSTOMER_TYPE_NEW_MONTH);
-                        break;
-                    case 2:
-                        openListCustomer(Constant.CUSTOMER_TYPE_CONSUMER);
-                        break;
-                    case 3:
-                        openListCustomer(Constant.CUSTOMER_TYPE_DISTRIBUTION);
-                        break;
-                }
-            }
-        });
+        mLayoutSumary = (RelativeLayout) view.findViewById(R.id.home_summary);
+        mLayoutPie = (LinearLayout) view.findViewById(R.id.home_pie_chart);
     }
 
     private void initSummaryView(View view) {
@@ -150,26 +141,67 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
         mPref = getActivity().getSharedPreferences(Constant.PREF_USER, Context.MODE_PRIVATE);
     }
 
-    private void countNumberCustomer() {
-        //Need change to potential of month
-        Calendar calendar = Calendar.getInstance();
-        Date end = calendar.getTime();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd");
-        String day = dateFormat.format(end);
-        int temp = Integer.parseInt(day);
-        //get start date before from today
-        calendar.add(Calendar.DAY_OF_MONTH, -(temp - 1));
-        Date start = calendar.getTime();
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void setDataPieView(PieView pieView) {
+        int sum = potetialMonth + potetial + consumer + distribution;
+        float poteM = 100 * potetialMonth / sum;
+        float pote = 100 * (potetial - potetialMonth) / sum;
+        float cons = 100 * consumer / sum;
+        float dis = 100 * distribution / sum;
 
-        int potetialMonth = mRealmController.getCountCustomer(Constant.CUSTOMER_DATE_CREATE, start, end);
-        int potetial = mRealmController.getCountCustomer(Constant.CUSTOMER_TYPE_NEW);
-        int consumer = mRealmController.getCountCustomer(Constant.CUSTOMER_TYPE_CONSUMER);
-        int distribution = mRealmController.getCountCustomer(Constant.CUSTOMER_TYPE_DISTRIBUTION);
+        ArrayList<PieHelper> pieHelperArrayList = new ArrayList<>();
+        pieHelperArrayList.add(new PieHelper(poteM, mContext.getResources().getColor(R.color.color_piechart_level_1, null)));
+        pieHelperArrayList.add(new PieHelper(pote, mContext.getResources().getColor(R.color.color_piechart_level_2, null)));
+        pieHelperArrayList.add(new PieHelper(cons, mContext.getResources().getColor(R.color.color_piechart_level_3, null)));
+        pieHelperArrayList.add(new PieHelper(dis, mContext.getResources().getColor(R.color.color_piechart_level_4, null)));
 
+        pieView.setDate(pieHelperArrayList);
+        pieView.setOnPieClickListener(new PieView.OnPieClickListener() {
+            @Override
+            public void onPieClick(int index) {
+                switch (index) {
+                    case 0:
+                        openListCustomer(Constant.CUSTOMER_TYPE_NEW_MONTH);
+                        break;
+                    case 1:
+                        openListCustomer(Constant.CUSTOMER_TYPE_NEW);
+                        break;
+                    case 2:
+                        openListCustomer(Constant.CUSTOMER_TYPE_CONSUMER);
+                        break;
+                    case 3:
+                        openListCustomer(Constant.CUSTOMER_TYPE_DISTRIBUTION);
+                        break;
+                }
+            }
+        });
+    }
+
+    private void setDataSumary() {
         mCPotentialMonth.setText(potetialMonth > 10 ? ("" + potetialMonth) : ("0" + potetialMonth));
         mCPotential.setText(potetial > 10 ? ("" + potetial) : ("0" + potetial));
         mCConsumer.setText(consumer > 10 ? ("" + consumer) : ("0" + consumer));
         mCDistribution.setText(distribution > 10 ? ("" + distribution) : ("0" + distribution));
+    }
+
+    private void calculatorPercent() {
+        //Need change to potential of month
+        Calendar calendar = Calendar.getInstance();
+        Date end = calendar.getTime();
+
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd");
+        String day = dateFormat.format(end);
+        int temp = Integer.parseInt(day);
+
+        //get start date before from today
+        calendar.add(Calendar.DAY_OF_MONTH, -(temp - 1));
+        Date start = calendar.getTime();
+
+        potetialMonth = mRealmController.getCountCustomer(Constant.CUSTOMER_DATE_CREATE, start, end);
+        potetial = mRealmController.getCountCustomer(Constant.CUSTOMER_TYPE_NEW);
+        consumer = mRealmController.getCountCustomer(Constant.CUSTOMER_TYPE_CONSUMER);
+        distribution = mRealmController.getCountCustomer(Constant.CUSTOMER_TYPE_DISTRIBUTION);
     }
 
     private void openListCustomer(int id) {
@@ -228,18 +260,22 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onResume() {
         super.onResume();
         mRealmController = new RealmController(mContext);
-        Log.d("dainq ", " onResume");
         mSpinner.setSelection(0);
-        sortCustomerBetween(0);
-        countNumberCustomer();
+
         String avatar = mPref.getString(Constant.PREF_USER_AVATAR, "");
         if (avatar != null) {
             mAvatarUser.setImageBitmap(Utility.decodeImage(avatar));
         }
+        calculatorPercent();
+        setDataSumary();
+        setDataPieView(mPieView);
+
+        sortCustomerBetween(0);
     }
 
     @Override
@@ -265,8 +301,29 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
                 }
                 break;
 
+            case R.id.home_btn_pie:
+                switchView(false, mTxtPie, mTxtSumary);
+                break;
+
+            case R.id.home_btn_sumary:
+                switchView(true, mTxtSumary, mTxtPie);
+                break;
+
             default:
                 break;
+        }
+    }
+
+    private void switchView(boolean value, TextView btnSwitch, TextView btnHide) {
+        btnSwitch.setTextColor(mContext.getResources().getColor(R.color.colorAccent));
+        btnHide.setTextColor(mContext.getResources().getColor(R.color.border_color));
+
+        if (value) {
+            mLayoutSumary.setVisibility(View.VISIBLE);
+            mLayoutPie.setVisibility(View.GONE);
+        } else {
+            mLayoutSumary.setVisibility(View.GONE);
+            mLayoutPie.setVisibility(View.VISIBLE);
         }
     }
 
