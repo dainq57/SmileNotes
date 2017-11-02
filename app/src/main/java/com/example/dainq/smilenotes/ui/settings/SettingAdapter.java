@@ -1,7 +1,10 @@
 package com.example.dainq.smilenotes.ui.settings;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +15,7 @@ import com.example.dainq.smilenotes.common.Constant;
 
 import nq.dai.smilenotes.R;
 
-class SettingAdapter extends RecyclerView.Adapter<SettingViewHolder> {
+public class SettingAdapter extends RecyclerView.Adapter<SettingViewHolder> {
     private Context mContext;
     private SettingItem[] mItem;
     private SharedPreferences mPref;
@@ -30,12 +33,12 @@ class SettingAdapter extends RecyclerView.Adapter<SettingViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(final SettingViewHolder holder, int position) {
+    public void onBindViewHolder(final SettingViewHolder holder, final int position) {
         holder.mSettingType.setText(mItem[position].mType);
 
-        if (position > Constant.SETTING_EVENT_NUMBER) {
-            holder.mSwitch.setVisibility(View.GONE);
-        }
+//        if (position > Constant.SETTING_EVENT_NUMBER) {
+        holder.mSwitch.setVisibility(View.GONE);
+//        }
 
         holder.mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -47,9 +50,48 @@ class SettingAdapter extends RecyclerView.Adapter<SettingViewHolder> {
         holder.mLayoutItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                holder.mSwitch.toggle();
+//                holder.mSwitch.toggle();
+                switch (position) {
+                    case 0:
+                        updateInfomation();
+                        break;
+                    case 1:
+                        backupData();
+                        break;
+                    case 2:
+                        aboutUs();
+                        break;
+                    default:
+                        break;
+                }
             }
         });
+    }
+
+    private void backupData() {
+        createDialog(mContext.getResources().getString(R.string.alert_anouncement_backup));
+    }
+
+    private void aboutUs() {
+        createDialog(mContext.getResources().getString(R.string.alert_about_us));
+    }
+
+    private void createDialog(String title) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setMessage(title)
+                .setCancelable(false)
+                .setPositiveButton(mContext.getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private void updateInfomation() {
+        Intent intent = new Intent(mContext, UpdateInfoActivity.class);
+        mContext.startActivity(intent);
     }
 
     @Override

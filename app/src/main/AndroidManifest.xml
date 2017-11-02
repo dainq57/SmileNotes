@@ -15,7 +15,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-
         <activity
             android:name="com.example.dainq.smilenotes.MainActivity"
             android:configChanges="orientation"
@@ -28,18 +27,20 @@
         </activity>
         <activity
             android:name="com.example.dainq.smilenotes.ui.create.CreateActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.example.dainq.smilenotes.ui.profile.customer.ListCustomerActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.example.dainq.smilenotes.ui.profile.ProfileActivity"
-            android:screenOrientation="portrait"/>
-
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.soundcloud.android.crop.CropImageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CustomTheme" />
+        <activity
+            android:name="com.example.dainq.smilenotes.ui.settings.UpdateInfoActivity"
+            android:screenOrientation="portrait"/>
 
         <!-- Register the Alarm Receiver -->
         <receiver android:name="com.example.dainq.smilenotes.ui.notifications.NotificationReceiver" />

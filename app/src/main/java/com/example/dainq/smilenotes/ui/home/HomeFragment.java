@@ -57,6 +57,7 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
     private TextView mCConsumer;
     private TextView mCDistribution;
     private CircleImageView mAvatarUser;
+    private TextView mNameUser;
     private TextView mTextNotResults;
     private RecyclerView mListCustomer;
     private SingleSpinnerLayout mSpinner;
@@ -137,20 +138,18 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
         mCDistribution = (TextView) view.findViewById(R.id.home_customer_distribution_number);
 
         mAvatarUser = (CircleImageView) view.findViewById(R.id.home_avatar_user);
-        mAvatarUser.setOnClickListener(this);
+        mNameUser = (TextView)view.findViewById(R.id.home_name_user);
         mPref = getActivity().getSharedPreferences(Constant.PREF_USER, Context.MODE_PRIVATE);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void setDataPieView(PieView pieView) {
-        int sum = potetialMonth + potetial + consumer + distribution;
-        float poteM = 100 * potetialMonth / sum;
-        float pote = 100 * (potetial - potetialMonth) / sum;
+        int sum = potetial + consumer + distribution;
+        float pote = 100 * potetial/ sum;
         float cons = 100 * consumer / sum;
         float dis = 100 * distribution / sum;
 
         ArrayList<PieHelper> pieHelperArrayList = new ArrayList<>();
-        pieHelperArrayList.add(new PieHelper(poteM, mContext.getResources().getColor(R.color.color_piechart_level_1, null)));
         pieHelperArrayList.add(new PieHelper(pote, mContext.getResources().getColor(R.color.color_piechart_level_2, null)));
         pieHelperArrayList.add(new PieHelper(cons, mContext.getResources().getColor(R.color.color_piechart_level_3, null)));
         pieHelperArrayList.add(new PieHelper(dis, mContext.getResources().getColor(R.color.color_piechart_level_4, null)));
@@ -161,15 +160,12 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
             public void onPieClick(int index) {
                 switch (index) {
                     case 0:
-                        openListCustomer(Constant.CUSTOMER_TYPE_NEW_MONTH);
-                        break;
-                    case 1:
                         openListCustomer(Constant.CUSTOMER_TYPE_NEW);
                         break;
-                    case 2:
+                    case 1:
                         openListCustomer(Constant.CUSTOMER_TYPE_CONSUMER);
                         break;
-                    case 3:
+                    case 2:
                         openListCustomer(Constant.CUSTOMER_TYPE_DISTRIBUTION);
                         break;
                 }
@@ -268,9 +264,11 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
         mSpinner.setSelection(0);
 
         String avatar = mPref.getString(Constant.PREF_USER_AVATAR, "");
-        if (avatar != null) {
-            mAvatarUser.setImageBitmap(Utility.decodeImage(avatar));
-        }
+        mAvatarUser.setImageBitmap(Utility.decodeImage(avatar));
+
+        String name = mPref.getString(Constant.PREF_USER_NAME, "");
+        mNameUser.setText(name);
+
         calculatorPercent();
         setDataSumary();
         setDataPieView(mPieView);
@@ -284,21 +282,17 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
             case R.id.home_customer_potential:
                 openListCustomer(Constant.CUSTOMER_TYPE_NEW);
                 break;
+
             case R.id.home_customer_potential_month:
                 openListCustomer(Constant.CUSTOMER_TYPE_NEW_MONTH);
                 break;
+
             case R.id.home_customer_consumer:
                 openListCustomer(Constant.CUSTOMER_TYPE_CONSUMER);
                 break;
+
             case R.id.home_customer_distribution:
                 openListCustomer(Constant.CUSTOMER_TYPE_DISTRIBUTION);
-                break;
-            case R.id.home_avatar_user:
-                if (!Utility.checkPermissionForReadExtertalStorage(getActivity())) {
-                    Utility.requestPermission(getActivity());
-                } else {
-                    Crop.pickImage(getActivity());
-                }
                 break;
 
             case R.id.home_btn_pie:
@@ -330,16 +324,6 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Log.v("dainq", "Permission: " + permissions[0] + "was " + grantResults[0]);
-            //resume tasks needing this permission
-            Crop.pickImage(getActivity());
-        }
     }
 
     @Override

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="array_setting_list">
-        <item>@string/setting_type_birthday</item>
-        <item>@string/setting_type_event</item>
-        <item>@string/setting_type_help</item>
+        <!--<item>@string/setting_type_birthday</item>-->
+        <!--<item>@string/setting_type_event</item>-->
+        <item>@string/setting_type_setting</item>
+        <item>@string/setting_type_backup</item>
         <item>@string/setting_type_information</item>
     </string-array>
 

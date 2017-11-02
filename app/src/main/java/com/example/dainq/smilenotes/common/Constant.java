@@ -50,9 +50,10 @@ public class Constant {
     /*pref*/
     public static String PREF_USER = "pref_user";
     public static String PREF_USER_AVATAR = "avatar";
+    public static String PREF_USER_NAME = "name";
+    public static String PREF_USER_FIRST_USE = "first";
     public static String PREF_NAME = "pref_customer";
     public static String PREF_PLAN = "pref_plan";
-    public static String PREF_NOTIFICATION = "pref_notification";
     public static int PREF_ID_DEFAULT = 0;
 
     /*bundle create*/

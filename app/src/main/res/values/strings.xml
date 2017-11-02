@@ -2,10 +2,11 @@
     <string name="app_name">SmileNotes</string>
 
     <!--Setting-->
-    <string name="setting_type_birthday">Sinh nhật</string>
-    <string name="setting_type_event">Sự kiện</string>
-    <string name="setting_type_help">Trợ giúp</string>
-    <string name="setting_type_information">Về chúng tôi</string>
+    <string name="setting_type_birthday">Thông báo sinh nhật</string>
+    <string name="setting_type_event">Thông báo sự kiện</string>
+    <string name="setting_type_setting">Thay đổi thông tin</string>
+    <string name="setting_type_backup">Sao lưu dữ liệu</string>
+    <string name="setting_type_information">Giới thiệu</string>
 
     <!--Spinner-->
     <string name="home_spinner_position_0">1 tuần</string>
@@ -41,16 +42,20 @@
 
     <!--Title activity-->
     <string name="title_create_new_customer">THÊM KHÁCH HÀNG MỚI</string>
-    <string name="ada_code">Mã ADA: %s</string>
+    <string name="update_info">CẬP NHẬT THÔNG TIN</string>
+    <string name="list_customer">DANH SÁCH KHÁCH HÀNG</string>
+    <string name="info_user">THÔNG TIN NGƯỜI DÙNG</string>
+
+    <!--Button-->
     <string name="save">LƯU</string>
     <string name="delete">XÓA</string>
     <string name="cancel">HỦY</string>
     <string name="update">CẬP NHẬT</string>
-    <string name="update_info">CẬP NHẬT THÔNG TIN</string>
-    <string name="list_customer">DANH SÁCH KHÁCH HÀNG</string>
 
     <!--Search-->
     <string name="search_hint">Tên, ADA hoặc SĐT</string>
+
+    <string name="ada_code">Mã ADA: %s</string>
 
     <!--Notification-->
     <string name="notification_birth_day">Thông báo sinh nhật</string>
@@ -91,6 +96,7 @@
     <string name="empty_content_product">Thông tin không được trống!</string>
     <string name="sure">CÓ</string>
     <string name="nope">KHÔNG</string>
+    <string name="content_dialog_cancel_update_info">Thông tin của bạn sẽ không được cập nhật, bạn có muốn huỷ?</string>
 
     <!--Toast-->
     <string name="create_success">Đã tạo mới!</string>
@@ -100,4 +106,13 @@
     <string name="type_product">Loại sản phẩm</string>
     <string name="time_use">Dự kiến thời gian dùng hết</string>
     <string name="add_success">Đã thêm mới!</string>
+
+    <!--Alert setting-->
+    <string name="alert_anouncement_backup">Tính năng đang được phát triển, sẽ được cập nhật trong thời gian sớm nhất!</string>
+    <string name="alert_about_us">Ứng dụng quản lí khách hàng thông minh, xây dựng bởi Smile Group
+        \n\n - Liên hệ: Nguyễn Đăng Luân
+        \n - SĐT: 0981.800.996
+        \n - Địa chỉ: Nơ 6B, bán đảo Linh Đàm
+        \n - Email: nguyenluanway@gmail.com
+    </string>
 </resources>

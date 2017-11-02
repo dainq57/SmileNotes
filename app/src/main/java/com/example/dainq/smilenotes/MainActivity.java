@@ -45,6 +45,7 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener, V
 
     private FloatingActionButton mFab;
     private SharedPreferences mPref;
+    private boolean isFirst;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +73,15 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener, V
         mFab.setOnClickListener(this);
 
         mPref = this.getSharedPreferences(Constant.PREF_USER, Context.MODE_PRIVATE);
+        isFirst = mPref.getBoolean(Constant.PREF_USER_FIRST_USE, false);
+
+        if (isFirst) {
+
+        }
+    }
+
+    private void inputUserName() {
+
     }
 
     private void initBottomView() {
@@ -142,34 +152,5 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener, V
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(realmConfiguration);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent result) {
-        Log.d("dainq ", "crop in home " + requestCode);
-        if (requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
-            beginCrop(result.getData());
-        } else if (requestCode == Crop.REQUEST_CROP) {
-            handleCrop(resultCode, result);
-        }
-    }
-
-    private void beginCrop(Uri source) {
-        Uri destination = Uri.fromFile(new File(this.getCacheDir(), "cropped"));
-        Crop.of(source, destination).asSquare().start(this);
-    }
-
-    private void handleCrop(int resultCode, Intent result) {
-        if (resultCode == RESULT_OK) {
-            mHomeFragment.getAvatarUser().setImageDrawable(null);
-            Uri mUri = Crop.getOutput(result);
-            mHomeFragment.getAvatarUser().setImageURI(mUri);
-            String mAvatarEncoder = Utility.convertImage(this, mUri);
-            mPref.edit().putString(Constant.PREF_USER_AVATAR, mAvatarEncoder).apply();
-            Log.d(HomeFragment.class.getSimpleName() + "-dainq", " pref avatar user: " + mAvatarEncoder);
-
-        } else if (resultCode == Crop.RESULT_ERROR) {
-            Toast.makeText(this, Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
-        }
     }
 }
