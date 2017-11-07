@@ -94,7 +94,7 @@ public class CreateProductDialog extends DialogFragment implements OnClickListen
 
         mIdcustomer = getArguments().getInt(Constant.KEY_ID_PRODUCT);
         mPref = getActivity().getSharedPreferences(Constant.PREF_PLAN, Context.MODE_PRIVATE);
-        mIdKey = mPref.getInt(Constant.KEY_ID_CUSTOMER, Constant.PREF_ID_DEFAULT);
+        mIdKey = mPref.getInt(Constant.KEY_ID, Constant.PREF_ID_DEFAULT);
     }
 
     @Override
@@ -164,7 +164,7 @@ public class CreateProductDialog extends DialogFragment implements OnClickListen
         ProductObject product = new ProductObject();
         int id = Utility.createId(mIdKey);
         Log.d(TAG + "dialog", " put product id: " + id);
-        mPref.edit().putInt(Constant.KEY_ID_CUSTOMER, id).apply();
+        mPref.edit().putInt(Constant.KEY_ID, id).apply();
 
         product.setId(id);
         product.setIdcustomer(mIdcustomer);

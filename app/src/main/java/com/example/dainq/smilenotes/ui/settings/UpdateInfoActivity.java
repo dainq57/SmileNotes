@@ -60,6 +60,12 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
         mCancel.setOnClickListener(this);
 
         mPref = getSharedPreferences(Constant.PREF_USER, Context.MODE_PRIVATE);
+
+        String name = mPref.getString(Constant.USER_NAME, "");
+        mEditName.setText(name);
+
+        String avatar = mPref.getString(Constant.USER_AVATAR, "");
+        mAvatar.setImageBitmap(Utility.decodeImage(avatar));
     }
 
     private void initToolBar() {
@@ -104,8 +110,6 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
     @Override
     protected void onResume() {
         super.onResume();
-        String name = mPref.getString(Constant.PREF_USER_NAME, "");
-        mEditName.setText(name);
     }
 
     @Override
@@ -117,11 +121,7 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
 
     private void confirmDialog(String title, String content) {
         final AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
-        } else {
-            builder = new AlertDialog.Builder(this);
-        }
+        builder = new AlertDialog.Builder(this);
         builder.setTitle(title)
                 .setMessage(content)
                 .setPositiveButton(R.string.sure, new DialogInterface.OnClickListener() {
@@ -142,10 +142,10 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
     private void save(String name) {
         if (mUri != null) {
             String mAvatarEncoder = Utility.convertImage(this, mUri);
-            mPref.edit().putString(Constant.PREF_USER_AVATAR, mAvatarEncoder).apply();
+            mPref.edit().putString(Constant.USER_AVATAR, mAvatarEncoder).apply();
             Log.d("dainq", " pref avatar user: " + mAvatarEncoder);
         }
-        mPref.edit().putString(Constant.PREF_USER_NAME, name).apply();
+        mPref.edit().putString(Constant.USER_NAME, name).apply();
     }
 
     @Override

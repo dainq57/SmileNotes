@@ -30,9 +30,11 @@ import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.controller.realm.RealmController;
 import com.example.dainq.smilenotes.model.CustomerObject;
+import com.example.dainq.smilenotes.model.NotificationObject;
 import com.example.dainq.smilenotes.ui.common.spinner.OnSpinnerItemSelectedListener;
 import com.example.dainq.smilenotes.ui.common.spinner.SingleSpinnerLayout;
 import com.example.dainq.smilenotes.ui.common.spinner.SpinnerItem;
+import com.example.dainq.smilenotes.ui.notifications.NotificationHelper;
 import com.example.dainq.smilenotes.ui.notifications.NotificationReceiver;
 import com.soundcloud.android.crop.Crop;
 
@@ -47,6 +49,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
     private static final String TAG = "CreateActivity";
 
     private int mLevel;
+    private int mId;
     private EditText mADA;
     private EditText mName;
     private TextView mDateOfBirth;
@@ -69,14 +72,14 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
     private DatePickerDialog mDialogDateOfBirth;
     private RatingBar mRatingBar;
 
-    private SharedPreferences mPref;
+    private SharedPreferences mPref, mPrefNoti;
     private int mIdKey;
     private int mAction;
     private SingleSpinnerLayout mSpinner;
     private int mCustomerId;
 
-    /*PLAN*/
-
+    private int mIdNoti;
+    private int mIdNotiKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +123,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         initSpinner();
 
         mPref = this.getSharedPreferences(Constant.PREF_NAME, Context.MODE_PRIVATE);
-        mIdKey = mPref.getInt(Constant.KEY_ID_CUSTOMER, Constant.PREF_ID_DEFAULT);
+        mIdKey = mPref.getInt(Constant.KEY_ID, Constant.PREF_ID_DEFAULT);
         Log.d(CreateActivity.class.getSimpleName() + "-dainq", " pref id: " + mIdKey);
 
         if (mAction == Constant.ACTION_CREATE) {
@@ -151,11 +154,15 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
                 mAvatar.setImageBitmap(Utility.decodeImage(avatar));
             }
         }
+
+        mPrefNoti = getSharedPreferences(Constant.PREF_USER, Context.MODE_PRIVATE);
+        mIdNotiKey = mPrefNoti.getInt(Constant.USER_NOTIFICATION, Constant.PREF_ID_DEFAULT);
+        Log.d("dainq ", "Create getIdNoti from pref " + mIdNotiKey);
     }
 
     private int getAction() {
         Bundle extras = getIntent().getExtras();
-        mCustomerId = extras.getInt(Constant.KEY_ID_CUSTOMER);
+        mCustomerId = extras.getInt(Constant.KEY_ID);
         Log.d(CreateActivity.class.getSimpleName() + "-dainq", " action: " + mAction);
         return extras.getInt(Constant.KEY_ACTION, Constant.ACTION_CREATE);
     }
@@ -237,11 +244,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
 
     private void confirmDialog(String title, String content) {
         final AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
-        } else {
-            builder = new AlertDialog.Builder(this);
-        }
+        builder = new AlertDialog.Builder(this);
         builder.setTitle(title)
                 .setMessage(content)
                 .setPositiveButton(R.string.sure, new DialogInterface.OnClickListener() {
@@ -362,12 +365,12 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
 
     private void save() {
         CustomerObject customer = new CustomerObject();
-        int id = Utility.createId(mIdKey);
-        Log.d(CreateActivity.class.getSimpleName() + "-dainq", " put id: " + id);
-        mPref.edit().putInt(Constant.KEY_ID_CUSTOMER, id).apply();
+        mId = Utility.createId(mIdKey);
+        Log.d(CreateActivity.class.getSimpleName() + "-dainq", " put id: " + mId);
+        mPref.edit().putInt(Constant.KEY_ID, mId).apply();
 
         Calendar dateCreate = Calendar.getInstance();
-        customer.setId(id);
+        customer.setId(mId);
         customer.setDatecreate(dateCreate.getTime());
         setData(customer);
 
@@ -408,11 +411,14 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
                 object.setAda(mADA.getText().toString());
             }
         }
+        String avatar = null;
         if (mUri != null) {
-            String avatar = Utility.convertImage(this, mUri);
+            avatar = Utility.convertImage(this, mUri);
             object.setAvatar(avatar);
         }
-        object.setName(mName.getText().toString());
+        String name = mName.getText().toString();
+
+        object.setName(name);
         object.setDateofbirth(dateOfBirth);
         object.setPhonenumber(mPhoneNumber.getText().toString());
         object.setAddress(mAddress.getText().toString());
@@ -421,6 +427,10 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         object.setSolution(mSolution.getText().toString());
         object.setNote(mNote.getText().toString());
         object.setProduct(mProductNeed.getText().toString());
+
+        if (dateOfBirth != null && mAction == Constant.ACTION_CREATE) {
+            setNotificationn(name, avatar);
+        }
     }
 
     @Override
@@ -469,5 +479,39 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
     protected void onDestroy() {
         mRealmController.close();
         super.onDestroy();
+    }
+
+    private void setNotificationn(String name, String avatar) {
+        //create notification to realm
+        createNotification(name, avatar);
+        //push notification use broadcast receiver
+        Intent intent = new Intent(this, NotificationReceiver.class);
+        Bundle bundle = new Bundle();
+
+        bundle.putInt(Constant.NOTIFICATION_TYPE, Constant.NOTIFICATION_BIRTH_DAY);
+        bundle.putString(Constant.NOTIFICATION_NAME_CUSTOMER, name);
+        bundle.putInt(Constant.NOTIFICATION_ID, mIdNoti);
+
+        intent.putExtras(bundle);
+
+        NotificationHelper.setRemindRTC(this, dateOfBirth, intent);
+        NotificationHelper.enableBootReceiver(this);
+    }
+
+    private void createNotification(String name, String avatar) {
+        NotificationObject notification = new NotificationObject();
+        mIdNoti = Utility.createId(mIdNotiKey);
+        Log.d(TAG + "dainq", " put notification id: " + mIdNoti);
+        mPrefNoti.edit().putInt(Constant.USER_NOTIFICATION, mIdNoti).apply();
+
+        notification.setId(mIdNoti);
+        notification.setIdcustomer(mId);
+        notification.setIsread(false);
+        notification.setType(Constant.NOTIFICATION_BIRTH_DAY);
+        notification.setContent("Sinh nhật " + name);
+        notification.setDate(dateOfBirth);
+        notification.setAvatar(avatar);
+
+        mRealmController.addNotification(notification);
     }
 }

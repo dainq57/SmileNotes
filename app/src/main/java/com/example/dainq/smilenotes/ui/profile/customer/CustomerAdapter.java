@@ -58,7 +58,7 @@ public class CustomerAdapter extends RealmRecyclerViewAdapter<CustomerObject> {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putInt(Constant.KEY_ID_CUSTOMER, customer.getId());
+                bundle.putInt(Constant.KEY_ID, customer.getId());
                 Log.d(TAG, "customer id: " + customer.getId());
                 Intent intent = new Intent(mContext, ProfileActivity.class);
                 intent.putExtras(bundle);
@@ -95,7 +95,7 @@ public class CustomerAdapter extends RealmRecyclerViewAdapter<CustomerObject> {
     private void startEdit(int id) {
         Bundle bundle = new Bundle();
         bundle.putInt(Constant.KEY_ACTION, Constant.ACTION_EDIT);
-        bundle.putInt(Constant.KEY_ID_CUSTOMER, id);
+        bundle.putInt(Constant.KEY_ID, id);
 
         Intent intent = new Intent(mContext, CreateActivity.class);
         intent.putExtras(bundle);

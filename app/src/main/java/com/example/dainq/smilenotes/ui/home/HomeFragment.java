@@ -79,6 +79,10 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
         mContext = context;
     }
 
+    public TextView getmNameUser() {
+        return mNameUser;
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @SuppressLint("InflateParams")
     @Nullable
@@ -87,10 +91,6 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
         View view = inflater.inflate(R.layout.fragment_home, null);
         initView(view);
         return view;
-    }
-
-    public CircleImageView getAvatarUser() {
-        return mAvatarUser;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -138,19 +138,21 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
         mCDistribution = (TextView) view.findViewById(R.id.home_customer_distribution_number);
 
         mAvatarUser = (CircleImageView) view.findViewById(R.id.home_avatar_user);
-        mNameUser = (TextView)view.findViewById(R.id.home_name_user);
+        mNameUser = (TextView) view.findViewById(R.id.home_name_user);
         mPref = getActivity().getSharedPreferences(Constant.PREF_USER, Context.MODE_PRIVATE);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void setDataPieView(PieView pieView) {
         int sum = potetial + consumer + distribution;
-        float pote = 100 * potetial/ sum;
-        float cons = 100 * consumer / sum;
-        float dis = 100 * distribution / sum;
-
+        float pote = 0, cons = 0, dis = 0;
+        if (sum != 0) {
+            pote = 100 * potetial / sum;
+            cons = 100 * consumer / sum;
+            dis = 100 * distribution / sum;
+        }
         ArrayList<PieHelper> pieHelperArrayList = new ArrayList<>();
-        pieHelperArrayList.add(new PieHelper(pote, mContext.getResources().getColor(R.color.color_piechart_level_2, null)));
+        pieHelperArrayList.add(new PieHelper(pote, mContext.getResources().getColor(R.color.color_piechart_level_1, null)));
         pieHelperArrayList.add(new PieHelper(cons, mContext.getResources().getColor(R.color.color_piechart_level_3, null)));
         pieHelperArrayList.add(new PieHelper(dis, mContext.getResources().getColor(R.color.color_piechart_level_4, null)));
 
@@ -183,6 +185,7 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
     private void calculatorPercent() {
         //Need change to potential of month
         Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 24);
         Date end = calendar.getTime();
 
         @SuppressLint("SimpleDateFormat")
@@ -202,7 +205,7 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
 
     private void openListCustomer(int id) {
         Bundle bundle = new Bundle();
-        bundle.putInt(Constant.KEY_LEVEL_CUSTOMER, id);
+        bundle.putInt(Constant.CUSTOMER_LEVEL, id);
 
         Intent intent = new Intent(mContext, ListCustomerActivity.class);
         intent.putExtras(bundle);
@@ -263,10 +266,10 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
         mRealmController = new RealmController(mContext);
         mSpinner.setSelection(0);
 
-        String avatar = mPref.getString(Constant.PREF_USER_AVATAR, "");
+        String avatar = mPref.getString(Constant.USER_AVATAR, "");
         mAvatarUser.setImageBitmap(Utility.decodeImage(avatar));
 
-        String name = mPref.getString(Constant.PREF_USER_NAME, "");
+        String name = mPref.getString(Constant.USER_NAME, "");
         mNameUser.setText(name);
 
         calculatorPercent();

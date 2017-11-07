@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.NotificationCompat;
 
-import com.example.dainq.smilenotes.MainActivity;
+import com.example.dainq.smilenotes.ui.MainActivity;
 import com.example.dainq.smilenotes.common.Constant;
 
 import nq.dai.smilenotes.R;
@@ -20,11 +20,13 @@ public class NotificationReceiver extends BroadcastReceiver {
         //set flag to restart/relaunch the app
         Intent intentToRepeat = new Intent(context, MainActivity.class);
         intentToRepeat.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
         int type = intent.getIntExtra(Constant.NOTIFICATION_TYPE, 0);
         String name = intent.getStringExtra(Constant.NOTIFICATION_NAME_CUSTOMER);
+        int id = intent.getIntExtra(Constant.NOTIFICATION_ID, 0);
+
         //Pending intent to handle launch of Activity in intent above
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, NotificationHelper.ALARM_TYPE_RTC,
-                intentToRepeat, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, id, intentToRepeat, PendingIntent.FLAG_UPDATE_CURRENT);
 
         //Build notification
         Notification notification = buildLocalNotification(context, pendingIntent, type, name).build();
@@ -43,13 +45,16 @@ public class NotificationReceiver extends BroadcastReceiver {
                 .setStyle(bigText)
                 .setAutoCancel(true);
 
-        if (type == Constant.NOTIFICATION_EVENT) {
-            builder.setContentTitle("Nhắc nhở sự kiện")
-                    .setContentText("Bạn có kế hoạch với " + name + " vào hôm nay!");
-        } else {
-            builder.setContentTitle("Sinh nhật")
-                    .setContentText("Hôm nay là sinh nhật của " + name);
-        }
+//        if (type == Constant.NOTIFICATION_EVENT) {
+//            builder.setContentTitle("Nhắc nhở sự kiện")
+//                    .setContentText("Bạn có kế hoạch với " + name + " vào hôm nay!");
+//        } else {
+//            builder.setContentTitle("Sinh nhật")
+//                    .setContentText("Hôm nay là sinh nhật của " + name);
+//        }
+
+        builder.setContentTitle("Thông báo")
+                .setContentText("Bạn có thông báo mới, xem bây giờ?");
         return builder;
     }
 }

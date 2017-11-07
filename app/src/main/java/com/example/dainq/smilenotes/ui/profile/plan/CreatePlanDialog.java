@@ -25,6 +25,7 @@ import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.controller.realm.RealmController;
 import com.example.dainq.smilenotes.model.CustomerObject;
 import com.example.dainq.smilenotes.model.MeetingObject;
+import com.example.dainq.smilenotes.model.NotificationObject;
 import com.example.dainq.smilenotes.ui.notifications.NotificationHelper;
 import com.example.dainq.smilenotes.ui.notifications.NotificationReceiver;
 
@@ -47,6 +48,7 @@ public class CreatePlanDialog extends DialogFragment implements View.OnClickList
     private EditText mContent;
     private TextView mSchedule;
     private Date mScheduleValue;
+    private int mIdPlan;
 
     private TextView mCancel;
 
@@ -54,8 +56,11 @@ public class CreatePlanDialog extends DialogFragment implements View.OnClickList
     private PlanAdapter mAdapter;
     private RealmController mRealmController;
 
-    private SharedPreferences mPref;
+    private SharedPreferences mPref, mPrefNoti;
     private int mIdKey;
+
+    private int mIdNoti;
+    private int mIdNotiKey;
 
     public CreatePlanDialog(Context context, PlanAdapter adapter, int type) {
         mContext = context;
@@ -101,12 +106,14 @@ public class CreatePlanDialog extends DialogFragment implements View.OnClickList
         mSchedule = (TextView) view.findViewById(R.id.dialog_txt_schedule);
         mSchedule.setOnClickListener(this);
 
+        mIdCustomer = getArguments().getInt(Constant.KEY_ID);
+
         if (mType == Constant.DIALOG_CREATE) {
             Log.d(TAG, " create");
             mContent.setText("");
-            mIdCustomer = getArguments().getInt(Constant.KEY_ID_CUSTOMER);
+
             mPref = getActivity().getSharedPreferences(Constant.PREF_PLAN, Context.MODE_PRIVATE);
-            mIdKey = mPref.getInt(Constant.KEY_ID_CUSTOMER, Constant.PREF_ID_DEFAULT);
+            mIdKey = mPref.getInt(Constant.KEY_ID, Constant.PREF_ID_DEFAULT);
 
             Calendar newDate = Calendar.getInstance();
             mTime.setText(Utility.dateToString(newDate.getTime()));
@@ -125,6 +132,11 @@ public class CreatePlanDialog extends DialogFragment implements View.OnClickList
 
             getData();
         }
+
+
+        mPrefNoti = getActivity().getSharedPreferences(Constant.PREF_USER, Context.MODE_PRIVATE);
+        mIdNotiKey = mPrefNoti.getInt(Constant.USER_NOTIFICATION, Constant.PREF_ID_DEFAULT);
+        Log.d("dainq ", "getIdNoti from pref " + mIdNotiKey);
     }
 
     private void getData() {
@@ -193,6 +205,7 @@ public class CreatePlanDialog extends DialogFragment implements View.OnClickList
             setNotificationn();
         } else if (mType == Constant.DIALOG_EDIT) {
             edit();
+
         }
         mAdapter.notifyDataSetChanged();
         dismiss();
@@ -258,11 +271,11 @@ public class CreatePlanDialog extends DialogFragment implements View.OnClickList
 
     private void create() {
         MeetingObject meeting = new MeetingObject();
-        int id = Utility.createId(mIdKey);
-        Log.d(TAG + "dialog", " put plan id: " + id);
-        mPref.edit().putInt(Constant.KEY_ID_CUSTOMER, id).apply();
+        mIdPlan = Utility.createId(mIdKey);
+        Log.d(TAG + "dialog", " put plan id: " + mIdPlan);
+        mPref.edit().putInt(Constant.KEY_ID, mIdPlan).apply();
 
-        meeting.setId(id);
+        meeting.setId(mIdPlan);
         meeting.setIdcustomer(mIdCustomer);
         setData(meeting);
 
@@ -309,17 +322,42 @@ public class CreatePlanDialog extends DialogFragment implements View.OnClickList
     }
 
     private void setNotificationn() {
-        Intent intent = new Intent(mContext, NotificationReceiver.class);
-        Bundle bundle = new Bundle();
-        bundle.putInt(Constant.NOTIFICATION_TYPE, Constant.NOTIFICATION_EVENT);
-
         CustomerObject customer = mRealmController.getCustomer(mIdCustomer);
         String name = customer.getName();
+        String avatar = customer.getAvatar();
+
+        //create notification to realm
+        createNotification(name, avatar);
+
+        //push notification use broadcast receiver
+        Intent intent = new Intent(mContext, NotificationReceiver.class);
+        Bundle bundle = new Bundle();
+
+        bundle.putInt(Constant.NOTIFICATION_TYPE, Constant.NOTIFICATION_EVENT);
         bundle.putString(Constant.NOTIFICATION_NAME_CUSTOMER, name);
+        bundle.putInt(Constant.NOTIFICATION_ID, mIdNoti);
 
         intent.putExtras(bundle);
 
         NotificationHelper.setRemindRTC(mContext, mScheduleValue, intent);
         NotificationHelper.enableBootReceiver(mContext);
+    }
+
+    private void createNotification(String name, String avatar) {
+        NotificationObject notification = new NotificationObject();
+        mIdNoti = Utility.createId(mIdNotiKey);
+        Log.d(TAG + "dainq", " put notification id: " + mIdNoti);
+        mPrefNoti.edit().putInt(Constant.USER_NOTIFICATION, mIdNoti).apply();
+
+        notification.setId(mIdNoti);
+        notification.setIdcustomer(mIdCustomer);
+        notification.setIsread(false);
+        notification.setIdmeeting(mIdPlan);
+        notification.setType(Constant.NOTIFICATION_EVENT);
+        notification.setContent("Kế hoạch với " + name);
+        notification.setDate(mScheduleValue);
+        notification.setAvatar(avatar);
+
+        mRealmController.addNotification(notification);
     }
 }

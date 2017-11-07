@@ -12,7 +12,6 @@ import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
-import android.util.Log;
 import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
@@ -21,6 +20,7 @@ import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -125,6 +125,15 @@ public class Utility {
             return dateFormat.parse(date);
         }
         return null;
+    }
+
+    public static Date resetCalendar(Calendar calendar) {
+        calendar.set(java.util.Calendar.HOUR_OF_DAY, 24);
+        calendar.set(java.util.Calendar.MINUTE, 0);
+        calendar.set(java.util.Calendar.SECOND, 0);
+        calendar.set(java.util.Calendar.MILLISECOND, 0);
+
+        return calendar.getTime();
     }
 
 }

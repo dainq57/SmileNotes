@@ -31,27 +31,34 @@ public class Constant {
     public static String CUSTOMER_DATE_CREATE = "datecreate";
     public static String CUSTOMER_ADA = "ada";
     public static String CUSTOMER_PHONE_NUMBER = "phonenumber";
-    public static String CUSTOMER_DOB = "dateofbirth";
     public static String CUSTOMER_LEVEL = "level";
 
+    /*ProductAdapter field*/
     public static String PRODUCT_USE_DATE = "usedate";
+
+    /*Notification field*/
+    public static String NOTIFICATION_READ = "isread";
+    public static String NOTIFICATION_DATE = "date";
 
     /*regex*/
     public static String regexPhoneNumber = "^0[0-9]{9,10}$";
 
-    /*customer*/
-    public static String KEY_LEVEL_CUSTOMER = "level";
-    public static String KEY_ID_CUSTOMER = "id";
+    /*key*/
+    public static String KEY_ID = "id";
     public static String KEY_ID_PLAN = "idcustomer";
     public static String KEY_ID_PRODUCT = "idcustomer";
     public static String KEY_TYPE_PRODILE = "type_prof";
-    public static int PREF_TYPE_PROFILE = 1;
+
+    /*Profile*/
+    public static int PROFILE_TYPE_PRODUCT = 1;
+    public static int PROFILE_TYPE_PLAN = 2;
 
     /*pref*/
     public static String PREF_USER = "pref_user";
-    public static String PREF_USER_AVATAR = "avatar";
-    public static String PREF_USER_NAME = "name";
-    public static String PREF_USER_FIRST_USE = "first";
+    public static String USER_AVATAR = "avatar";
+    public static String USER_NAME = "name";
+    public static String USER_FIRST_USE = "first";
+    public static String USER_NOTIFICATION = "notification";
     public static String PREF_NAME = "pref_customer";
     public static String PREF_PLAN = "pref_plan";
     public static int PREF_ID_DEFAULT = 0;
@@ -66,7 +73,10 @@ public class Constant {
     public static int NOTIFICATION_EVENT = 2;
     public static String NOTIFICATION_TYPE = "notification_type";
     public static String NOTIFICATION_NAME_CUSTOMER = "notification_name_customer";
+    public static String NOTIFICATION_ID = "id_notification";
 
+    public static String NOTIFICATION_ID_MEETING = "idmeeting";
+    public static String NOTIFICATION_ID_CUSTOMER = "idcustomer";
 
     /*create*/
     public static String FORMAT_DATE = "yyyy-MM-dd";

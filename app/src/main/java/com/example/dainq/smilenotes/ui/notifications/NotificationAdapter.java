@@ -1,56 +1,91 @@
 package com.example.dainq.smilenotes.ui.notifications;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.example.dainq.smilenotes.common.Constant;
+import com.example.dainq.smilenotes.common.Utility;
+import com.example.dainq.smilenotes.controller.realm.RealmController;
+import com.example.dainq.smilenotes.model.NotificationObject;
+import com.example.dainq.smilenotes.ui.common.realm.RealmRecyclerViewAdapter;
+import com.example.dainq.smilenotes.ui.profile.ProfileActivity;
 
 import nq.dai.smilenotes.R;
 
-public class NotificationAdapter extends RecyclerView.Adapter<NotificationViewHolder> {
+public class NotificationAdapter extends RealmRecyclerViewAdapter<NotificationObject> {
     private Context mContext;
-    private List<String> mDataSet = new ArrayList<>();
+    private RealmController mRealmController;
 
-    public NotificationAdapter(Context context, List<String> dataSet) {
+    public NotificationAdapter(Context context) {
         mContext = context;
-        mDataSet = dataSet;
     }
 
     @Override
-    public NotificationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.item_notification, parent, false);
         return new NotificationViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(NotificationViewHolder holder, int position) {
-        if (mDataSet != null && 0 <= position && position < mDataSet.size()) {
-            final String data = mDataSet.get(position);
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+        mRealmController = new RealmController(mContext);
+        final NotificationObject notification = getItem(position);
+        String date = Utility.dateToString(notification.getDate());
 
-            holder.mTextNotification.setText(data);
-            holder.mDeleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //TODO
-                }
-            });
+        NotificationViewHolder holder = (NotificationViewHolder) viewHolder;
 
-            holder.mContentLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //TODO
-                }
-            });
+        holder.mTime.setText(date);
+        holder.mTextNotification.setText(notification.getContent());
+        String avatar = notification.getAvatar();
+        if (avatar != null) {
+            holder.mAvatar.setImageBitmap(Utility.decodeImage(avatar));
         }
+        int type = notification.getType();
+        if (type == Constant.NOTIFICATION_EVENT) {
+            holder.mType.setImageDrawable(mContext.getResources().getDrawable(R.drawable.icon_schedule));
+        } else {
+            holder.mType.setImageDrawable(mContext.getResources().getDrawable(R.drawable.icon_birthday));
+        }
+        if (!notification.isread()) {
+            holder.mContentLayout.setBackgroundColor(mContext.getResources().getColor(R.color.notification_unread));
+        } else {
+            holder.mContentLayout.setBackgroundColor(mContext.getResources().getColor(R.color.transparent));
+        }
+
+        holder.mContentLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putInt(Constant.KEY_ID, notification.getIdcustomer());
+                Log.d("dainq ", "type noti " + notification.getType());
+                if (notification.getType() == Constant.NOTIFICATION_EVENT) {
+                    Log.d("dainq ", "plan");
+                    bundle.putInt(Constant.KEY_TYPE_PRODILE, Constant.PROFILE_TYPE_PLAN);
+                }
+                Intent intent = new Intent(mContext, ProfileActivity.class);
+                intent.putExtras(bundle);
+                mContext.startActivity(intent);
+
+                if (!notification.isread()) {
+                    mRealmController.updateNotiRead(notification);
+                    notifyDataSetChanged();
+                }
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return mDataSet.size();
+        if (getRealmAdapter() != null) {
+            return getRealmAdapter().getCount();
+        }
+        return 0;
     }
 
     @Override

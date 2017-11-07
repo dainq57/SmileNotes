@@ -3,6 +3,7 @@ package com.example.dainq.smilenotes.ui.profile.plan;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -34,6 +35,7 @@ public class PlanAdapter extends RealmRecyclerViewAdapter<MeetingObject> {
         mAdapter = adapter;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.item_card_plan, parent, false);

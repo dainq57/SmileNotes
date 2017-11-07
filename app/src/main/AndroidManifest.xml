@@ -16,14 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
         <activity
-            android:name="com.example.dainq.smilenotes.MainActivity"
+            android:name="com.example.dainq.smilenotes.ui.MainActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name="com.example.dainq.smilenotes.ui.create.CreateActivity"
@@ -41,7 +36,16 @@
         <activity
             android:name="com.example.dainq.smilenotes.ui.settings.UpdateInfoActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.example.dainq.smilenotes.ui.SplashActivity"
+            android:noHistory="true"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
 
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
         <!-- Register the Alarm Receiver -->
         <receiver android:name="com.example.dainq.smilenotes.ui.notifications.NotificationReceiver" />
     </application>

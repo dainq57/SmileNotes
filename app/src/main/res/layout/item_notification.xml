@@ -1,81 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.daimajia.swipe.SwipeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:swipe="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/swipe"
+    android:id="@+id/notification_content"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    swipe:drag_edge="left"
-    swipe:leftEdgeSwipeOffset="0dp"
-    swipe:rightEdgeSwipeOffset="0dp">
-
-    <FrameLayout
-        android:id="@+id/notification_delete"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#ffcc0000">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/holo_red_dark"
-            android:gravity="center"
-            android:text="Delete"
-            style="@style/TextAppearance"
-            android:textColor="@android:color/white"/>
-    </FrameLayout>
+    android:background="?android:selectableItemBackground"
+    android:orientation="vertical"
+    android:paddingEnd="12dp"
+    android:paddingStart="12dp">
 
     <LinearLayout
-        android:id="@+id/notification_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:selectableItemBackground"
-        android:orientation="vertical"
-        android:paddingEnd="12dp"
-        android:paddingStart="12dp">
+        android:layout_height="60dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/item_noti_avatar_user"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/bg_profile_image"
+            swipe:civ_border_color="@color/border_color"
+            swipe:civ_border_width="1px" />
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp">
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:orientation="vertical">
+            <TextView
+                android:id="@+id/notification_text"
+                style="@style/TextAppearance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Notification"
+                android:textSize="14dp" />
 
-                <TextView
-                    android:id="@+id/notification_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="1dp"
-                    android:maxLines="1"
-                    style="@style/TextAppearance"
-                    android:text="Notification"/>
-
-                <TextView
-                    android:id="@+id/notification_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="1dp"
-                    style="@style/TextAppearance"
-                    android:maxLines="1"
-                    android:text="Time/Date"/>
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/notification_type"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_time"/>
+            <TextView
+                android:id="@+id/notification_time"
+                style="@style/TextAppearance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:maxLines="1"
+                android:text="Time/Date"
+                android:textColor="@color/colorAccent"
+                android:textSize="13dp" />
         </LinearLayout>
 
-        <FrameLayout
-            android:id="@+id/notification_divider"
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@drawable/divider"/>
+        <ImageView
+            android:id="@+id/notification_type"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="12dp" />
     </LinearLayout>
-</com.daimajia.swipe.SwipeLayout>
+
+    <FrameLayout
+        android:id="@+id/notification_divider"
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@drawable/divider" />
+</LinearLayout>

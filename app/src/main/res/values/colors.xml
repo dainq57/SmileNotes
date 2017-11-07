@@ -3,6 +3,7 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF5722</color>
+    <color name="colorSplash">#ec8e71</color>
     <color name="transparent">@android:color/transparent</color>
 
     <!--Common-->
@@ -28,4 +29,7 @@
     <color name="spinner_non_selected_item">#252525</color>
     <color name="drop_down_window_color">#fafafa</color>
     <color name="drop_down_stroke_color">#a8a8a8</color>
+
+    <!--Notification-->
+    <color name="notification_unread">#eceded</color>
 </resources>

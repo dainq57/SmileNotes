@@ -100,7 +100,7 @@ public class ListCustomerActivity extends AppCompatActivity implements OnSpinner
         Bundle mExtras = getIntent().getExtras();
         mRealmController = RealmController.with(this);
         if (mExtras != null) {
-            mType = mExtras.getInt(Constant.KEY_LEVEL_CUSTOMER);
+            mType = mExtras.getInt(Constant.CUSTOMER_LEVEL);
         }
         Log.d(TAG, "dainq mType List " + mType);
         mSpinner.setSelection(mType);

@@ -73,11 +73,13 @@
 
     <!--Dialog-->
     <string name="title_dialog_delete">Xoá khách hàng</string>
+    <string name="title_dialog_delete_notification">Xoá thông báo</string>
     <string name="title_dialog_back_create">Huỷ tạo khách hàng</string>
     <string name="title_dialog_back_edit">Huỷ chỉnh sửa</string>
     <string name="dialog_content_create">Khách hàng sẽ không được tạo mới</string>
     <string name="dialog_content_edit">Thông tin sẽ được khôi phục như ban đầu</string>
     <string name="dialog_delete_content">Thông tin về khách hàng sẽ bị xoá, bạn có chắc chắn xoá khách hàng này?</string>
+    <string name="dialog_delete_content_notification">Xoá tất cả thông báo của bạn?</string>
     <string name="customer_need_new_product">KH SẮP HẾT SẢN PHẨM</string>
     <string name="ada_is_exit">Mã số ADA này đã tồn tại!</string>
     <string name="new_meeting">Thêm cuộc gặp mới</string>
@@ -110,9 +112,12 @@
     <!--Alert setting-->
     <string name="alert_anouncement_backup">Tính năng đang được phát triển, sẽ được cập nhật trong thời gian sớm nhất!</string>
     <string name="alert_about_us">Ứng dụng quản lí khách hàng thông minh, xây dựng bởi Smile Group
+        \n - Phiên bản 1.0
         \n\n - Liên hệ: Nguyễn Đăng Luân
         \n - SĐT: 0981.800.996
         \n - Địa chỉ: Nơ 6B, bán đảo Linh Đàm
         \n - Email: nguyenluanway@gmail.com
     </string>
+    <string name="dont_have_notification">Bạn không có thông báo mới nào!</string>
+    <string name="enter_your_name_touse_app">Nhập tên của bạn để bắt đầu sử dụng ứng dụng</string>
 </resources>

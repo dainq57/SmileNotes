@@ -79,7 +79,7 @@ public class ProfilePlanFragment extends BaseFragment implements View.OnClickLis
 
     private void showDialog() {
         Bundle bundle = new Bundle();
-        bundle.putInt(Constant.KEY_ID_CUSTOMER, mCustomer.getId());
+        bundle.putInt(Constant.KEY_ID, mCustomer.getId());
         mDialog.setArguments(bundle);
 
         mDialog.show(getFragmentManager(), null);

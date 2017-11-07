@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.model.CustomerObject;
 import com.example.dainq.smilenotes.model.MeetingObject;
+import com.example.dainq.smilenotes.model.NotificationObject;
 import com.example.dainq.smilenotes.model.ProductObject;
 
 import java.util.Date;
@@ -99,7 +100,7 @@ public class RealmController {
 
     //query a single item with the given id
     public CustomerObject getCustomer(int id) {
-        return realm.where(CustomerObject.class).equalTo(Constant.KEY_ID_CUSTOMER, id).findFirst();
+        return realm.where(CustomerObject.class).equalTo(Constant.KEY_ID, id).findFirst();
     }
 
     //query a count item with the given level
@@ -117,7 +118,7 @@ public class RealmController {
 
     //check ada is exit
     public boolean isExit(String ada) {
-        CustomerObject results = realm.where(CustomerObject.class).equalTo(Constant.CUSTOMER_ADA, ada).findFirst();
+        CustomerObject results = realm.where(CustomerObject.class).equalTo("ada", ada).findFirst();
         return results != null;
     }
 
@@ -128,25 +129,25 @@ public class RealmController {
 
     //query example
     public RealmResults<CustomerObject> queryedCustomers(int key) {
-        if (key == Constant.CUSTOMER_TYPE_NEW ) {
+        if (key == Constant.CUSTOMER_TYPE_NEW) {
             return realm.where(CustomerObject.class)
-                    .equalTo(Constant.KEY_LEVEL_CUSTOMER, Constant.CUSTOMER_LEVEL_0)
+                    .equalTo(Constant.CUSTOMER_LEVEL, Constant.CUSTOMER_LEVEL_0)
                     .findAll();
         }
 
         if (key == Constant.CUSTOMER_TYPE_CONSUMER) {
             return realm.where(CustomerObject.class)
-                    .equalTo(Constant.KEY_LEVEL_CUSTOMER, Constant.CUSTOMER_LEVEL_1)
+                    .equalTo(Constant.CUSTOMER_LEVEL, Constant.CUSTOMER_LEVEL_1)
                     .or()
-                    .equalTo(Constant.KEY_LEVEL_CUSTOMER, Constant.CUSTOMER_LEVEL_2)
+                    .equalTo(Constant.CUSTOMER_LEVEL, Constant.CUSTOMER_LEVEL_2)
                     .findAll();
         }
 
         if (key == Constant.CUSTOMER_TYPE_DISTRIBUTION) {
             return realm.where(CustomerObject.class)
-                    .equalTo(Constant.KEY_LEVEL_CUSTOMER, Constant.CUSTOMER_LEVEL_3)
+                    .equalTo(Constant.CUSTOMER_LEVEL, Constant.CUSTOMER_LEVEL_3)
                     .or()
-                    .equalTo(Constant.KEY_LEVEL_CUSTOMER, Constant.CUSTOMER_LEVEL_4)
+                    .equalTo(Constant.CUSTOMER_LEVEL, Constant.CUSTOMER_LEVEL_4)
                     .findAll();
         }
         return getCustomers();
@@ -154,7 +155,7 @@ public class RealmController {
 
     public RealmResults<CustomerObject> queryedCustomers(String date, Date start, Date end) {
         return realm.where(CustomerObject.class)
-                .equalTo(Constant.KEY_LEVEL_CUSTOMER, Constant.CUSTOMER_LEVEL_0)
+                .equalTo(Constant.CUSTOMER_LEVEL, Constant.CUSTOMER_LEVEL_0)
                 .between(date, start, end)
                 .findAll();
     }
@@ -179,7 +180,7 @@ public class RealmController {
 
     //query a single item with the given id
     private MeetingObject getMetting(int id) {
-        return realm.where(MeetingObject.class).equalTo(Constant.KEY_ID_CUSTOMER, id).findFirst();
+        return realm.where(MeetingObject.class).equalTo(Constant.KEY_ID, id).findFirst();
     }
 
     public RealmResults<MeetingObject> getMeetingOfCustomer(int id) {
@@ -216,7 +217,7 @@ public class RealmController {
     }
 
     private ProductObject getProduct(int id) {
-        return realm.where(ProductObject.class).equalTo(Constant.KEY_ID_CUSTOMER, id).findFirst();
+        return realm.where(ProductObject.class).equalTo(Constant.KEY_ID, id).findFirst();
     }
 
     public RealmResults<ProductObject> getProductOfCustomer(int id) {
@@ -241,5 +242,65 @@ public class RealmController {
                 realmResults.clear();
             }
         });
+    }
+
+    /*-----------------Notification---------------*/
+
+    public void addNotification(NotificationObject object) {
+        realm.beginTransaction();
+        realm.copyToRealm(object);
+        realm.commitTransaction();
+    }
+
+    public void deleteNotification(int id) {
+        realm.beginTransaction();
+        NotificationObject object = getNotification(id);
+        object.removeFromRealm();
+        realm.commitTransaction();
+    }
+
+    //getVia Id
+    private NotificationObject getNotification(int id) {
+        return realm.where(NotificationObject.class).equalTo(Constant.KEY_ID, id).findFirst();
+    }
+
+    //getAll
+    public RealmResults<NotificationObject> getNotifications() {
+        return realm.where(NotificationObject.class).findAll();
+    }
+
+    //getAll until today
+    public RealmResults<NotificationObject> getNotificationToday(Date date) {
+        return realm.where(NotificationObject.class).lessThanOrEqualTo(Constant.NOTIFICATION_DATE, date)
+                .findAllSorted(Constant.NOTIFICATION_DATE, Sort.DESCENDING);
+    }
+
+    //getAll unread
+    public RealmResults<NotificationObject> getNotificationUnread(Date date) {
+        return realm.where(NotificationObject.class)
+                .equalTo(Constant.NOTIFICATION_READ, false)
+                .lessThanOrEqualTo(Constant.NOTIFICATION_DATE, date)
+                .findAll();
+    }
+
+    public void updateNotiRead(NotificationObject notification) {
+        realm.beginTransaction();
+        notification.setIsread(true);
+        realm.copyToRealmOrUpdate(notification);
+        realm.commitTransaction();
+    }
+
+    public NotificationObject getNotificationByMeeting(int id) {
+        return realm.where(NotificationObject.class).equalTo(Constant.NOTIFICATION_ID_MEETING, id).findFirst();
+    }
+
+    public NotificationObject getNotificationByCustomer(int id) {
+        return realm.where(NotificationObject.class).equalTo(Constant.NOTIFICATION_ID_CUSTOMER, id).findFirst();
+    }
+
+    public void clearAllNotification() {
+        realm.beginTransaction();
+        realm.clear(NotificationObject.class);
+        realm.commitTransaction();
     }
 }

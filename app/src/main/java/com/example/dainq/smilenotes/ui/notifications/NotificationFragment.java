@@ -2,26 +2,37 @@ package com.example.dainq.smilenotes.ui.notifications;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.TextView;
 
 
 import com.example.dainq.smilenotes.common.BaseFragment;
 import com.example.dainq.smilenotes.common.Utility;
+import com.example.dainq.smilenotes.controller.realm.RealmController;
+import com.example.dainq.smilenotes.model.NotificationObject;
 
+import java.util.Calendar;
+import java.util.Date;
+
+import io.realm.RealmResults;
 import nq.dai.smilenotes.R;
 
-public class NotificationFragment extends BaseFragment {
+public class NotificationFragment extends BaseFragment implements View.OnClickListener {
     private Context mContext;
     private RecyclerView mListNotification;
     private NotificationAdapter mAdapter;
-    private Button mCreate;
+    private RealmController mRealmController;
+    private TextView mTextNotResult;
+    private TextView mDeleteNoti;
 
     public NotificationFragment(Context context) {
         mContext = context;
@@ -39,12 +50,69 @@ public class NotificationFragment extends BaseFragment {
     private void initView(View view) {
         mListNotification = (RecyclerView) view.findViewById(R.id.list_notification);
         mListNotification.setHasFixedSize(true);
-
         mListNotification.setLayoutManager(new LinearLayoutManager(mContext));
-
-        mAdapter = new NotificationAdapter(mContext, Utility.createList(20, "Notification"));
+        mAdapter = new NotificationAdapter(mContext);
         mAdapter.setHasStableIds(true);
-        mListNotification.setLayoutManager(new LinearLayoutManager(mContext));
         mListNotification.setAdapter(mAdapter);
+
+        mTextNotResult = (TextView) view.findViewById(R.id.notification_not_result);
+        mDeleteNoti = (TextView) view.findViewById(R.id.notification_delete_notification);
+        mDeleteNoti.setOnClickListener(this);
+    }
+
+    private void getData() {
+        mRealmController = RealmController.with(this);
+        Calendar calendar = Calendar.getInstance();
+        Date date = Utility.resetCalendar(calendar);
+        RealmResults<NotificationObject> realmResults = mRealmController.getNotificationToday(date);
+
+        Log.d("dainq ", "empty? " + realmResults.isEmpty());
+        if (realmResults.isEmpty()) {
+            mTextNotResult.setVisibility(View.VISIBLE);
+        } else {
+            mTextNotResult.setVisibility(View.GONE);
+            RealmNotificationAdapter realmAdapter = new RealmNotificationAdapter(mContext, realmResults, true);
+            mAdapter.setRealmAdapter(realmAdapter);
+        }
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getData();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.notification_delete_notification:
+                deleteAllNotification();
+                Log.d("dainq ", "delete all notification");
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private void deleteAllNotification() {
+        final AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(mContext);
+        builder.setTitle(R.string.title_dialog_delete_notification)
+                .setMessage(R.string.dialog_delete_content_notification)
+                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        mRealmController.clearAllNotification();
+                        mAdapter.notifyDataSetChanged();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 }

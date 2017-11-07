@@ -1,5 +1,7 @@
 package com.example.dainq.smilenotes.model;
 
+import java.util.Date;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.RealmClass;
@@ -8,13 +10,15 @@ import io.realm.annotations.RealmClass;
 public class NotificationObject extends RealmObject {
     @PrimaryKey
     private int id;
-    private int idCustomer;
-    private int idProduct;
-    private int idMeeting;
+    private int idcustomer;
+    private int idproduct;
+    private int idmeeting;
 
+    private Date date;
     private String content;
     private int type;
-    private boolean read;
+    private boolean isread;
+    private String avatar;
 
     public int getId() {
         return id;
@@ -24,28 +28,44 @@ public class NotificationObject extends RealmObject {
         this.id = id;
     }
 
-    public int getIdCustomer() {
-        return idCustomer;
+    public int getIdcustomer() {
+        return idcustomer;
     }
 
-    public void setIdCustomer(int idCustomer) {
-        this.idCustomer = idCustomer;
+    public void setIdcustomer(int idcustomer) {
+        this.idcustomer = idcustomer;
     }
 
-    public int getIdProduct() {
-        return idProduct;
+    public int getIdproduct() {
+        return idproduct;
     }
 
-    public void setIdProduct(int idProduct) {
-        this.idProduct = idProduct;
+    public void setIdproduct(int idproduct) {
+        this.idproduct = idproduct;
     }
 
-    public int getIdMeeting() {
-        return idMeeting;
+    public int getIdmeeting() {
+        return idmeeting;
     }
 
-    public void setIdMeeting(int idMeeting) {
-        this.idMeeting = idMeeting;
+    public void setIdmeeting(int idmeeting) {
+        this.idmeeting = idmeeting;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public boolean isread() {
+        return isread;
+    }
+
+    public void setIsread(boolean isread) {
+        this.isread = isread;
     }
 
     public String getContent() {
@@ -64,11 +84,11 @@ public class NotificationObject extends RealmObject {
         this.type = type;
     }
 
-    public boolean isRead() {
-        return read;
+    public String getAvatar() {
+        return avatar;
     }
 
-    public void setRead(boolean read) {
-        this.read = read;
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

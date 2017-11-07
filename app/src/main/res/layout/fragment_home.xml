@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/color_new_white"
@@ -18,9 +19,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="5dp"
-            android:textColor="@color/colorAccent"
             android:paddingStart="12dp"
-            android:text="Tổng quan" />
+            android:text="Tổng quan"
+            android:textColor="@color/colorAccent"/>
 
         <TextView
             android:id="@+id/home_btn_pie"
@@ -28,11 +29,16 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end"
-            android:paddingEnd="12dp"
             android:padding="5dp"
-            android:text="Biểu đồ" />
-
+            android:paddingEnd="12dp"
+            android:text="Biểu đồ"/>
     </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_below="@+id/home_switch_layout"
+        android:background="@color/border_color"/>
 
     <LinearLayout
         android:id="@+id/home_pie_chart"
@@ -50,15 +56,16 @@
             class="im.dacer.androidcharts.PieView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.2" />
+            android:layout_weight="1.3"/>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_marginStart="10dp"
+            android:layout_weight="1"
             android:gravity="bottom"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="20dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -69,13 +76,49 @@
                 <View
                     android:layout_width="10dp"
                     android:layout_height="10dp"
-                    android:background="@color/color_piechart_level_1" />
+                    android:background="@color/color_piechart_level_1"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:text="@string/list_spinner_type_0" />
+                    android:text="@string/list_spinner_type_0"/>
+            </LinearLayout>
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:padding="3dp">-->
+
+            <!--<View-->
+            <!--android:layout_width="10dp"-->
+            <!--android:layout_height="10dp"-->
+            <!--android:background="@color/color_piechart_level_2"/>-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginStart="10dp"-->
+            <!--android:text="@string/list_spinner_type_1"/>-->
+            <!--</LinearLayout>-->
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="3dp">
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:background="@color/color_piechart_level_3"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/list_spinner_type_2"/>
             </LinearLayout>
 
             <LinearLayout
@@ -87,49 +130,13 @@
                 <View
                     android:layout_width="10dp"
                     android:layout_height="10dp"
-                    android:background="@color/color_piechart_level_2" />
+                    android:background="@color/color_piechart_level_4"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:text="@string/list_spinner_type_1" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:padding="3dp">
-
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
-                    android:background="@color/color_piechart_level_3" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="@string/list_spinner_type_2" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:padding="3dp">
-
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
-                    android:background="@color/color_piechart_level_4" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="@string/list_spinner_type_3" />
+                    android:text="@string/list_spinner_type_3"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -171,7 +178,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
                         android:text="TIỀM NĂNG"
-                        android:textColor="@color/color_piechart_level_1" />
+                        android:textColor="@color/color_piechart_level_1"/>
 
                     <TextView
                         android:id="@+id/home_customer_potential_number"
@@ -179,7 +186,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="03"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -194,7 +201,7 @@
                     <View
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"/>
 
                     <TextView
                         android:id="@+id/home_customer_consumer_number"
@@ -202,7 +209,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="03"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"/>
 
                     <TextView
                         android:id="@+id/home_customer_consumer_text"
@@ -211,13 +218,13 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
                         android:text="TIÊU DÙNG"
-                        android:textColor="@color/color_piechart_level_3" />
+                        android:textColor="@color/color_piechart_level_3"/>
                 </LinearLayout>
             </LinearLayout>
 
             <FrameLayout
                 android:layout_width="30dp"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"/>
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -241,7 +248,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
                         android:text="TN THÁNG"
-                        android:textColor="@color/color_piechart_level_2" />
+                        android:textColor="@color/color_piechart_level_2"/>
 
                     <TextView
                         android:id="@+id/home_customer_potential_month_number"
@@ -249,7 +256,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="03"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -264,7 +271,7 @@
                     <View
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"/>
 
                     <TextView
                         android:id="@+id/home_customer_distribution_number"
@@ -272,7 +279,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="03"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"/>
 
                     <TextView
                         android:id="@+id/home_customer_distribution_text"
@@ -281,7 +288,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
                         android:text="NPP"
-                        android:textColor="@color/color_piechart_level_4" />
+                        android:textColor="@color/color_piechart_level_4"/>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -305,7 +312,7 @@
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/home_avatar_user"
                     android:layout_width="80dp"
-                    android:layout_height="80dp" />
+                    android:layout_height="80dp"/>
             </FrameLayout>
 
             <FrameLayout
@@ -321,9 +328,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:layout_marginStart="5dp"
+                    android:text="Nguyễn Đăng Luân"
                     android:textAllCaps="true"
                     android:textColor="@color/color_text"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
             </FrameLayout>
         </LinearLayout>
     </RelativeLayout>
@@ -334,6 +342,11 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/border_color"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -349,7 +362,7 @@
                 android:gravity="center_vertical"
                 android:padding="10dp"
                 android:paddingStart="12dp"
-                android:text="@string/customer_need_new_product" />
+                android:text="@string/customer_need_new_product"/>
 
             <com.example.dainq.smilenotes.ui.common.spinner.SingleSpinnerLayout
                 android:id="@+id/home_spinner_select_number"
@@ -357,13 +370,13 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
                 android:gravity="end"
-                android:textAlignment="gravity" />
+                android:textAlignment="gravity"/>
         </LinearLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:background="@color/border_color" />
+            android:background="@color/border_color"/>
     </LinearLayout>
 
     <LinearLayout
@@ -378,13 +391,13 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="Không có khách hàng nào"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/home_list_customer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:cacheColorHint="@android:color/transparent"
-            android:listSelector="@android:color/transparent" />
+            android:listSelector="@android:color/transparent"/>
     </LinearLayout>
 </RelativeLayout>

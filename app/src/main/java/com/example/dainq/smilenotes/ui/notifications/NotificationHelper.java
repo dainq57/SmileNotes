@@ -9,11 +9,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
+import com.example.dainq.smilenotes.common.Constant;
+
 import java.util.Calendar;
 import java.util.Date;
 
 import static android.content.Context.ALARM_SERVICE;
-
 
 public class NotificationHelper {
     public static int ALARM_TYPE_RTC = 100;
@@ -28,13 +29,15 @@ public class NotificationHelper {
         calendar.set(Calendar.MINUTE, 0);
 
         Log.d("dainq57 time", calendar.toString());
-        alarmIntentRTC = PendingIntent.getBroadcast(context, ALARM_TYPE_RTC, data, PendingIntent.FLAG_UPDATE_CURRENT);
+        int id = data.getIntExtra(Constant.NOTIFICATION_ID, 0);
+        alarmIntentRTC = PendingIntent.getBroadcast(context, id, data, PendingIntent.FLAG_UPDATE_CURRENT);
 
         alarmManagerRTC = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         alarmManagerRTC.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntentRTC);
     }
 
-    public static void cancelRemindRTC() {
+    public static void cancelRemindRTC(Context context, Intent data, int id) {
+        alarmIntentRTC = PendingIntent.getBroadcast(context, id, data, PendingIntent.FLAG_UPDATE_CURRENT);
         if (alarmManagerRTC != null) {
             alarmManagerRTC.cancel(alarmIntentRTC);
         }

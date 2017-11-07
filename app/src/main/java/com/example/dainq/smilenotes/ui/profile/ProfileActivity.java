@@ -99,7 +99,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private void getCustomerObject() {
         mExtras = getIntent().getExtras();
         if (mExtras != null) {
-            mId = mExtras.getInt(Constant.KEY_ID_CUSTOMER);
+            mId = mExtras.getInt(Constant.KEY_ID);
             type = mExtras.getInt(Constant.KEY_TYPE_PRODILE);
             Log.d(ProfileActivity.class.getSimpleName() + "-dainq", "mId: " + mId);
             mRealmController = RealmController.with(this);
@@ -122,8 +122,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private void initViewPager() {
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
-        if (type == Constant.PREF_TYPE_PROFILE) {
+        Log.d("dainq ", "Profile type " + type);
+        if (type == Constant.PROFILE_TYPE_PRODUCT) {
             viewPager.setCurrentItem(3);
+        }
+        if (type == Constant.PROFILE_TYPE_PLAN) {
+            viewPager.setCurrentItem(2);
         }
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -156,7 +160,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private void startEdit() {
         Bundle bundle = new Bundle();
         bundle.putInt(Constant.KEY_ACTION, Constant.ACTION_EDIT);
-        bundle.putInt(Constant.KEY_ID_CUSTOMER, mId);
+        bundle.putInt(Constant.KEY_ID, mId);
 
         Intent intent = new Intent(this, CreateActivity.class);
         intent.putExtras(bundle);

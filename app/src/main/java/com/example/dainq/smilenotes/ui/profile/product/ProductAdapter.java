@@ -99,8 +99,8 @@ public class ProductAdapter extends RealmRecyclerViewAdapter<ProductObject> {
                 @Override
                 public void onClick(View v) {
                     Bundle bundle = new Bundle();
-                    bundle.putInt(Constant.KEY_ID_CUSTOMER, customer.getId());
-                    bundle.putInt(Constant.KEY_TYPE_PRODILE, Constant.PREF_TYPE_PROFILE);
+                    bundle.putInt(Constant.KEY_ID, customer.getId());
+                    bundle.putInt(Constant.KEY_TYPE_PRODILE, Constant.PROFILE_TYPE_PRODUCT);
                     Intent intent = new Intent(mContext, ProfileActivity.class);
                     intent.putExtras(bundle);
                     mContext.startActivity(intent);
