@@ -4,10 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.dainq.smilenotes.common.BaseFragment;
@@ -31,7 +28,6 @@ import com.example.dainq.smilenotes.ui.common.spinner.SpinnerItem;
 import com.example.dainq.smilenotes.ui.profile.customer.ListCustomerActivity;
 import com.example.dainq.smilenotes.ui.profile.product.ProductAdapter;
 import com.example.dainq.smilenotes.ui.profile.product.RealmProductAdapter;
-import com.soundcloud.android.crop.Crop;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,11 +55,10 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
     private CircleImageView mAvatarUser;
     private TextView mNameUser;
     private TextView mTextNotResults;
-    private RecyclerView mListCustomer;
     private SingleSpinnerLayout mSpinner;
     private PieView mPieView;
 
-    private RelativeLayout mLayoutSumary;
+    private LinearLayout mLayoutSumary;
     private LinearLayout mLayoutPie;
     private TextView mTxtSumary;
     private TextView mTxtPie;
@@ -98,7 +93,7 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
         mPieView = (PieView) view.findViewById(R.id.pie_view);
         initSummaryView(view);
 
-        mListCustomer = (RecyclerView) view.findViewById(R.id.home_list_customer);
+        RecyclerView mListCustomer = (RecyclerView) view.findViewById(R.id.home_list_customer);
         mListCustomer.setHasFixedSize(true);
         mListCustomer.setLayoutManager(new LinearLayoutManager(mContext));
 
@@ -115,7 +110,7 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
         mTxtPie = (TextView) view.findViewById(R.id.home_btn_pie);
         mTxtPie.setOnClickListener(this);
 
-        mLayoutSumary = (RelativeLayout) view.findViewById(R.id.home_summary);
+        mLayoutSumary = (LinearLayout) view.findViewById(R.id.home_summary);
         mLayoutPie = (LinearLayout) view.findViewById(R.id.home_pie_chart);
     }
 

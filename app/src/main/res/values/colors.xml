@@ -15,14 +15,15 @@
     <color name="listview_divider_color">#e6e6e6</color>
 
     <!--PieChart-->
-    <color name="color_piechart_level_1">#FFD54F</color>
-    <color name="color_piechart_level_2">#81C784</color>
-    <color name="color_piechart_level_3">#E57373</color>
-    <color name="color_piechart_level_4">#42A5F5</color>
+    <color name="color_piechart_level_4">#f4d004</color>
+    <color name="color_piechart_level_2">#5786be</color>
+    <color name="color_piechart_level_3">#64b42b</color>
+    <color name="color_piechart_level_1">#fd7044</color>
 
     <!--Home-->
     <color name="border_color">#c8c8c8</color>
     <color name="home_title_color">#fcf0f4</color>
+    <color name="home_background_potetial">#dae7f1</color>
 
     <!--Spinner-->
     <color name="spinner_selected_item">#499ebd</color>
