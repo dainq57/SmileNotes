@@ -111,12 +111,12 @@
 
     <!--Alert setting-->
     <string name="alert_anouncement_backup">Tính năng đang được phát triển, sẽ được cập nhật trong thời gian sớm nhất!</string>
-    <string name="alert_about_us">Ứng dụng quản lí khách hàng thông minh, xây dựng bởi Smile Group
-        \n - Phiên bản 1.0
-        \n\n - Liên hệ: Nguyễn Đăng Luân
-        \n - SĐT: 0981.800.996
-        \n - Địa chỉ: Nơ 6B, bán đảo Linh Đàm
-        \n - Email: nguyenluanway@gmail.com
+    <string name="alert_about_us">Ứng dụng quản lí khách hàng thông minh, xây dựng bởi Smile 4T Group
+        \n + Phiên bản 1.0
+        \n\n + Liên hệ: Nguyễn Đăng Luân
+        \n + SĐT: 0981.800.996
+        \n + Địa chỉ: Nơ 6B - KDT Linh Đàm - Hoàng Liệt - Hoàng Mai - HN
+        \n + Email: nguyenluanway@gmail.com
     </string>
     <string name="dont_have_notification">Bạn không có thông báo mới nào!</string>
     <string name="enter_your_name_touse_app">Nhập tên của bạn để bắt đầu sử dụng ứng dụng</string>

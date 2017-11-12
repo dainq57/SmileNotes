@@ -168,7 +168,6 @@
                     android:textSize="20sp" />
             </LinearLayout>
 
-
             <FrameLayout
                 android:id="@+id/home_layout_avatar"
                 android:layout_width="wrap_content"
@@ -220,7 +219,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
-                    android:text="TIÊU DÙNG"
+                    android:text="KH TIÊU DÙNG"
+                    android:gravity="center"
                     android:textColor="@color/color_piechart_level_3" />
 
                 <TextView
@@ -270,7 +270,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
-                    android:text="TIỀM NĂNG"
+                    android:text="KH TIỀM NĂNG"
                     android:textColor="@color/color_piechart_level_1" />
 
             </LinearLayout>
@@ -302,7 +302,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
-                    android:text="TN THÁNG"
+                    android:text="KH TN THÁNG"
                     android:textColor="@color/color_piechart_level_2" />
             </LinearLayout>
 
@@ -335,6 +335,8 @@
                 android:gravity="center_vertical"
                 android:padding="10dp"
                 android:paddingStart="12dp"
+                android:textStyle="bold"
+                android:textColor="@color/color_piechart_level_3"
                 android:text="@string/customer_need_new_product" />
 
             <com.example.dainq.smilenotes.ui.common.spinner.SingleSpinnerLayout
