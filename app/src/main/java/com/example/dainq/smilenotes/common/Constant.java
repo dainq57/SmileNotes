@@ -36,9 +36,14 @@ public class Constant {
     /*ProductAdapter field*/
     public static String PRODUCT_USE_DATE = "usedate";
 
+    /*Metting field*/
+    public static String PLAN_DATE = "schedule";
+
     /*Notification field*/
     public static String NOTIFICATION_READ = "isread";
     public static String NOTIFICATION_DATE = "date";
+    public static String NOTIFICATION_DATEVALUE = "datevalue";
+    public static String NOTIFICATION_TYPE_NOTI = "type";
 
     /*regex*/
     public static String regexPhoneNumber = "^0[0-9]{9,10}$";
@@ -79,7 +84,7 @@ public class Constant {
     public static String NOTIFICATION_ID_CUSTOMER = "idcustomer";
 
     /*create*/
-    public static String FORMAT_DATE = "yyyy-MM-dd";
+    public static String FORMAT_DATE = "dd-MM-yyyy";
 
     /*dialog*/
     public static int DIALOG_CREATE = 10;

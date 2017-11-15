@@ -15,10 +15,10 @@ public class NotificationObject extends RealmObject {
     private int idmeeting;
 
     private Date date;
+    private Date datevalue;
     private String content;
     private int type;
     private boolean isread;
-    private String avatar;
 
     public int getId() {
         return id;
@@ -60,6 +60,14 @@ public class NotificationObject extends RealmObject {
         this.date = date;
     }
 
+    public Date getDatevalue() {
+        return datevalue;
+    }
+
+    public void setDatevalue(Date datevalue) {
+        this.datevalue = datevalue;
+    }
+
     public boolean isread() {
         return isread;
     }
@@ -82,13 +90,5 @@ public class NotificationObject extends RealmObject {
 
     public void setType(int type) {
         this.type = type;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
     }
 }

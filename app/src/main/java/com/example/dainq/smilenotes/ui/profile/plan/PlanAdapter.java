@@ -3,7 +3,6 @@ package com.example.dainq.smilenotes.ui.profile.plan;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -16,8 +15,10 @@ import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.controller.realm.RealmController;
 import com.example.dainq.smilenotes.model.MeetingObject;
+import com.example.dainq.smilenotes.model.NotificationObject;
 import com.example.dainq.smilenotes.ui.common.realm.RealmRecyclerViewAdapter;
 
+import io.realm.RealmResults;
 import nq.dai.smilenotes.R;
 
 public class PlanAdapter extends RealmRecyclerViewAdapter<MeetingObject> {
@@ -35,7 +36,6 @@ public class PlanAdapter extends RealmRecyclerViewAdapter<MeetingObject> {
         mAdapter = adapter;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.item_card_plan, parent, false);
@@ -91,6 +91,7 @@ public class PlanAdapter extends RealmRecyclerViewAdapter<MeetingObject> {
                 .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         mRealmController.deleteMeeting(id);
+                        deleteAllOfMetting(id);
                         notifyDataSetChanged();
                     }
                 })
@@ -102,5 +103,10 @@ public class PlanAdapter extends RealmRecyclerViewAdapter<MeetingObject> {
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+    }
+
+    private void deleteAllOfMetting(int id) {
+        RealmResults<NotificationObject> notificationList = mRealmController.getNotificationOfMetting(id);
+        mRealmController.removeAllNotification(notificationList);
     }
 }

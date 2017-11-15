@@ -19,24 +19,12 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class Utility {
     private static SimpleDateFormat dateFormat = new SimpleDateFormat(Constant.FORMAT_DATE, Locale.US);
-
-    public static List<String> createList(int n, String string) {
-        List<String> list = new ArrayList<>();
-
-        for (int i = 0; i < n; i++) {
-            list.add(string + " " + i);
-        }
-
-        return list;
-    }
 
     public static boolean isEmptyString(String string) {
         return string.trim().isEmpty();
@@ -63,7 +51,7 @@ public class Utility {
 
     private static String encodeImage(Bitmap bm) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG, 40, baos);
+        bm.compress(Bitmap.CompressFormat.JPEG, 10, baos);
         byte[] b = baos.toByteArray();
 
         return Base64.encodeToString(b, Base64.DEFAULT);
@@ -128,12 +116,11 @@ public class Utility {
     }
 
     public static Date resetCalendar(Calendar calendar) {
-        calendar.set(java.util.Calendar.HOUR_OF_DAY, 24);
-        calendar.set(java.util.Calendar.MINUTE, 0);
-        calendar.set(java.util.Calendar.SECOND, 0);
-        calendar.set(java.util.Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
 
         return calendar.getTime();
     }
-
 }

@@ -19,14 +19,12 @@ import java.util.List;
 import nq.dai.smilenotes.R;
 
 public class SingleSpinnerLayout extends LinearLayout {
-    public static final int INVALID_POSITION = -1;
     public static final int DEFAULT_POSITION = 0;
 
     private Context mContext;
     private Spinner mSpinner;
     private OnSpinnerItemSelectedListener mOnSpinnerItemSelectedListener;
     private SpinnerAdapter<?> mWinsetSpinnerAdapter;
-    private boolean mIsAppBar = false;
     private View mView;
 
     public SingleSpinnerLayout(Context context, AttributeSet attributeSet) {
@@ -40,10 +38,6 @@ public class SingleSpinnerLayout extends LinearLayout {
 
         mSpinner = (Spinner) findViewById(R.id.spinner_item);
         mSpinner.getBackground().setColorFilter(ContextCompat.getColor(mContext, R.color.color_text), PorterDuff.Mode.SRC_ATOP);
-
-        final TypedArray a = context.obtainStyledAttributes(attributeSet, R.styleable.SingleSpinnerLayout);
-        mIsAppBar = a.getBoolean(R.styleable.SingleSpinnerLayout_isAppBar, false);
-        a.recycle();
         setSingleSpinnerItemSelectedListener();
     }
 
@@ -115,7 +109,7 @@ public class SingleSpinnerLayout extends LinearLayout {
     }
 
     public <T> void setSingleSpinnerList(T[] objects) {
-        mWinsetSpinnerAdapter = new SpinnerAdapter<>(mContext, objects, mIsAppBar);
+        mWinsetSpinnerAdapter = new SpinnerAdapter<>(mContext, objects, false);
         mSpinner.setAdapter(mWinsetSpinnerAdapter);
         setSelection(DEFAULT_POSITION);
     }

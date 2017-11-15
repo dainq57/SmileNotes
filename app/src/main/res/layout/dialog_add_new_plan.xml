@@ -33,7 +33,6 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/dialog_add_new_button"
         android:layout_below="@+id/dialog_title">
 
         <include layout="@layout/profile_add_plan"/>
@@ -44,7 +43,6 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@+id/dialog_btn_ok"
         android:background="@color/white"
         android:visibility="visible">
 

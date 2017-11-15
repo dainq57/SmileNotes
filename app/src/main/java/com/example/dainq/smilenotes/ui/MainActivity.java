@@ -121,6 +121,7 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener, V
         BottomBar mBottomBar = (BottomBar) findViewById(R.id.bottomBar);
         mBottomBar.setOnTabSelectListener(this);
         mNotificationTab = mBottomBar.getTabWithId(R.id.tab_notifications);
+        updateBadge();
     }
 
     private void updateBadge() {
@@ -135,12 +136,6 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener, V
         if (badge > 0) {
             mNotificationTab.setBadgeCount(badge);
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        updateBadge();
     }
 
     @Override

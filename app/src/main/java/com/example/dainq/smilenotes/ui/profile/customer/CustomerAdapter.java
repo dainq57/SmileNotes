@@ -16,6 +16,7 @@ import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.controller.realm.RealmController;
 import com.example.dainq.smilenotes.model.CustomerObject;
 import com.example.dainq.smilenotes.model.MeetingObject;
+import com.example.dainq.smilenotes.model.NotificationObject;
 import com.example.dainq.smilenotes.model.ProductObject;
 import com.example.dainq.smilenotes.ui.common.realm.RealmRecyclerViewAdapter;
 import com.example.dainq.smilenotes.ui.create.CreateActivity;
@@ -104,11 +105,7 @@ public class CustomerAdapter extends RealmRecyclerViewAdapter<CustomerObject> {
 
     private void confirmDelete(final int id) {
         final AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new AlertDialog.Builder(mContext, android.R.style.Theme_Material_Dialog_Alert);
-        } else {
-            builder = new AlertDialog.Builder(mContext);
-        }
+        builder = new AlertDialog.Builder(mContext);
         builder.setTitle(R.string.title_dialog_delete)
                 .setMessage(R.string.dialog_delete_content)
                 .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
@@ -131,9 +128,11 @@ public class CustomerAdapter extends RealmRecyclerViewAdapter<CustomerObject> {
     private void deleteAllOfCustomer(int id) {
         RealmResults<ProductObject> productList = mRealmController.getProductOfCustomer(id);
         RealmResults<MeetingObject> meetingList = mRealmController.getMeetingOfCustomer(id);
+        RealmResults<NotificationObject> notificationList = mRealmController.getNotificationOfCustomer(id);
 
         Log.d(TAG, "dainq product/meeting: " + productList.size() + "/" + meetingList.size());
         mRealmController.removeAllProduct(productList);
         mRealmController.removeAllPlan(meetingList);
+        mRealmController.removeAllNotification(notificationList);
     }
 }

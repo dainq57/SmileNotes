@@ -17,7 +17,9 @@ import java.util.Date;
 import static android.content.Context.ALARM_SERVICE;
 
 public class NotificationHelper {
-    public static int ALARM_TYPE_RTC = 100;
+    private static final int ALARM_HOUR = 7;
+    private static final int ALARM_MINUTE = 30;
+
     private static AlarmManager alarmManagerRTC;
     private static PendingIntent alarmIntentRTC;
 
@@ -25,8 +27,8 @@ public class NotificationHelper {
         //get calendar instance to be able to select what time notification should be scheduled
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        calendar.set(Calendar.HOUR_OF_DAY, 7);
-        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, ALARM_HOUR);
+        calendar.set(Calendar.MINUTE, ALARM_MINUTE);
 
         Log.d("dainq57 time", calendar.toString());
         int id = data.getIntExtra(Constant.NOTIFICATION_ID, 0);
@@ -36,9 +38,10 @@ public class NotificationHelper {
         alarmManagerRTC.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntentRTC);
     }
 
-    public static void cancelRemindRTC(Context context, Intent data, int id) {
-        alarmIntentRTC = PendingIntent.getBroadcast(context, id, data, PendingIntent.FLAG_UPDATE_CURRENT);
+    public static void cancelRemindRTC(Context context, int id) {
+        alarmManagerRTC = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         if (alarmManagerRTC != null) {
+            alarmIntentRTC = PendingIntent.getBroadcast(context, id, null, PendingIntent.FLAG_UPDATE_CURRENT);
             alarmManagerRTC.cancel(alarmIntentRTC);
         }
     }

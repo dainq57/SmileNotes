@@ -23,7 +23,6 @@ import android.widget.Toast;
 import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.controller.realm.RealmController;
-import com.example.dainq.smilenotes.model.CustomerObject;
 import com.example.dainq.smilenotes.model.MeetingObject;
 import com.example.dainq.smilenotes.model.NotificationObject;
 import com.example.dainq.smilenotes.ui.notifications.NotificationHelper;
@@ -38,7 +37,7 @@ import nq.dai.smilenotes.R;
 public class CreatePlanDialog extends DialogFragment implements View.OnClickListener {
 
     private String TAG = "CreatePlanDialog";
-    private int mType;
+    private int mAction;
 
     private Context mContext;
     private TextView mTitle;
@@ -49,6 +48,7 @@ public class CreatePlanDialog extends DialogFragment implements View.OnClickList
     private TextView mSchedule;
     private Date mScheduleValue;
     private int mIdPlan;
+    private NotificationObject mNotification;
 
     private TextView mCancel;
 
@@ -62,17 +62,20 @@ public class CreatePlanDialog extends DialogFragment implements View.OnClickList
     private int mIdNoti;
     private int mIdNotiKey;
 
+    public CreatePlanDialog() {
+    }
+
     public CreatePlanDialog(Context context, PlanAdapter adapter, int type) {
         mContext = context;
         mAdapter = adapter;
-        mType = type;
+        mAction = type;
     }
 
     public CreatePlanDialog(Context context, PlanAdapter adapter, MeetingObject object, int type) {
         mContext = context;
         mAdapter = adapter;
         mMeeting = object;
-        mType = type;
+        mAction = type;
     }
 
     @Nullable
@@ -106,9 +109,7 @@ public class CreatePlanDialog extends DialogFragment implements View.OnClickList
         mSchedule = (TextView) view.findViewById(R.id.dialog_txt_schedule);
         mSchedule.setOnClickListener(this);
 
-        mIdCustomer = getArguments().getInt(Constant.KEY_ID);
-
-        if (mType == Constant.DIALOG_CREATE) {
+        if (mAction == Constant.DIALOG_CREATE) {
             Log.d(TAG, " create");
             mContent.setText("");
 
@@ -118,9 +119,10 @@ public class CreatePlanDialog extends DialogFragment implements View.OnClickList
             Calendar newDate = Calendar.getInstance();
             mTime.setText(Utility.dateToString(newDate.getTime()));
             mTimeValue = newDate.getTime();
+            mIdCustomer = getArguments().getInt(Constant.KEY_ID);
         }
 
-        if (mType == Constant.DIALOG_VIEW) {
+        if (mAction == Constant.DIALOG_VIEW) {
             Log.d(TAG, " view");
             mTitle.setText(R.string.dialog_title_view);
             mCancel.setText(R.string.edit);
@@ -131,8 +133,8 @@ public class CreatePlanDialog extends DialogFragment implements View.OnClickList
             mSchedule.setClickable(false);
 
             getData();
+            mNotification = mRealmController.getNotificationPlan(mMeeting.getId());
         }
-
 
         mPrefNoti = getActivity().getSharedPreferences(Constant.PREF_USER, Context.MODE_PRIVATE);
         mIdNotiKey = mPrefNoti.getInt(Constant.USER_NOTIFICATION, Constant.PREF_ID_DEFAULT);
@@ -164,7 +166,7 @@ public class CreatePlanDialog extends DialogFragment implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.dialog_btn_save:
-                if (mType == Constant.DIALOG_VIEW) {
+                if (mAction == Constant.DIALOG_VIEW) {
                     dismiss();
                 } else {
                     int val = 0;
@@ -199,21 +201,18 @@ public class CreatePlanDialog extends DialogFragment implements View.OnClickList
     }
 
     private void btnRightClick() {
-        if (mType == Constant.DIALOG_CREATE) {
+        if (mAction == Constant.DIALOG_CREATE) {
             create();
-            //set Remind plan with notification
-            setNotificationn();
-        } else if (mType == Constant.DIALOG_EDIT) {
+        } else if (mAction == Constant.DIALOG_EDIT) {
             edit();
-
         }
         mAdapter.notifyDataSetChanged();
         dismiss();
     }
 
     private void btnLeftClick() {
-        if (mType == Constant.DIALOG_VIEW) {
-            mType = Constant.DIALOG_EDIT;
+        if (mAction == Constant.DIALOG_VIEW) {
+            mAction = Constant.DIALOG_EDIT;
             mTime.setClickable(true);
             mSchedule.setClickable(true);
             mContent.setEnabled(true);
@@ -255,6 +254,7 @@ public class CreatePlanDialog extends DialogFragment implements View.OnClickList
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
+                newDate.set(Calendar.HOUR_OF_DAY, 0);
                 if (type == 0) {
                     mTimeValue = newDate.getTime();
                     mTime.setText(Utility.dateToString(mTimeValue));
@@ -286,19 +286,30 @@ public class CreatePlanDialog extends DialogFragment implements View.OnClickList
         object.setMeeting(mTimeValue);
         object.setContent(mContent.getText().toString());
         object.setSchedule(mScheduleValue);
+
+        Log.d("dainq time", mTimeValue + "/" + mScheduleValue);
+
+        //set Remind plan with notification
+        if (mAction == Constant.DIALOG_CREATE) {
+            setNotificationn();
+        }
     }
 
     private void edit() {
         mRealmController.getRealm().beginTransaction();
         setData(mMeeting);
         mRealmController.getRealm().commitTransaction();
+
+        if (mScheduleValue != null) {
+            updateNotification(mNotification);
+        }
     }
 
     private int validate() throws ParseException {
         String time = mTime.getText().toString();
         String content = mContent.getText().toString();
         String schedule = mSchedule.getText().toString();
-        if (mType == Constant.DIALOG_EDIT) {
+        if (mAction == Constant.DIALOG_EDIT) {
             mTimeValue = Utility.stringToDate(mTime.getText().toString());
             mScheduleValue = Utility.stringToDate(mSchedule.getText().toString());
         }
@@ -322,19 +333,13 @@ public class CreatePlanDialog extends DialogFragment implements View.OnClickList
     }
 
     private void setNotificationn() {
-        CustomerObject customer = mRealmController.getCustomer(mIdCustomer);
-        String name = customer.getName();
-        String avatar = customer.getAvatar();
-
         //create notification to realm
-        createNotification(name, avatar);
+        createNotification();
 
         //push notification use broadcast receiver
         Intent intent = new Intent(mContext, NotificationReceiver.class);
         Bundle bundle = new Bundle();
 
-        bundle.putInt(Constant.NOTIFICATION_TYPE, Constant.NOTIFICATION_EVENT);
-        bundle.putString(Constant.NOTIFICATION_NAME_CUSTOMER, name);
         bundle.putInt(Constant.NOTIFICATION_ID, mIdNoti);
 
         intent.putExtras(bundle);
@@ -343,7 +348,7 @@ public class CreatePlanDialog extends DialogFragment implements View.OnClickList
         NotificationHelper.enableBootReceiver(mContext);
     }
 
-    private void createNotification(String name, String avatar) {
+    private void createNotification() {
         NotificationObject notification = new NotificationObject();
         mIdNoti = Utility.createId(mIdNotiKey);
         Log.d(TAG + "dainq", " put notification id: " + mIdNoti);
@@ -354,10 +359,20 @@ public class CreatePlanDialog extends DialogFragment implements View.OnClickList
         notification.setIsread(false);
         notification.setIdmeeting(mIdPlan);
         notification.setType(Constant.NOTIFICATION_EVENT);
-        notification.setContent("Kế hoạch với " + name);
+        notification.setContent("Cuộc hẹn với ");
+        notification.setDatevalue(mScheduleValue);
         notification.setDate(mScheduleValue);
-        notification.setAvatar(avatar);
 
         mRealmController.addNotification(notification);
+    }
+
+    private void updateNotification(NotificationObject notification) {
+        mRealmController.getRealm().beginTransaction();
+        notification.setDatevalue(mScheduleValue);
+        notification.setDate(mScheduleValue);
+        if (mScheduleValue != notification.getDatevalue()) {
+            notification.setIsread(false);
+        }
+        mRealmController.getRealm().commitTransaction();
     }
 }

@@ -22,7 +22,6 @@ public class PlanViewHolder extends RecyclerView.ViewHolder {
     public TextView mContent;
     public FrameLayout mRemove;
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     PlanViewHolder(View itemView, Context context) {
         super(itemView);
 

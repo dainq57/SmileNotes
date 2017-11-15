@@ -26,7 +26,6 @@ import java.util.Date;
 import io.realm.RealmResults;
 import nq.dai.smilenotes.R;
 
-
 public class ListCustomerActivity extends AppCompatActivity implements OnSpinnerItemSelectedListener {
 
     private String TAG = "ListCustomerActivity";
@@ -76,6 +75,7 @@ public class ListCustomerActivity extends AppCompatActivity implements OnSpinner
 
         // create an empty adapter and add it to the recycler view
         mAdapter = new CustomerAdapter(this);
+        mAdapter.setHasStableIds(true);
         mListCustomer.setAdapter(mAdapter);
     }
 

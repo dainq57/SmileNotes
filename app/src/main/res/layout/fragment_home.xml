@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -21,7 +22,7 @@
             android:padding="5dp"
             android:paddingStart="12dp"
             android:text="Tổng quan"
-            android:textColor="@color/colorAccent" />
+            android:textColor="@color/colorAccent"/>
 
         <TextView
             android:id="@+id/home_btn_pie"
@@ -31,14 +32,14 @@
             android:gravity="end"
             android:padding="5dp"
             android:paddingEnd="12dp"
-            android:text="Biểu đồ" />
+            android:text="Biểu đồ"/>
     </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:layout_below="@+id/home_switch_layout"
-        android:background="@color/border_color" />
+        android:background="@color/border_color"/>
 
     <LinearLayout
         android:id="@+id/home_pie_chart"
@@ -56,7 +57,7 @@
             class="im.dacer.androidcharts.PieView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.3" />
+            android:layout_weight="1.3"/>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -76,14 +77,14 @@
                 <View
                     android:layout_width="10dp"
                     android:layout_height="10dp"
-                    android:background="@color/color_piechart_level_1" />
+                    android:background="@color/color_piechart_level_1"/>
 
                 <TextView
                     style="@style/TextAppearance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:text="@string/list_spinner_type_0" />
+                    android:text="@string/list_spinner_type_0"/>
             </LinearLayout>
 
             <LinearLayout
@@ -95,14 +96,14 @@
                 <View
                     android:layout_width="10dp"
                     android:layout_height="10dp"
-                    android:background="@color/color_piechart_level_3" />
+                    android:background="@color/color_piechart_level_3"/>
 
                 <TextView
                     style="@style/TextAppearance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:text="@string/list_spinner_type_2" />
+                    android:text="@string/list_spinner_type_2"/>
             </LinearLayout>
 
             <LinearLayout
@@ -114,14 +115,14 @@
                 <View
                     android:layout_width="10dp"
                     android:layout_height="10dp"
-                    android:background="@color/color_piechart_level_4" />
+                    android:background="@color/color_piechart_level_4"/>
 
                 <TextView
                     style="@style/TextAppearance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:text="@string/list_spinner_type_3" />
+                    android:text="@string/list_spinner_type_3"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -152,20 +153,20 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/home_customer_distribution_number"
+                    style="@style/TextAppearance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"/>
+
+                <TextView
                     android:id="@+id/home_customer_distribution_text"
                     style="@style/TextAppearance.Home"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:text="NPP"
-                    android:textColor="@color/color_piechart_level_4" />
-
-                <TextView
-                    android:id="@+id/home_customer_distribution_number"
-                    style="@style/TextAppearance"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp" />
+                    android:textColor="@color/color_piechart_level_4"/>
             </LinearLayout>
 
             <FrameLayout
@@ -178,8 +179,8 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/home_avatar_user"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp" />
+                    android:layout_width="@dimen/home_avatar_size"
+                    android:layout_height="@dimen/home_avatar_size"/>
             </FrameLayout>
 
             <FrameLayout
@@ -200,7 +201,7 @@
                     android:text="Nguyễn Đăng Luân"
                     android:textAllCaps="true"
                     android:textColor="@color/color_text"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
             </FrameLayout>
 
             <LinearLayout
@@ -214,21 +215,21 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/home_customer_consumer_number"
+                    style="@style/TextAppearance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"/>
+
+                <TextView
                     android:id="@+id/home_customer_consumer_text"
                     style="@style/TextAppearance.Home"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
-                    android:text="KH TIÊU DÙNG"
                     android:gravity="center"
-                    android:textColor="@color/color_piechart_level_3" />
-
-                <TextView
-                    android:id="@+id/home_customer_consumer_number"
-                    style="@style/TextAppearance"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp" />
+                    android:text="KH\nTIÊU DÙNG"
+                    android:textColor="@color/color_piechart_level_3"/>
             </LinearLayout>
 
         </RelativeLayout>
@@ -236,7 +237,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@drawable/divider" />
+            android:background="@drawable/divider"/>
 
         <LinearLayout
             android:id="@+id/home_summary_bottom"
@@ -262,7 +263,7 @@
                     style="@style/TextAppearance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"/>
 
                 <TextView
                     android:id="@+id/home_customer_potential_text"
@@ -271,14 +272,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:text="KH TIỀM NĂNG"
-                    android:textColor="@color/color_piechart_level_1" />
+                    android:textColor="@color/color_piechart_level_1"/>
 
             </LinearLayout>
 
             <View
                 android:layout_width="1px"
                 android:layout_height="match_parent"
-                android:background="@color/color_new_white" />
+                android:background="@color/color_new_white"/>
 
             <LinearLayout
                 android:id="@+id/home_customer_potential_month"
@@ -294,7 +295,7 @@
                     style="@style/TextAppearance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"/>
 
                 <TextView
                     android:id="@+id/home_customer_potential_month_text"
@@ -303,7 +304,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:text="KH TN THÁNG"
-                    android:textColor="@color/color_piechart_level_2" />
+                    android:textColor="@color/color_piechart_level_2"/>
             </LinearLayout>
 
         </LinearLayout>
@@ -319,7 +320,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:background="@color/border_color" />
+            android:background="@color/border_color"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -335,9 +336,9 @@
                 android:gravity="center_vertical"
                 android:padding="10dp"
                 android:paddingStart="12dp"
-                android:textStyle="bold"
+                android:text="@string/customer_need_new_product"
                 android:textColor="@color/color_piechart_level_3"
-                android:text="@string/customer_need_new_product" />
+                android:textStyle="bold"/>
 
             <com.example.dainq.smilenotes.ui.common.spinner.SingleSpinnerLayout
                 android:id="@+id/home_spinner_select_number"
@@ -345,13 +346,13 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
                 android:gravity="end"
-                android:textAlignment="gravity" />
+                android:textAlignment="gravity"/>
         </LinearLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:background="@color/border_color" />
+            android:background="@color/border_color"/>
     </LinearLayout>
 
     <LinearLayout
@@ -366,13 +367,13 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="Không có khách hàng nào"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/home_list_customer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:cacheColorHint="@android:color/transparent"
-            android:listSelector="@android:color/transparent" />
+            android:listSelector="@android:color/transparent"/>
     </LinearLayout>
 </RelativeLayout>

@@ -180,7 +180,6 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
     private void calculatorPercent() {
         //Need change to potential of month
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 24);
         Date end = calendar.getTime();
 
         @SuppressLint("SimpleDateFormat")
@@ -236,9 +235,9 @@ public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedL
 
         //Seclect list in 1 week or 1 month from today
         if (type == 0) {
-            calendar.add(Calendar.DAY_OF_MONTH, 7);
+            calendar.add(Calendar.DAY_OF_MONTH, 8);
         } else {
-            calendar.add(Calendar.DAY_OF_MONTH, 30);
+            calendar.add(Calendar.DAY_OF_MONTH, 31);
         }
         Date end = calendar.getTime();
         RealmResults<ProductObject> mRealmResult = mRealmController.getProductBetween(start, end, Sort.ASCENDING);

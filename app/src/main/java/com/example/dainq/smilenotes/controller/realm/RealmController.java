@@ -179,12 +179,16 @@ public class RealmController {
     }
 
     //query a single item with the given id
-    private MeetingObject getMetting(int id) {
-        return realm.where(MeetingObject.class).equalTo(Constant.KEY_ID, id).findFirst();
+    public MeetingObject getMetting(int id) {
+        return realm.where(MeetingObject.class)
+                .equalTo(Constant.KEY_ID, id)
+                .findFirst();
     }
 
     public RealmResults<MeetingObject> getMeetingOfCustomer(int id) {
-        return realm.where(MeetingObject.class).equalTo(Constant.KEY_ID_PLAN, id).findAll();
+        return realm.where(MeetingObject.class)
+                .equalTo(Constant.KEY_ID_PLAN, id)
+                .findAllSorted(Constant.PLAN_DATE, Sort.DESCENDING);
     }
 
     public void deleteMeeting(int id) {
@@ -221,7 +225,9 @@ public class RealmController {
     }
 
     public RealmResults<ProductObject> getProductOfCustomer(int id) {
-        return realm.where(ProductObject.class).equalTo(Constant.KEY_ID_PRODUCT, id).findAll();
+        return realm.where(ProductObject.class)
+                .equalTo(Constant.KEY_ID_PRODUCT, id)
+                .findAllSorted(Constant.PRODUCT_USE_DATE, Sort.ASCENDING);
     }
 
     public void deleteProduct(int id) {
@@ -232,7 +238,9 @@ public class RealmController {
     }
 
     public RealmResults<ProductObject> getProductBetween(Date start, Date end, Sort type) {
-        return realm.where(ProductObject.class).between(Constant.PRODUCT_USE_DATE, start, end).findAllSorted(Constant.PRODUCT_USE_DATE, type);
+        return realm.where(ProductObject.class)
+                .between(Constant.PRODUCT_USE_DATE, start, end)
+                .findAllSorted(Constant.PRODUCT_USE_DATE, type);
     }
 
     public void removeAllProduct(final RealmResults<ProductObject> realmResults) {
@@ -252,34 +260,53 @@ public class RealmController {
         realm.commitTransaction();
     }
 
-    public void deleteNotification(int id) {
-        realm.beginTransaction();
-        NotificationObject object = getNotification(id);
-        object.removeFromRealm();
-        realm.commitTransaction();
+    //getVia Id customer
+    public RealmResults<NotificationObject> getNotificationOfCustomer(int id) {
+        return realm.where(NotificationObject.class)
+                .equalTo(Constant.NOTIFICATION_ID_CUSTOMER, id)
+                .findAll();
     }
 
-    //getVia Id
-    private NotificationObject getNotification(int id) {
-        return realm.where(NotificationObject.class).equalTo(Constant.KEY_ID, id).findFirst();
+    //getVia Id customer
+    public RealmResults<NotificationObject> getNotificationOfMetting(int id) {
+        return realm.where(NotificationObject.class)
+                .equalTo(Constant.NOTIFICATION_ID_MEETING, id)
+                .findAll();
     }
 
-    //getAll
-    public RealmResults<NotificationObject> getNotifications() {
-        return realm.where(NotificationObject.class).findAll();
+    public NotificationObject getNotificationBirthDay(int idcustomer) {
+        return realm.where(NotificationObject.class)
+                .equalTo(Constant.NOTIFICATION_ID_CUSTOMER, idcustomer)
+                .equalTo(Constant.NOTIFICATION_TYPE_NOTI, Constant.NOTIFICATION_BIRTH_DAY)
+                .findFirst();
+    }
+    public RealmResults<NotificationObject> getListNotificationBirthDay(int idcustomer) {
+        return realm.where(NotificationObject.class)
+                .equalTo(Constant.NOTIFICATION_ID_CUSTOMER, idcustomer)
+                .equalTo(Constant.NOTIFICATION_TYPE_NOTI, Constant.NOTIFICATION_BIRTH_DAY)
+                .findAll();
+    }
+
+    public NotificationObject getNotificationPlan(int idmeeting) {
+        return realm.where(NotificationObject.class)
+                .equalTo(Constant.NOTIFICATION_ID_MEETING, idmeeting)
+                .equalTo(Constant.NOTIFICATION_TYPE_NOTI, Constant.NOTIFICATION_EVENT)
+                .findFirst();
     }
 
     //getAll until today
     public RealmResults<NotificationObject> getNotificationToday(Date date) {
-        return realm.where(NotificationObject.class).lessThanOrEqualTo(Constant.NOTIFICATION_DATE, date)
-                .findAllSorted(Constant.NOTIFICATION_DATE, Sort.DESCENDING);
+        return realm.where(NotificationObject.class)
+                .lessThanOrEqualTo(Constant.NOTIFICATION_DATEVALUE, date)
+                .findAllSorted(Constant.NOTIFICATION_READ, Sort.ASCENDING,
+                        Constant.NOTIFICATION_DATEVALUE, Sort.DESCENDING);
     }
 
     //getAll unread
     public RealmResults<NotificationObject> getNotificationUnread(Date date) {
         return realm.where(NotificationObject.class)
                 .equalTo(Constant.NOTIFICATION_READ, false)
-                .lessThanOrEqualTo(Constant.NOTIFICATION_DATE, date)
+                .lessThanOrEqualTo(Constant.NOTIFICATION_DATEVALUE, date)
                 .findAll();
     }
 
@@ -290,17 +317,18 @@ public class RealmController {
         realm.commitTransaction();
     }
 
-    public NotificationObject getNotificationByMeeting(int id) {
-        return realm.where(NotificationObject.class).equalTo(Constant.NOTIFICATION_ID_MEETING, id).findFirst();
-    }
-
-    public NotificationObject getNotificationByCustomer(int id) {
-        return realm.where(NotificationObject.class).equalTo(Constant.NOTIFICATION_ID_CUSTOMER, id).findFirst();
-    }
-
     public void clearAllNotification() {
         realm.beginTransaction();
         realm.clear(NotificationObject.class);
         realm.commitTransaction();
+    }
+
+    public void removeAllNotification(final RealmResults<NotificationObject> realmResults) {
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realmResults.clear();
+            }
+        });
     }
 }

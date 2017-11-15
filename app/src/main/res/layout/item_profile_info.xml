@@ -184,7 +184,7 @@
                     style="@style/TextAppearance"
                     android:layout_width="@dimen/create_title_width"
                     android:layout_height="wrap_content"
-                    android:text="Ngày sinh "/>
+                    android:text="Ngày sinh * "/>
 
                 <TextView
                     android:id="@+id/create_edit_date_of_birth"

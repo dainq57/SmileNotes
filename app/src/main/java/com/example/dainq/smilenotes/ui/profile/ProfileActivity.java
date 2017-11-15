@@ -84,6 +84,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         onUpdate();
         initToolBar();
         initViewPager();
+
+//        RealmResults<NotificationObject> notificationObjects = mRealmController.getNotificationOfCustomer(mCustomer.getId());
+//        Log.d("dainq size notification ", "" + notificationObjects.size());
+//        for (int i = 0; i < notificationObjects.size(); i++) {
+//            Log.d("dainq noti: ", notificationObjects.get(i).getDatevalue() + "");
+//        }
     }
 
     @Override
@@ -122,7 +128,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private void initViewPager() {
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
-        Log.d("dainq ", "Profile type " + type);
         if (type == Constant.PROFILE_TYPE_PRODUCT) {
             viewPager.setCurrentItem(3);
         }

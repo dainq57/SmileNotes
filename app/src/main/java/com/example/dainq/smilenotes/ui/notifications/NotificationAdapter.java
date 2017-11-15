@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.controller.realm.RealmController;
+import com.example.dainq.smilenotes.model.CustomerObject;
+import com.example.dainq.smilenotes.model.MeetingObject;
 import com.example.dainq.smilenotes.model.NotificationObject;
 import com.example.dainq.smilenotes.ui.common.realm.RealmRecyclerViewAdapter;
 import com.example.dainq.smilenotes.ui.profile.ProfileActivity;
@@ -39,26 +41,29 @@ public class NotificationAdapter extends RealmRecyclerViewAdapter<NotificationOb
         String date = Utility.dateToString(notification.getDate());
 
         NotificationViewHolder holder = (NotificationViewHolder) viewHolder;
-
         holder.mTime.setText(date);
-        holder.mTextNotification.setText(notification.getContent());
-        String avatar = notification.getAvatar();
-        if (avatar != null) {
-            holder.mAvatar.setImageBitmap(Utility.decodeImage(avatar));
-        }
+
+        CustomerObject customerObject = mRealmController.getCustomer(notification.getIdcustomer());
+        String name = customerObject.getName();
+
         int type = notification.getType();
         if (type == Constant.NOTIFICATION_EVENT) {
+            MeetingObject meetingObject = mRealmController.getMetting(notification.getIdmeeting());
+            String content = meetingObject.getContent();
             holder.mType.setImageDrawable(mContext.getResources().getDrawable(R.drawable.icon_schedule));
+            holder.mTextNotification.setText(notification.getContent() + name + ": " + content);
         } else {
             holder.mType.setImageDrawable(mContext.getResources().getDrawable(R.drawable.icon_birthday));
+            holder.mTextNotification.setText(notification.getContent() + name);
         }
+
         if (!notification.isread()) {
             holder.mContentLayout.setBackgroundColor(mContext.getResources().getColor(R.color.notification_unread));
         } else {
             holder.mContentLayout.setBackgroundColor(mContext.getResources().getColor(R.color.transparent));
         }
 
-        holder.mContentLayout.setOnClickListener(new View.OnClickListener() {
+        holder.mBoundary.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();

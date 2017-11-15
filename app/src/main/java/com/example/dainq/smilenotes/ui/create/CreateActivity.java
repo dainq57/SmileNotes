@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -43,17 +42,23 @@ import java.util.Calendar;
 import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.realm.RealmResults;
 import nq.dai.smilenotes.R;
 
 public class CreateActivity extends BaseActivity implements View.OnClickListener, OnSpinnerItemSelectedListener {
     private static final String TAG = "CreateActivity";
+    private static final int NUM_BIRTHDAY = 5;
 
     private int mLevel;
+    //id to set object
     private int mId;
     private EditText mADA;
     private EditText mName;
     private TextView mDateOfBirth;
+    //value date to view
     private Date dateOfBirth;
+    //value date of birth to set notification
+    private Date[] dateOfBirthValue;
     private EditText mPhoneNumber;
     private EditText mAddress;
     private EditText mReason;
@@ -63,6 +68,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
     private EditText mProductNeed;
     private LinearLayout mAdaLayout;
     private CircleImageView mAvatar;
+    //uri of avatar
     private Uri mUri;
 
     private boolean isSave;
@@ -73,13 +79,19 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
     private RatingBar mRatingBar;
 
     private SharedPreferences mPref, mPrefNoti;
+    //value id get from pref
     private int mIdKey;
     private int mAction;
     private SingleSpinnerLayout mSpinner;
+    //id customer when show profile of customer
     private int mCustomerId;
 
-    private int mIdNoti;
+    //id get from pref of notification
     private int mIdNotiKey;
+
+    private RealmResults<NotificationObject> mNotification;
+
+    private String tempDate = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +130,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         mRealmController = RealmController.with(this);
 
         mRatingBar = (RatingBar) findViewById(R.id.create_rating_bar);
-
+        dateOfBirthValue = new Date[NUM_BIRTHDAY + 1];
         initDialogDateOfBirth();
         initSpinner();
 
@@ -139,8 +151,8 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
             mADA.setText(mCustomer.getAda());
             mName.setText(mCustomer.getName());
 
-            String date = Utility.dateToString(mCustomer.getDateofbirth());
-            mDateOfBirth.setText(date);
+            tempDate = Utility.dateToString(mCustomer.getDateofbirth());
+            mDateOfBirth.setText(tempDate);
             mPhoneNumber.setText(mCustomer.getPhonenumber());
             mAddress.setText(mCustomer.getAddress());
             mReason.setText(mCustomer.getReason());
@@ -153,11 +165,13 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
             if (avatar != null) {
                 mAvatar.setImageBitmap(Utility.decodeImage(avatar));
             }
+
+            mNotification = mRealmController.getListNotificationBirthDay(mCustomerId);
         }
 
         mPrefNoti = getSharedPreferences(Constant.PREF_USER, Context.MODE_PRIVATE);
         mIdNotiKey = mPrefNoti.getInt(Constant.USER_NOTIFICATION, Constant.PREF_ID_DEFAULT);
-        Log.d("dainq ", "Create getIdNoti from pref " + mIdNotiKey);
+        Log.d("dainqid ", "Create getIdNoti from pref " + mIdNotiKey);
     }
 
     private int getAction() {
@@ -269,8 +283,14 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
 
         if (mLevel > Constant.CUSTOMER_LEVEL_2) {
             String ada = mADA.getText().toString();
-            if (adaIsExit() && !ada.equals(mCustomer.getAda())) {
-                return Constant.VALIDATE_ADA;
+            if (adaIsExit()) {
+                if (mAction == Constant.ACTION_EDIT) {
+                    if (!ada.equals(mCustomer.getAda())) {
+                        return Constant.VALIDATE_ADA;
+                    }
+                } else {
+                    return Constant.VALIDATE_ADA;
+                }
             }
         }
         String number = mPhoneNumber.getText().toString();
@@ -287,7 +307,8 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
 
         return (Utility.isEmptyString(name)
                 || Utility.isEmptyString(phone)
-                || Utility.isEmptyString(address));
+                || Utility.isEmptyString(address)
+                || Utility.isEmptyString(tempDate));
 
     }
 
@@ -320,18 +341,53 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
 
     public void initDialogDateOfBirth() {
         Calendar calendar = Calendar.getInstance();
+        //reset hour to 0h
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        //get current year and current day
+        final int currentyear = calendar.get(Calendar.YEAR);
+        final int currentmonth = calendar.get(Calendar.MONTH);
+        final int currentday = calendar.get(Calendar.DAY_OF_MONTH);
+
         mDialogDateOfBirth = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
+                newDate.set(Calendar.HOUR_OF_DAY, 0);
+
                 dateOfBirth = newDate.getTime();
                 String dateSet = Utility.dateToString(dateOfBirth);
+                tempDate = dateSet;
                 mDateOfBirth.setText(dateSet);
+
+                //Value to set notification birthday
+                //calculate real birthday
+                if (monthOfYear >= currentmonth) {
+                    if (dayOfMonth >= currentday) {
+                        Log.d("dainq setdate", "dayOfMonth >= currentday");
+                        newDate.add(Calendar.YEAR, (currentyear - year));
+                    } else {
+                        Log.d("dainq setdate", "dayOfMonth < currentday");
+                        newDate.add(Calendar.YEAR, (currentyear - year) + 1);
+                    }
+                } else {
+                    Log.d("dainq setdate", "monthOfYear < currentmonth");
+                    newDate.add(Calendar.YEAR, (currentyear - year) + 1);
+                }
+//                newDate.set(Calendar.HOUR_OF_DAY, 0);
+                dateOfBirthValue[0] = newDate.getTime();
+                Log.d("dainq year", "dateofBirth noti " + dateOfBirthValue[0]);
+                for (int i = 1; i < NUM_BIRTHDAY; i++) {
+                    newDate.add(Calendar.YEAR, 1);
+                    dateOfBirthValue[i] = newDate.getTime();
+                    Log.d("dainq year", "dateofBirth noti " + dateOfBirthValue[i]);
+                }
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 
-        mDialogDateOfBirth.getDatePicker().setLayoutMode(1);
+        mDialogDateOfBirth.getDatePicker().
+
+                setLayoutMode(1);
     }
 
     @Override
@@ -396,11 +452,11 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         setData(mCustomer);
         mRealmController.getRealm().commitTransaction();
 
-        Intent intent = new Intent(this, NotificationReceiver.class);
-        Bundle bundle = new Bundle();
-        bundle.putString(Constant.CUSTOMER_NAME, mCustomer.getName());
-        bundle.putInt(Constant.NOTIFICATION_TYPE, Constant.NOTIFICATION_BIRTH_DAY);
-        intent.putExtras(bundle);
+        for (int i = 0; i < NUM_BIRTHDAY; i++) {
+            if (dateOfBirthValue[i] != null) {
+                updateNotification(mNotification.get(i), dateOfBirthValue[i]);
+            }
+        }
     }
 
     private void setData(CustomerObject object) {
@@ -411,15 +467,17 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
                 object.setAda(mADA.getText().toString());
             }
         }
-        String avatar = null;
+
         if (mUri != null) {
-            avatar = Utility.convertImage(this, mUri);
+            String avatar = Utility.convertImage(this, mUri);
             object.setAvatar(avatar);
         }
-        String name = mName.getText().toString();
+        String tempName = mName.getText().toString();
 
-        object.setName(name);
-        object.setDateofbirth(dateOfBirth);
+        object.setName(tempName);
+        if (dateOfBirth != null) {
+            object.setDateofbirth(dateOfBirth);
+        }
         object.setPhonenumber(mPhoneNumber.getText().toString());
         object.setAddress(mAddress.getText().toString());
         object.setReason(mReason.getText().toString());
@@ -427,9 +485,16 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         object.setSolution(mSolution.getText().toString());
         object.setNote(mNote.getText().toString());
         object.setProduct(mProductNeed.getText().toString());
-
-        if (dateOfBirth != null && mAction == Constant.ACTION_CREATE) {
-            setNotificationn(name, avatar);
+        if (dateOfBirth != null) {
+            if (mAction == Constant.ACTION_CREATE) {
+                int id = mIdNotiKey;
+                for (int i = 0; i < NUM_BIRTHDAY; i++) {
+                    setNotification(dateOfBirthValue[i], id);
+                    id++;
+                }
+                Log.d("dainqid ", "id noti put " + id);
+                mPrefNoti.edit().putInt(Constant.USER_NOTIFICATION, id).apply();
+            }
         }
     }
 
@@ -481,37 +546,45 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         super.onDestroy();
     }
 
-    private void setNotificationn(String name, String avatar) {
+    private void setNotification(Date date, int id) {
         //create notification to realm
-        createNotification(name, avatar);
+        createNotification(date, id);
         //push notification use broadcast receiver
         Intent intent = new Intent(this, NotificationReceiver.class);
         Bundle bundle = new Bundle();
 
-        bundle.putInt(Constant.NOTIFICATION_TYPE, Constant.NOTIFICATION_BIRTH_DAY);
-        bundle.putString(Constant.NOTIFICATION_NAME_CUSTOMER, name);
-        bundle.putInt(Constant.NOTIFICATION_ID, mIdNoti);
+        bundle.putInt(Constant.NOTIFICATION_ID, id);
 
         intent.putExtras(bundle);
 
-        NotificationHelper.setRemindRTC(this, dateOfBirth, intent);
+        NotificationHelper.setRemindRTC(this, date, intent);
         NotificationHelper.enableBootReceiver(this);
     }
 
-    private void createNotification(String name, String avatar) {
+    private void createNotification(Date date, int id) {
         NotificationObject notification = new NotificationObject();
-        mIdNoti = Utility.createId(mIdNotiKey);
-        Log.d(TAG + "dainq", " put notification id: " + mIdNoti);
-        mPrefNoti.edit().putInt(Constant.USER_NOTIFICATION, mIdNoti).apply();
 
-        notification.setId(mIdNoti);
+        notification.setId(id);
         notification.setIdcustomer(mId);
         notification.setIsread(false);
         notification.setType(Constant.NOTIFICATION_BIRTH_DAY);
-        notification.setContent("Sinh nhật " + name);
+        notification.setContent("Sinh nhật ");
         notification.setDate(dateOfBirth);
-        notification.setAvatar(avatar);
+        notification.setDatevalue(date);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.get(Calendar.YEAR);
 
         mRealmController.addNotification(notification);
+    }
+
+    private void updateNotification(NotificationObject notification, Date date) {
+        mRealmController.getRealm().beginTransaction();
+        notification.setDatevalue(date);
+        notification.setDate(dateOfBirth);
+        if (date != notification.getDatevalue()) {
+            notification.setIsread(false);
+        }
+        mRealmController.getRealm().commitTransaction();
     }
 }

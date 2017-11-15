@@ -17,6 +17,7 @@ import java.util.Date;
 
 import nq.dai.smilenotes.R;
 
+
 public class ProfileInfoFragment extends BaseFragment {
     private Context mContext;
     private TextView mDateOfBirth;

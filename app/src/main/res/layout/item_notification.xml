@@ -1,28 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:swipe="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/notification_content"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="?android:selectableItemBackground"
-    android:orientation="vertical"
-    android:paddingEnd="12dp"
-    android:paddingStart="12dp">
+  android:id="@+id/notification_content"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/notification_layout"
         android:layout_width="match_parent"
-        android:layout_height="60dp">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/item_noti_avatar_user"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:layout_marginEnd="12dp"
-            android:background="@drawable/bg_profile_image"
-            swipe:civ_border_color="@color/border_color"
-            swipe:civ_border_width="1px" />
+        android:background="?android:selectableItemBackground"
+        android:layout_height="60dp"
+        android:paddingEnd="12dp"
+        android:paddingStart="12dp">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -40,7 +29,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="Notification"
-                android:textSize="14dp" />
+                android:textSize="14dp"/>
 
             <TextView
                 android:id="@+id/notification_time"
@@ -51,7 +40,7 @@
                 android:maxLines="1"
                 android:text="Time/Date"
                 android:textColor="@color/colorAccent"
-                android:textSize="13dp" />
+                android:textSize="13dp"/>
         </LinearLayout>
 
         <ImageView
@@ -59,12 +48,12 @@
             android:layout_width="18dp"
             android:layout_height="18dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="12dp" />
+            android:layout_marginStart="12dp"/>
     </LinearLayout>
 
     <FrameLayout
         android:id="@+id/notification_divider"
         android:layout_width="match_parent"
         android:layout_height="2px"
-        android:background="@drawable/divider" />
+        android:background="@drawable/divider"/>
 </LinearLayout>

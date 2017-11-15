@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.example.dainq.smilenotes.common.BaseFragment;
@@ -28,11 +29,10 @@ import nq.dai.smilenotes.R;
 
 public class NotificationFragment extends BaseFragment implements View.OnClickListener {
     private Context mContext;
-    private RecyclerView mListNotification;
     private NotificationAdapter mAdapter;
     private RealmController mRealmController;
     private TextView mTextNotResult;
-    private TextView mDeleteNoti;
+    private RealmResults<NotificationObject> mRealmResults;
 
     public NotificationFragment(Context context) {
         mContext = context;
@@ -48,7 +48,7 @@ public class NotificationFragment extends BaseFragment implements View.OnClickLi
     }
 
     private void initView(View view) {
-        mListNotification = (RecyclerView) view.findViewById(R.id.list_notification);
+        RecyclerView mListNotification = (RecyclerView) view.findViewById(R.id.list_notification);
         mListNotification.setHasFixedSize(true);
         mListNotification.setLayoutManager(new LinearLayoutManager(mContext));
         mAdapter = new NotificationAdapter(mContext);
@@ -56,7 +56,7 @@ public class NotificationFragment extends BaseFragment implements View.OnClickLi
         mListNotification.setAdapter(mAdapter);
 
         mTextNotResult = (TextView) view.findViewById(R.id.notification_not_result);
-        mDeleteNoti = (TextView) view.findViewById(R.id.notification_delete_notification);
+        TextView mDeleteNoti = (TextView) view.findViewById(R.id.notification_delete_notification);
         mDeleteNoti.setOnClickListener(this);
     }
 
@@ -64,14 +64,15 @@ public class NotificationFragment extends BaseFragment implements View.OnClickLi
         mRealmController = RealmController.with(this);
         Calendar calendar = Calendar.getInstance();
         Date date = Utility.resetCalendar(calendar);
-        RealmResults<NotificationObject> realmResults = mRealmController.getNotificationToday(date);
+        Log.d("dainq date today ", "" + date);
+        mRealmResults = mRealmController.getNotificationToday(date);
 
-        Log.d("dainq ", "empty? " + realmResults.isEmpty());
-        if (realmResults.isEmpty()) {
+        Log.d("dainq ", "empty? " + mRealmResults.isEmpty());
+        if (mRealmResults.isEmpty()) {
             mTextNotResult.setVisibility(View.VISIBLE);
         } else {
             mTextNotResult.setVisibility(View.GONE);
-            RealmNotificationAdapter realmAdapter = new RealmNotificationAdapter(mContext, realmResults, true);
+            RealmNotificationAdapter realmAdapter = new RealmNotificationAdapter(mContext, mRealmResults, true);
             mAdapter.setRealmAdapter(realmAdapter);
         }
         mAdapter.notifyDataSetChanged();
@@ -87,8 +88,12 @@ public class NotificationFragment extends BaseFragment implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.notification_delete_notification:
-                deleteAllNotification();
-                Log.d("dainq ", "delete all notification");
+                if (!mRealmResults.isEmpty()) {
+                    deleteAllNotification();
+                    Log.d("dainq ", "delete all notification");
+                } else {
+                    Toast.makeText(mContext, "Không có thông báo!", Toast.LENGTH_SHORT).show();
+                }
                 break;
 
             default:

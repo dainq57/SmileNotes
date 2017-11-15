@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 
 import com.example.dainq.smilenotes.common.Constant;
@@ -72,8 +73,30 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingViewHolder> {
         createDialog(mContext.getResources().getString(R.string.alert_anouncement_backup));
     }
 
+
     private void aboutUs() {
-        createDialog(mContext.getResources().getString(R.string.alert_about_us));
+        final View view = View.inflate(mContext, R.layout.dialog_about_app, null);
+        final AlertDialog.Builder builder;
+
+        builder = new AlertDialog.Builder(mContext);
+        builder.setPositiveButton("OK", null);
+        builder.setView(view);
+        builder.setCancelable(false);
+
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialog) {
+                Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+        alertDialog.show();
     }
 
     private void createDialog(String title) {
