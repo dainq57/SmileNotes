@@ -158,6 +158,7 @@ public class CreatePlanDialog extends DialogFragment implements View.OnClickList
         int height = displayMetrics.heightPixels;
 
         Window window = getDialog().getWindow();
+        assert window != null;
         window.setLayout((int) (width * 0.9f), (int) (height * 0.85f));
         window.setGravity(Gravity.CENTER);
     }

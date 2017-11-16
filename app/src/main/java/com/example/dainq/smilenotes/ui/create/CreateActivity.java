@@ -19,6 +19,8 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -68,6 +70,9 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
     private EditText mProductNeed;
     private LinearLayout mAdaLayout;
     private CircleImageView mAvatar;
+    private EditText mJob;
+    private RadioButton mMale, mFemale;
+    private RadioGroup mGender;
     //uri of avatar
     private Uri mUri;
 
@@ -90,8 +95,6 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
     private int mIdNotiKey;
 
     private RealmResults<NotificationObject> mNotification;
-
-    private String tempDate = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +130,11 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         mNote = (EditText) findViewById(R.id.create_edit_note);
         mProductNeed = (EditText) findViewById(R.id.create_edit_product_need);
 
+        mJob = (EditText) findViewById(R.id.create_edit_job);
+        mGender = (RadioGroup) findViewById(R.id.create_gender);
+        mMale = (RadioButton) mGender.findViewById(R.id.create_gender_male);
+        mFemale = (RadioButton) mGender.findViewById(R.id.create_gender_female);
+
         mRealmController = RealmController.with(this);
 
         mRatingBar = (RatingBar) findViewById(R.id.create_rating_bar);
@@ -141,6 +149,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         if (mAction == Constant.ACTION_CREATE) {
             mButtonSave.setText(R.string.save);
             getSupportActionBar().setTitle(R.string.title_create_new_customer);
+            mMale.setChecked(true);
         } else {
             mButtonSave.setText(R.string.update);
             getSupportActionBar().setTitle(R.string.update_info);
@@ -151,7 +160,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
             mADA.setText(mCustomer.getAda());
             mName.setText(mCustomer.getName());
 
-            tempDate = Utility.dateToString(mCustomer.getDateofbirth());
+            String tempDate = Utility.dateToString(mCustomer.getDateofbirth());
             mDateOfBirth.setText(tempDate);
             mPhoneNumber.setText(mCustomer.getPhonenumber());
             mAddress.setText(mCustomer.getAddress());
@@ -160,6 +169,12 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
             mSolution.setText(mCustomer.getSolution());
             mNote.setText(mCustomer.getNote());
             mProductNeed.setText(mCustomer.getProduct());
+            mJob.setText(mCustomer.getJob());
+            if (mCustomer.getGender() == 0) {
+                mFemale.setChecked(true);
+            } else {
+                mMale.setChecked(true);
+            }
 
             String avatar = mCustomer.getAvatar();
             if (avatar != null) {
@@ -307,8 +322,7 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
 
         return (Utility.isEmptyString(name)
                 || Utility.isEmptyString(phone)
-                || Utility.isEmptyString(address)
-                || Utility.isEmptyString(tempDate));
+                || Utility.isEmptyString(address));
 
     }
 
@@ -357,7 +371,6 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
 
                 dateOfBirth = newDate.getTime();
                 String dateSet = Utility.dateToString(dateOfBirth);
-                tempDate = dateSet;
                 mDateOfBirth.setText(dateSet);
 
                 //Value to set notification birthday
@@ -485,16 +498,28 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         object.setSolution(mSolution.getText().toString());
         object.setNote(mNote.getText().toString());
         object.setProduct(mProductNeed.getText().toString());
-        if (dateOfBirth != null) {
-            if (mAction == Constant.ACTION_CREATE) {
-                int id = mIdNotiKey;
+        object.setJob(mJob.getText().toString());
+
+        int index = mGender.indexOfChild(findViewById(mGender.getCheckedRadioButtonId()));
+        object.setGender(index);
+        Log.d("dainq", " gender:" + index);
+
+        if (mAction == Constant.ACTION_CREATE) {
+            int id = mIdNotiKey + 1;
+            if (dateOfBirth != null) {
                 for (int i = 0; i < NUM_BIRTHDAY; i++) {
                     setNotification(dateOfBirthValue[i], id);
                     id++;
                 }
                 Log.d("dainqid ", "id noti put " + id);
-                mPrefNoti.edit().putInt(Constant.USER_NOTIFICATION, id).apply();
+            } else {
+                for (int i = 0; i < NUM_BIRTHDAY; i++) {
+                    createNotification(dateOfBirthValue[i], id);
+                    id++;
+                }
+                Log.d("dainqid ", "id noti put " + id);
             }
+            mPrefNoti.edit().putInt(Constant.USER_NOTIFICATION, id).apply();
         }
     }
 
@@ -565,7 +590,11 @@ public class CreateActivity extends BaseActivity implements View.OnClickListener
         NotificationObject notification = new NotificationObject();
 
         notification.setId(id);
-        notification.setIdcustomer(mId);
+        if (mAction == Constant.ACTION_CREATE) {
+            notification.setIdcustomer(mId);
+        } else {
+            notification.setIdcustomer(mCustomerId);
+        }
         notification.setIsread(false);
         notification.setType(Constant.NOTIFICATION_BIRTH_DAY);
         notification.setContent("Sinh nhật ");

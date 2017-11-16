@@ -22,6 +22,8 @@ public class CustomerObject extends RealmObject {
     private String phonenumber;
     private String address;
     private String reason;
+    private int gender;
+    private String job;
 
     private String problem;
     private String solution;
@@ -138,5 +140,22 @@ public class CustomerObject extends RealmObject {
 
     public void setDatecreate(Date datecreate) {
         this.datecreate = datecreate;
+    }
+
+
+    public int getGender() {
+        return gender;
+    }
+
+    public void setGender(int gender) {
+        this.gender = gender;
+    }
+
+    public String getJob() {
+        return job;
+    }
+
+    public void setJob(String job) {
+        this.job = job;
     }
 }

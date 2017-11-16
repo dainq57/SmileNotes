@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.example.dainq.smilenotes.common.BaseFragment;
@@ -24,6 +26,8 @@ public class ProfileInfoFragment extends BaseFragment {
     private EditText mPhoneNumber;
     private EditText mAddress;
     private EditText mReason;
+    private RadioButton mMale, mFemale;
+    private EditText mJob;
 
     private CustomerObject mCustomer;
 
@@ -58,6 +62,13 @@ public class ProfileInfoFragment extends BaseFragment {
         mPhoneNumber.setText(mCustomer.getPhonenumber());
         mAddress.setText(mCustomer.getAddress());
         mReason.setText(mCustomer.getReason());
+        mJob.setText(mCustomer.getJob());
+        int gender = mCustomer.getGender();
+        if (gender == 0) {
+            mFemale.setChecked(true);
+        } else {
+            mMale.setChecked(true);
+        }
     }
 
     private void initView(View view) {
@@ -77,5 +88,13 @@ public class ProfileInfoFragment extends BaseFragment {
         mAddress.setEnabled(false);
         mReason = (EditText) view.findViewById(R.id.create_edit_reason);
         mReason.setEnabled(false);
+        mJob = (EditText) view.findViewById(R.id.create_edit_job);
+        mJob.setEnabled(false);
+
+        RadioGroup mGender = (RadioGroup) view.findViewById(R.id.create_gender);
+        mMale = (RadioButton) mGender.findViewById(R.id.create_gender_male);
+        mFemale = (RadioButton) mGender.findViewById(R.id.create_gender_female);
+        mMale.setClickable(false);
+        mFemale.setClickable(false);
     }
 }

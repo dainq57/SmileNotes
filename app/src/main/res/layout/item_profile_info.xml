@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -26,14 +25,14 @@
                 android:layout_marginEnd="5dp"
                 android:text="Phân loại"
                 android:textAllCaps="true"
-                android:textStyle="bold|italic"/>
+                android:textStyle="bold|italic" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="3px"
                 android:layout_marginEnd="5dp"
                 android:layout_weight="1"
-                android:background="@color/listview_divider_color"/>
+                android:background="@color/listview_divider_color" />
 
             <!--<ImageView-->
             <!--android:id="@+id/create_filter_dropdown"-->
@@ -59,7 +58,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Loại khách hàng "/>
+                    android:text="Loại khách hàng " />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -72,7 +71,7 @@
                         android:layout_height="20dp"
                         android:layout_marginEnd="-12dp"
                         android:gravity="end"
-                        android:textAlignment="gravity"/>
+                        android:textAlignment="gravity" />
 
                     <RatingBar
                         android:id="@+id/create_rating_bar"
@@ -81,7 +80,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:layout_marginTop="2dp"
-                        android:numStars="5"/>
+                        android:numStars="5" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -97,14 +96,14 @@
                     style="@style/TextAppearance"
                     android:layout_width="@dimen/create_title_width"
                     android:layout_height="wrap_content"
-                    android:text="Mã ADA"/>
+                    android:text="Mã ADA" />
 
                 <EditText
                     android:id="@+id/create_edit_ada"
                     style="@style/EditText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -129,14 +128,14 @@
                 android:layout_marginEnd="5dp"
                 android:text="Thông tin cơ bản"
                 android:textAllCaps="true"
-                android:textStyle="bold|italic"/>
+                android:textStyle="bold|italic" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="3px"
                 android:layout_marginEnd="5dp"
                 android:layout_weight="1"
-                android:background="@color/listview_divider_color"/>
+                android:background="@color/listview_divider_color" />
 
             <!--<ImageView-->
             <!--android:id="@+id/create_info_dropdown"-->
@@ -163,14 +162,14 @@
                     style="@style/TextAppearance"
                     android:layout_width="@dimen/create_title_width"
                     android:layout_height="wrap_content"
-                    android:text="Họ tên *"/>
+                    android:text="Họ tên *" />
 
                 <EditText
                     android:id="@+id/create_edit_name"
                     style="@style/EditText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
             </LinearLayout>
 
             <LinearLayout
@@ -184,14 +183,47 @@
                     style="@style/TextAppearance"
                     android:layout_width="@dimen/create_title_width"
                     android:layout_height="wrap_content"
-                    android:text="Ngày sinh * "/>
+                    android:text="Giới tính *" />
+
+                <RadioGroup
+                    android:id="@+id/create_gender"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <RadioButton
+                        android:id="@+id/create_gender_female"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="20dp"
+                        android:text="Nữ" />
+                    <RadioButton
+                        android:id="@+id/create_gender_male"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Nam" />
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp">
+
+                <TextView
+                    style="@style/TextAppearance"
+                    android:layout_width="@dimen/create_title_width"
+                    android:layout_height="wrap_content"
+                    android:text="Ngày sinh " />
 
                 <TextView
                     android:id="@+id/create_edit_date_of_birth"
                     style="@style/EditText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
             </LinearLayout>
 
             <LinearLayout
@@ -205,7 +237,7 @@
                     style="@style/TextAppearance"
                     android:layout_width="@dimen/create_title_width"
                     android:layout_height="wrap_content"
-                    android:text="Số điên thoại *"/>
+                    android:text="Số điên thoại *" />
 
                 <EditText
                     android:id="@+id/create_edit_phonenumber"
@@ -213,7 +245,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:inputType="phone"/>
+                    android:inputType="phone" />
             </LinearLayout>
 
             <LinearLayout
@@ -227,14 +259,14 @@
                     style="@style/TextAppearance"
                     android:layout_width="@dimen/create_title_width"
                     android:layout_height="wrap_content"
-                    android:text="Địa chỉ *"/>
+                    android:text="Địa chỉ *" />
 
                 <EditText
                     android:id="@+id/create_edit_address"
                     style="@style/EditText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
             </LinearLayout>
 
             <LinearLayout
@@ -248,14 +280,35 @@
                     style="@style/TextAppearance"
                     android:layout_width="@dimen/create_title_width"
                     android:layout_height="wrap_content"
-                    android:text="Lý do quen biết "/>
+                    android:text="Nghề nghiệp" />
+
+                <EditText
+                    android:id="@+id/create_edit_job"
+                    style="@style/EditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp">
+
+                <TextView
+                    style="@style/TextAppearance"
+                    android:layout_width="@dimen/create_title_width"
+                    android:layout_height="wrap_content"
+                    android:text="Lý do quen biết " />
 
                 <EditText
                     android:id="@+id/create_edit_reason"
                     style="@style/EditText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

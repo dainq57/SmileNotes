@@ -37,6 +37,7 @@
                 android:lineSpacingExtra="3dp"
                 android:text="@string/alert_about_us"
                 android:textAlignment="center"
+                android:gravity="center"
                 android:textColor="@color/colorAccent"/>
 
             <View
