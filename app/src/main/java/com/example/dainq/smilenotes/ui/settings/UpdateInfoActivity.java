@@ -7,11 +7,11 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -20,7 +20,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.dainq.smilenotes.common.BaseActivity;
 import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.common.Utility;
 import com.soundcloud.android.crop.Crop;
@@ -30,7 +29,7 @@ import java.io.File;
 import de.hdodenhof.circleimageview.CircleImageView;
 import nq.dai.smilenotes.R;
 
-public class UpdateInfoActivity extends BaseActivity implements View.OnClickListener {
+public class UpdateInfoActivity extends AppCompatActivity implements View.OnClickListener {
     private CircleImageView mAvatar;
     private EditText mEditName;
     private TextView mSave;

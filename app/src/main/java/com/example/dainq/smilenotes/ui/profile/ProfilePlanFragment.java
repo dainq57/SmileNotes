@@ -2,6 +2,7 @@ package com.example.dainq.smilenotes.ui.profile;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.dainq.smilenotes.common.BaseFragment;
 import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.controller.realm.RealmController;
 import com.example.dainq.smilenotes.model.CustomerObject;
@@ -22,7 +22,7 @@ import com.example.dainq.smilenotes.ui.profile.plan.RealmMeetingAdapter;
 import io.realm.RealmResults;
 import nq.dai.smilenotes.R;
 
-public class ProfilePlanFragment extends BaseFragment implements View.OnClickListener {
+public class ProfilePlanFragment extends Fragment implements View.OnClickListener {
     private String TAG = "ProfilePlanFragment";
 
     private Context mContext;

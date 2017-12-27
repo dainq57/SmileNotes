@@ -7,26 +7,28 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.IdRes;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.dainq.smilenotes.common.BaseActivity;
-import com.example.dainq.smilenotes.common.BaseFragment;
 import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.controller.realm.RealmController;
 import com.example.dainq.smilenotes.ui.create.CreateActivity;
 import com.example.dainq.smilenotes.ui.home.HomeFragment;
 import com.example.dainq.smilenotes.ui.notifications.NotificationFragment;
-import com.example.dainq.smilenotes.ui.search.SearchFragment;
+import com.example.dainq.smilenotes.ui.other.GoldKeyFragment;
+import com.example.dainq.smilenotes.ui.other.PigFragment;
+import com.example.dainq.smilenotes.ui.search.SearchActivity;
 import com.example.dainq.smilenotes.ui.settings.SettingFragment;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.BottomBarTab;
 import com.roughike.bottombar.OnTabSelectListener;
@@ -39,14 +41,17 @@ import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import nq.dai.smilenotes.R;
 
-public class MainActivity extends BaseActivity implements OnTabSelectListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements OnTabSelectListener, View.OnClickListener {
     private BottomBarTab mNotificationTab;
 
     protected FragmentTransaction mFragment;
     private HomeFragment mHomeFragment;
     private NotificationFragment mNotificationFragment;
     private SettingFragment mSettingFragment;
-    private SearchFragment mSearchFragment;
+    private GoldKeyFragment mGoldKeyFragment;
+    private PigFragment mPigFragment;
+
+    private FloatingActionMenu mFab;
 
     private SharedPreferences mPref;
 
@@ -64,15 +69,21 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener, V
         mHomeFragment = new HomeFragment(this);
         mNotificationFragment = new NotificationFragment(this);
         mSettingFragment = new SettingFragment(this);
-        mSearchFragment = new SearchFragment(this);
+        mGoldKeyFragment = new GoldKeyFragment(this);
+        mPigFragment = new PigFragment(this);
 
         mFragment = getSupportFragmentManager().beginTransaction();
         mFragment.add(R.id.fragment, mHomeFragment);
         mFragment.commit();
 
-        FloatingActionButton mFab = (FloatingActionButton) findViewById(R.id.fab);
-        mFab.getDrawable().mutate().setTint(ContextCompat.getColor(this, R.color.white));
-        mFab.setOnClickListener(this);
+        mFab = (FloatingActionMenu) findViewById(R.id.fab);
+        mFab.setClosedOnTouchOutside(true);
+
+        FloatingActionButton mFabAdd = (FloatingActionButton) findViewById(R.id.fab_add);
+        mFabAdd.setOnClickListener(this);
+
+        FloatingActionButton mFabSearch = (FloatingActionButton) findViewById(R.id.fab_search);
+        mFabSearch.setOnClickListener(this);
 
         mPref = this.getSharedPreferences(Constant.PREF_USER, Context.MODE_PRIVATE);
         boolean isFirst = mPref.getBoolean(Constant.USER_FIRST_USE, true);
@@ -145,13 +156,17 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener, V
                 replaceFragment(mHomeFragment);
                 break;
 
-            case R.id.tab_search:
-                replaceFragment(mSearchFragment);
+            case R.id.tab_gold_key:
+                replaceFragment(mGoldKeyFragment);
                 break;
 
             case R.id.tab_notifications:
                 replaceFragment(mNotificationFragment);
                 mNotificationTab.removeBadge();
+                break;
+
+            case R.id.tab_pig:
+                replaceFragment(mPigFragment);
                 break;
 
             case R.id.tab_settings:
@@ -164,7 +179,7 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener, V
     }
 
     @SuppressLint("CommitTransaction")
-    private void replaceFragment(BaseFragment fragment) {
+    private void replaceFragment(Fragment fragment) {
         mFragment = getSupportFragmentManager().beginTransaction();
         mFragment.replace(R.id.fragment, fragment);
         mFragment.commit();
@@ -173,14 +188,22 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener, V
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.fab:
+            case R.id.fab_add:
                 startCreate();
+                mFab.close(true);
+                break;
+
+            case R.id.fab_search:
+                Intent intent = new Intent(this, SearchActivity.class);
+                startActivity(intent);
+                mFab.close(true);
                 break;
 
             default:
                 break;
         }
     }
+
 
     private void startCreate() {
         Bundle bundle = new Bundle();

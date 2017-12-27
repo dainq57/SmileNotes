@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -26,7 +27,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.example.dainq.smilenotes.common.BaseActivity;
 import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.controller.realm.RealmController;
@@ -47,7 +47,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import io.realm.RealmResults;
 import nq.dai.smilenotes.R;
 
-public class CreateActivity extends BaseActivity implements View.OnClickListener, OnSpinnerItemSelectedListener {
+public class CreateActivity extends AppCompatActivity implements View.OnClickListener, OnSpinnerItemSelectedListener {
     private static final String TAG = "CreateActivity";
     private static final int NUM_BIRTHDAY = 5;
 

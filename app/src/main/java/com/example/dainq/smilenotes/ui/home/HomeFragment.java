@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.dainq.smilenotes.common.BaseFragment;
 import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.controller.realm.RealmController;
@@ -41,7 +41,7 @@ import io.realm.RealmResults;
 import io.realm.Sort;
 import nq.dai.smilenotes.R;
 
-public class HomeFragment extends BaseFragment implements OnSpinnerItemSelectedListener, View.OnClickListener {
+public class HomeFragment extends Fragment implements OnSpinnerItemSelectedListener, View.OnClickListener {
     private String TAG = "HomeFragment";
 
     private Context mContext;

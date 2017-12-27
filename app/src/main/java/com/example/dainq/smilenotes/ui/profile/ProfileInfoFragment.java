@@ -2,6 +2,7 @@ package com.example.dainq.smilenotes.ui.profile;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.example.dainq.smilenotes.common.BaseFragment;
 import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.model.CustomerObject;
 
@@ -20,7 +20,7 @@ import java.util.Date;
 import nq.dai.smilenotes.R;
 
 
-public class ProfileInfoFragment extends BaseFragment {
+public class ProfileInfoFragment extends Fragment {
     private Context mContext;
     private TextView mDateOfBirth;
     private EditText mPhoneNumber;

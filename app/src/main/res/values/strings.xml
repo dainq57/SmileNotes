@@ -120,4 +120,32 @@
     </string>
     <string name="dont_have_notification">Bạn không có thông báo mới nào!</string>
     <string name="enter_your_name_touse_app">Nhập tên của bạn để bắt đầu sử dụng ứng dụng</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">Email chưa chính xác</string>
+    <string name="error_invalid_password_login">Mật khẩu sai</string>
+    <string name="error_invalid_password">Mật khẩu quá ngắn</string>
+    <string name="error_incorrect_password">Mật khẩu không khớp</string>
+    <string name="error_field_required">Trường này không được trống</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="login_password">Mật khẩu</string>
+    <string name="login_email">Địa chỉ email</string>
+    <string name="remember_login">Ghi nhớ</string>
+    <string name="singin_login">ĐĂNG NHẬP</string>
+    <string name="do_not_have_accout">Chưa có tài khoản?</string>
+    <string name="already_have_accout">Đã có tài khoản?</string>
+    <string name="login_register">Đăng ký</string>
+    <string name="signup_login">Đăng nhập</string>
+    <string name="forgot_pass">Quên mật khẩu?</string>
+    <string name="signup_name">Họ tên</string>
+    <string name="re_password">Nhập lại mật khẩu</string>
+    <string name="sign_up">ĐĂNG KÍ</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

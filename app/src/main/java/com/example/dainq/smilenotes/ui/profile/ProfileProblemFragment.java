@@ -2,18 +2,18 @@ package com.example.dainq.smilenotes.ui.profile;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-import com.example.dainq.smilenotes.common.BaseFragment;
 import com.example.dainq.smilenotes.model.CustomerObject;
 
 import nq.dai.smilenotes.R;
 
-public class ProfileProblemFragment extends BaseFragment {
+public class ProfileProblemFragment extends Fragment {
     private Context mContext;
     private CustomerObject mCustomer;
     private EditText mProblem;

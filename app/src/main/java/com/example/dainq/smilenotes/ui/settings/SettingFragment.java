@@ -5,17 +5,16 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.dainq.smilenotes.common.BaseFragment;
-
 import nq.dai.smilenotes.R;
 
-public class SettingFragment extends BaseFragment {
+public class SettingFragment extends Fragment {
     private Context mContext;
     private SharedPreferences mPref;
     private SettingAdapter mAdapter;

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/id_login_area_signup"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentStart="true"
+    android:layout_centerVertical="true"
+    android:paddingEnd="48dp"
+    android:paddingStart="48dp">
+
+    <RelativeLayout
+        android:id="@+id/id_signup_field_name"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_edit_text_login"
+        android:paddingBottom="3dp"
+        android:paddingEnd="15dp"
+        android:paddingStart="15dp"
+        android:paddingTop="3dp">
+
+        <ImageView
+            android:id="@+id/id_signup_name_ic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="15dp"
+            android:alpha="0.5"
+            android:src="@drawable/ic_profile_64" />
+
+        <EditText
+            android:id="@+id/id_signup_edit_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/id_signup_name_ic"
+            android:background="@color/transparent"
+            android:hint="@string/signup_name"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
+            android:textCursorDrawable="@null"
+            android:textSize="15sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/id_signup_field_email"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@+id/id_signup_field_name"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/bg_edit_text_login"
+        android:paddingBottom="3dp"
+        android:paddingEnd="15dp"
+        android:paddingStart="15dp"
+        android:paddingTop="3dp">
+
+        <ImageView
+            android:id="@+id/id_signup_email_ic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="15dp"
+            android:alpha="0.5"
+            android:src="@drawable/ic_email_64" />
+
+        <EditText
+            android:id="@+id/id_signup_edit_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/id_signup_email_ic"
+            android:background="@color/transparent"
+            android:hint="@string/login_email"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
+            android:textCursorDrawable="@null"
+            android:textSize="15sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/id_signup_field_pass"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@+id/id_signup_field_email"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/bg_edit_text_login"
+        android:paddingBottom="3dp"
+        android:paddingEnd="15dp"
+        android:paddingStart="15dp"
+        android:paddingTop="3dp">
+
+        <ImageView
+            android:id="@+id/id_signup_pass_ic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="15dp"
+            android:alpha="0.5"
+            android:src="@drawable/ic_password_64" />
+
+        <EditText
+            android:id="@+id/id_signup_edit_pass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/id_signup_pass_ic"
+            android:background="@color/transparent"
+            android:hint="@string/login_password"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
+            android:textCursorDrawable="@null"
+            android:textSize="15sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/id_signup_field_re_pass"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@+id/id_signup_field_pass"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/bg_edit_text_login"
+        android:paddingBottom="3dp"
+        android:paddingEnd="15dp"
+        android:paddingStart="15dp"
+        android:paddingTop="3dp">
+
+        <ImageView
+            android:id="@+id/id_signup_re_pass_ic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="15dp"
+            android:alpha="0.5"
+            android:src="@drawable/ic_password_64" />
+
+        <EditText
+            android:id="@+id/id_signup_edit_re_pass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/id_signup_re_pass_ic"
+            android:background="@color/transparent"
+            android:hint="@string/re_password"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
+            android:textCursorDrawable="@null"
+            android:textSize="15sp" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/id_signup_btn"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@+id/id_signup_field_re_pass"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_button_login"
+        android:gravity="center"
+        android:text="@string/sign_up"
+        android:textColor="@color/color_new_white" />
+</RelativeLayout>

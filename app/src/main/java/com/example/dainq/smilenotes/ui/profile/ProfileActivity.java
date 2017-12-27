@@ -12,8 +12,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.TextView;
 

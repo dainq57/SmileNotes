@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -9,26 +9,58 @@
     <FrameLayout
         android:id="@+id/fragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottomBar"/>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fab"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="2dp"
+        android:paddingEnd="12dp"
+        android:paddingStart="12dp"
+        android:layout_above="@+id/bottomBar"
+        app:menu_backgroundColor="#84434242"
+        app:menu_colorNormal="@color/colorAccent"
+        app:menu_colorPressed="@color/colorAccent"
+        app:menu_labels_colorNormal="@color/transparent"
+        app:menu_labels_margin="5dp"
+        app:menu_shadowColor="@color/transparent">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginBottom="12dp"
-            android:layout_marginEnd="12dp"
-            android:src="@drawable/ic_write_s"/>
-    </FrameLayout>
+            android:src="@drawable/icon_add"
+            app:fab_colorNormal="@color/colorAccent"
+            app:fab_colorPressed="@color/colorAccent"
+            app:fab_label="Thêm mới"
+            app:fab_shadowColor="@color/transparent"
+            app:fab_size="mini"/>
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_search"
+            app:fab_colorNormal="@color/colorAccent"
+            app:fab_colorPressed="@color/colorAccent"
+            app:fab_label="Tìm kiếm"
+            app:fab_shadowColor="@color/transparent"
+            app:fab_size="mini"/>
+
+    </com.github.clans.fab.FloatingActionMenu>
 
     <com.roughike.bottombar.BottomBar
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true"
+        android:background="@color/color_new_white"
+        app:bb_inActiveTabColor="@color/bottombar_inactive_color"
         app:bb_activeTabColor="@color/colorAccent"
         app:bb_badgesHideWhenActive="true"
         app:bb_showShadow="true"
-        app:bb_tabXmlResource="@xml/bottombar_tabs"/>
-</LinearLayout>
+        app:bb_behavior="shifting"
+        app:bb_tabXmlResource="@xml/bottombar_tabs" />
+</RelativeLayout>

@@ -3,7 +3,7 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF5722</color>
-    <color name="colorSplash">#ec8e71</color>
+    <color name="colorBackground">#efb3a0</color>
     <color name="transparent">@android:color/transparent</color>
 
     <!--Common-->
@@ -33,4 +33,7 @@
 
     <!--Notification-->
     <color name="notification_unread">#eceded</color>
+
+    <!--bottom bar-->
+    <color name="bottombar_inactive_color">#7b7878</color>
 </resources>

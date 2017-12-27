@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tabs>
     <tab
-        icon="@drawable/ic_home"
+        icon="@drawable/icon_home"
         id="@+id/tab_home"
         title="Trang chủ"/>
     <tab
-        icon="@drawable/ic_search"
-        id="@+id/tab_search"
-        title="Tìm kiếm"/>
+        icon="@drawable/icon_key"
+        id="@+id/tab_gold_key"
+        title="8 CKV"/>
     <tab
-        icon="@drawable/ic_notifications"
+        icon="@drawable/icon_noti"
         id="@+id/tab_notifications"
         title="Thông báo"/>
+
     <tab
-        icon="@drawable/ic_settings"
+        icon="@drawable/icon_pig"
+        id="@+id/tab_pig"
+        title="PIG"/>
+    <tab
+        icon="@drawable/icon_setting"
         id="@+id/tab_settings"
         title="Cài đặt"/>
 </tabs>

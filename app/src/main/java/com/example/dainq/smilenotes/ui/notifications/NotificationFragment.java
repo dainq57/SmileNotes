@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.example.dainq.smilenotes.common.BaseFragment;
 import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.controller.realm.RealmController;
 import com.example.dainq.smilenotes.model.NotificationObject;
@@ -27,7 +27,7 @@ import java.util.Date;
 import io.realm.RealmResults;
 import nq.dai.smilenotes.R;
 
-public class NotificationFragment extends BaseFragment implements View.OnClickListener {
+public class NotificationFragment extends Fragment implements View.OnClickListener {
     private Context mContext;
     private NotificationAdapter mAdapter;
     private RealmController mRealmController;
