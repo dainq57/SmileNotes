@@ -178,6 +178,10 @@ public class RealmController {
         realm.commitTransaction();
     }
 
+    public RealmResults<MeetingObject> getMeetings() {
+        return realm.where(MeetingObject.class).findAll();
+    }
+
     //query a single item with the given id
     public MeetingObject getMetting(int id) {
         return realm.where(MeetingObject.class)
@@ -218,6 +222,10 @@ public class RealmController {
         realm.beginTransaction();
         realm.copyToRealm(object);
         realm.commitTransaction();
+    }
+
+    public RealmResults<ProductObject> getProducts(){
+        return realm.where(ProductObject.class).findAll();
     }
 
     private ProductObject getProduct(int id) {
@@ -280,6 +288,7 @@ public class RealmController {
                 .equalTo(Constant.NOTIFICATION_TYPE_NOTI, Constant.NOTIFICATION_BIRTH_DAY)
                 .findFirst();
     }
+
     public RealmResults<NotificationObject> getListNotificationBirthDay(int idcustomer) {
         return realm.where(NotificationObject.class)
                 .equalTo(Constant.NOTIFICATION_ID_CUSTOMER, idcustomer)

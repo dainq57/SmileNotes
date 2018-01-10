@@ -13,8 +13,8 @@ import android.widget.TextView;
 import nq.dai.smilenotes.R;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
-    private final String email = "hadesnq@gmail.com";
-    private final String pass = "111111";
+    private static final String URL_SIGN_UP = "http://103.9.77.212:8686/user/sign-up";
+    private static final String URL_LOG_IN = "http://103.9.77.212:8686/user/login";
 
     private TextView mBtnSignIn;
     private TextView mBtnSignUp;

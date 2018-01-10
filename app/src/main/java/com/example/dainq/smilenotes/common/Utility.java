@@ -9,21 +9,40 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
+import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.dainq.smilenotes.model.CustomerObject;
+import com.example.dainq.smilenotes.model.MeetingObject;
+import com.example.dainq.smilenotes.model.ProductObject;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import io.realm.RealmResults;
+
+import static com.github.mikephil.charting.utils.ColorTemplate.rgb;
+
 public class Utility {
+    public static final String fileName = "smilenote.txt";
     private static SimpleDateFormat dateFormat = new SimpleDateFormat(Constant.FORMAT_DATE, Locale.US);
 
     public static boolean isEmptyString(String string) {
@@ -123,4 +142,116 @@ public class Utility {
 
         return calendar.getTime();
     }
+
+
+    /*JSON backup data*/
+
+    public static JSONObject makJsonObject(JSONArray jsonArray1, JSONArray jsonArray2, JSONArray jsonArray3) throws JSONException {
+
+        JSONObject finalobject = new JSONObject();
+        finalobject.put("customer", jsonArray1);
+        finalobject.put("meeting", jsonArray2);
+        finalobject.put("product", jsonArray3);
+        return finalobject;
+    }
+
+    public static JSONArray makeJsonArrayCustomer(RealmResults<CustomerObject> realmResults) {
+        JSONObject jsonObject = null;
+        CustomerObject customer = null;
+        JSONArray jsonArray = new JSONArray();
+
+        for (int i = 0; i < realmResults.size(); i++) {
+            jsonObject = new JSONObject();
+            customer = realmResults.get(i);
+            try {
+                jsonObject.put("id", customer.getId());
+                jsonObject.put("level", customer.getLevel());
+                jsonObject.put("ada", customer.getAda());
+                jsonObject.put("name", customer.getName());
+                jsonObject.put("dateofbirth", customer.getDateofbirth());
+                jsonObject.put("phonenumber", customer.getPhonenumber());
+                jsonObject.put("address", customer.getAddress());
+                jsonObject.put("reason", customer.getReason());
+                jsonObject.put("gender", customer.getGender());
+                jsonObject.put("job", customer.getJob());
+                jsonObject.put("problem", customer.getProblem());
+                jsonObject.put("solution", customer.getSolution());
+                jsonObject.put("note", customer.getNote());
+                jsonObject.put("product", customer.getProduct());
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            jsonArray.put(jsonObject);
+        }
+        return jsonArray;
+    }
+
+    public static JSONArray makeJsonArrayMeeting(RealmResults<MeetingObject> realmResults) {
+        JSONObject jsonObject = null;
+        MeetingObject meeting = null;
+        JSONArray jsonArray = new JSONArray();
+
+        for (int i = 0; i < realmResults.size(); i++) {
+            jsonObject = new JSONObject();
+            meeting = realmResults.get(i);
+            try {
+                jsonObject.put("idcustomer", meeting.getIdcustomer());
+                jsonObject.put("id", meeting.getId());
+                jsonObject.put("meeting", meeting.getMeeting());
+                jsonObject.put("schedule", meeting.getSchedule());
+                jsonObject.put("content", meeting.getContent());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            jsonArray.put(jsonObject);
+        }
+        return jsonArray;
+    }
+
+    public static JSONArray makeJsonArrayProduct(RealmResults<ProductObject> realmResults) {
+        JSONObject jsonObject = null;
+        ProductObject product = null;
+        JSONArray jsonArray = new JSONArray();
+
+        for (int i = 0; i < realmResults.size(); i++) {
+            jsonObject = new JSONObject();
+            product = realmResults.get(i);
+            try {
+                jsonObject.put("idcustomer", product.getIdcustomer());
+                jsonObject.put("id", product.getId());
+                jsonObject.put("name", product.getName());
+                jsonObject.put("usedate", product.getUsedate());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            jsonArray.put(jsonObject);
+        }
+        return jsonArray;
+    }
+
+    public static void writeFile(String string) {
+        // Thư mục gốc của SD Card.
+        File extStore = Environment.getExternalStorageDirectory();
+        // ==> /storage/emulated/0/note.txt
+        String path = extStore.getAbsolutePath() + "/" + fileName;
+        Log.i("ExternalStorageDemo", "Save to: " + path);
+
+        try {
+            File myFile = new File(path);
+            myFile.createNewFile();
+            FileOutputStream fOut = new FileOutputStream(myFile);
+            OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
+            myOutWriter.append(string);
+            myOutWriter.close();
+            fOut.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    //COLOR
+    //GREEN - VIOLET - BLUE - ORANGE
+    public static final int[] MATERIAL_COLORS = {
+            rgb("#49b800"), rgb("#b541b5"), rgb("#00a1c9"), rgb("#ed6c02")
+    };
 }

@@ -1,5 +1,6 @@
 package com.example.dainq.smilenotes.ui.settings;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -19,9 +20,11 @@ public class SettingFragment extends Fragment {
     private SharedPreferences mPref;
     private SettingAdapter mAdapter;
     private RecyclerView mList;
+    private Activity mActivity;
 
-    public SettingFragment(Context context) {
+    public SettingFragment(Context context, Activity activity) {
         mContext = context;
+        mActivity = activity;
     }
 
     @Nullable
@@ -47,7 +50,7 @@ public class SettingFragment extends Fragment {
             settingItems[i].mType = setting[i];
         }
 
-        mAdapter = new SettingAdapter(mContext, settingItems, mPref);
+        mAdapter = new SettingAdapter(mContext, settingItems, mPref, mActivity);
         mAdapter.setHasStableIds(true);
         mList.setLayoutManager(new LinearLayoutManager(mContext));
         mList.setAdapter(mAdapter);

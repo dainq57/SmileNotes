@@ -16,7 +16,7 @@
     <tab
         icon="@drawable/icon_pig"
         id="@+id/tab_pig"
-        title="PIG"/>
+        title="OPP"/>
     <tab
         icon="@drawable/icon_setting"
         id="@+id/tab_settings"

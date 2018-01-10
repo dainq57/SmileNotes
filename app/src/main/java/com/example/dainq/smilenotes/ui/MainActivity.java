@@ -5,8 +5,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Environment;
 import android.support.annotation.IdRes;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -20,6 +23,9 @@ import android.widget.Toast;
 import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.controller.realm.RealmController;
+import com.example.dainq.smilenotes.model.CustomerObject;
+import com.example.dainq.smilenotes.model.MeetingObject;
+import com.example.dainq.smilenotes.model.ProductObject;
 import com.example.dainq.smilenotes.ui.create.CreateActivity;
 import com.example.dainq.smilenotes.ui.home.HomeFragment;
 import com.example.dainq.smilenotes.ui.notifications.NotificationFragment;
@@ -32,7 +38,15 @@ import com.github.clans.fab.FloatingActionMenu;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.BottomBarTab;
 import com.roughike.bottombar.OnTabSelectListener;
+import com.soundcloud.android.crop.Crop;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -42,6 +56,7 @@ import io.realm.RealmResults;
 import nq.dai.smilenotes.R;
 
 public class MainActivity extends AppCompatActivity implements OnTabSelectListener, View.OnClickListener {
+
     private BottomBarTab mNotificationTab;
 
     protected FragmentTransaction mFragment;
@@ -54,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements OnTabSelectListen
     private FloatingActionMenu mFab;
 
     private SharedPreferences mPref;
+    private RealmController mReamController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements OnTabSelectListen
     private void initView() {
         mHomeFragment = new HomeFragment(this);
         mNotificationFragment = new NotificationFragment(this);
-        mSettingFragment = new SettingFragment(this);
+        mSettingFragment = new SettingFragment(this, this);
         mGoldKeyFragment = new GoldKeyFragment(this);
         mPigFragment = new PigFragment(this);
 
@@ -91,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements OnTabSelectListen
         if (isFirst) {
             inputUserName();
         }
+        mReamController = new RealmController(this);
     }
 
     private void inputUserName() {
@@ -204,7 +221,6 @@ public class MainActivity extends AppCompatActivity implements OnTabSelectListen
         }
     }
 
-
     private void startCreate() {
         Bundle bundle = new Bundle();
         bundle.putInt(Constant.KEY_ACTION, Constant.ACTION_CREATE);
@@ -222,4 +238,38 @@ public class MainActivity extends AppCompatActivity implements OnTabSelectListen
                 .build();
         Realm.setDefaultConfiguration(realmConfiguration);
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Log.v("dainq", "Permission: " + permissions[0] + "was " + grantResults[0]);
+            backupData();
+        } else {
+            Toast.makeText(this, "Không thể sao lưu data!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void backupData() {
+        RealmResults<CustomerObject> resultsCustomer = mReamController.getCustomers();
+        RealmResults<MeetingObject> resultsMeeting = mReamController.getMeetings();
+        RealmResults<ProductObject> resultsProduct = mReamController.getProducts();
+
+        Log.d("dainq ", "backup customer");
+        JSONArray jsonArray1 = Utility.makeJsonArrayCustomer(resultsCustomer);
+        JSONArray jsonArray2 = Utility.makeJsonArrayMeeting(resultsMeeting);
+        JSONArray jsonArray3 = Utility.makeJsonArrayProduct(resultsProduct);
+        try {
+            JSONObject jsonObject = Utility.makJsonObject(jsonArray1, jsonArray2, jsonArray3);
+            Log.d("backup", jsonObject.toString());
+            String data = jsonObject.toString();
+
+            Utility.writeFile(data);
+            Toast.makeText(this, Utility.fileName + " saved!", Toast.LENGTH_SHORT).show();
+        } catch (JSONException e) {
+            //TODO exception
+            e.printStackTrace();
+        }
+    }
+
 }

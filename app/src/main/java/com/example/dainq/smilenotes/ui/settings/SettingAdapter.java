@@ -1,30 +1,51 @@
 package com.example.dainq.smilenotes.ui.settings;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 
-import com.example.dainq.smilenotes.common.Constant;
+import com.example.dainq.smilenotes.common.Utility;
+import com.example.dainq.smilenotes.controller.realm.RealmController;
+import com.example.dainq.smilenotes.model.CustomerObject;
+import com.example.dainq.smilenotes.model.MeetingObject;
+import com.example.dainq.smilenotes.model.ProductObject;
+import com.example.dainq.smilenotes.ui.MainActivity;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+
+import io.realm.RealmResults;
 import nq.dai.smilenotes.R;
 
 public class SettingAdapter extends RecyclerView.Adapter<SettingViewHolder> {
     private Context mContext;
     private SettingItem[] mItem;
     private SharedPreferences mPref;
+    private RealmController mReamController;
+    private Activity mActivity;
 
-    SettingAdapter(Context context, SettingItem[] item, SharedPreferences pref) {
+    SettingAdapter(Context context, SettingItem[] item, SharedPreferences pref, Activity activity) {
         mContext = context;
         mItem = item;
         mPref = pref;
+        mActivity = activity;
     }
 
     @Override
@@ -35,6 +56,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingViewHolder> {
 
     @Override
     public void onBindViewHolder(final SettingViewHolder holder, final int position) {
+        mReamController = new RealmController(mContext);
         holder.mSettingType.setText(mItem[position].mType);
 
 //        if (position > Constant.SETTING_EVENT_NUMBER) {
@@ -57,7 +79,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingViewHolder> {
                         updateInfomation();
                         break;
                     case 1:
-                        backupData();
+                        requestPermission();
                         break;
                     case 2:
                         aboutUs();
@@ -69,10 +91,35 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingViewHolder> {
         });
     }
 
-    private void backupData() {
-        createDialog(mContext.getResources().getString(R.string.alert_anouncement_backup));
+    private void requestPermission() {
+        if (!Utility.checkPermissionForReadExtertalStorage(mActivity)) {
+            Utility.requestPermission(mActivity);
+        } else {
+            backupData();
+        }
     }
 
+    private void backupData() {
+        RealmResults<CustomerObject> resultsCustomer = mReamController.getCustomers();
+        RealmResults<MeetingObject> resultsMeeting = mReamController.getMeetings();
+        RealmResults<ProductObject> resultsProduct = mReamController.getProducts();
+
+        Log.d("dainq ", "backup customer");
+        JSONArray jsonArray1 = Utility.makeJsonArrayCustomer(resultsCustomer);
+        JSONArray jsonArray2 = Utility.makeJsonArrayMeeting(resultsMeeting);
+        JSONArray jsonArray3 = Utility.makeJsonArrayProduct(resultsProduct);
+        try {
+            JSONObject jsonObject = Utility.makJsonObject(jsonArray1, jsonArray2, jsonArray3);
+            Log.d("backup", jsonObject.toString());
+            String data = jsonObject.toString();
+
+            Utility.writeFile(data);
+            Toast.makeText(mContext, Utility.fileName + " saved!", Toast.LENGTH_SHORT).show();
+        } catch (JSONException e) {
+            //TODO exception
+            e.printStackTrace();
+        }
+    }
 
     private void aboutUs() {
         final View view = View.inflate(mContext, R.layout.dialog_about_app, null);
