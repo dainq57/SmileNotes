@@ -25,7 +25,7 @@
             android:layout_centerVertical="true"
             android:layout_marginEnd="15dp"
             android:alpha="0.5"
-            android:src="@drawable/ic_email_64" />
+            android:src="@drawable/icon_mail" />
 
         <EditText
             android:id="@+id/id_login_edit_email"
@@ -46,7 +46,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_below="@+id/id_login_field_email"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="2dp"
         android:background="@drawable/bg_edit_text_login"
         android:paddingBottom="3dp"
         android:paddingEnd="15dp"
@@ -60,7 +60,7 @@
             android:layout_centerVertical="true"
             android:layout_marginEnd="15dp"
             android:alpha="0.5"
-            android:src="@drawable/ic_password_64" />
+            android:src="@drawable/icon_lock" />
 
         <EditText
             android:id="@+id/id_login_edit_pass"
@@ -80,43 +80,23 @@
         android:id="@+id/id_login_btn"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_below="@+id/id_login_field_pass"
-        android:layout_marginTop="20dp"
+        android:layout_below="@+id/id_login_forgot_pass"
+        android:layout_marginTop="30dp"
         android:background="@drawable/bg_button_login"
         android:gravity="center"
+        android:textStyle="bold"
         android:text="@string/singin_login"
         android:textColor="@color/color_new_white" />
 
-    <RelativeLayout
-        android:id="@+id/id_login_field_remember_pass"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/id_login_forgot_pass"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/id_login_btn"
-        android:layout_marginTop="5dp">
-
-        <TextView
-            android:id="@+id/id_login_forgot_pass"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:padding="3dp"
-            android:text="@string/forgot_pass"
-            android:textColor="@color/color_new_white"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toStartOf="@+id/id_login_checkbox_rem"
-            android:text="@string/remember_login"
-            android:textColor="@color/color_new_white" />
-
-        <CheckBox
-            android:id="@+id/id_login_checkbox_rem"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true" />
-    </RelativeLayout>
+        android:layout_below="@+id/id_login_field_pass"
+        android:layout_marginTop="10dp"
+        android:padding="3dp"
+        android:text="@string/forgot_pass"
+        android:textColor="@color/color_new_white"
+        android:textSize="15sp"
+        android:textStyle="bold" />
 </RelativeLayout>

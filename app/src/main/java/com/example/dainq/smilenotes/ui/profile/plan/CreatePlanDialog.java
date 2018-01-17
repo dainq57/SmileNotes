@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -22,7 +23,7 @@ import android.widget.Toast;
 
 import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.common.Utility;
-import com.example.dainq.smilenotes.controller.realm.RealmController;
+import com.example.dainq.smilenotes.controllers.realm.RealmController;
 import com.example.dainq.smilenotes.model.MeetingObject;
 import com.example.dainq.smilenotes.model.NotificationObject;
 import com.example.dainq.smilenotes.ui.notifications.NotificationHelper;
@@ -315,9 +316,9 @@ public class CreatePlanDialog extends DialogFragment implements View.OnClickList
             mScheduleValue = Utility.stringToDate(mSchedule.getText().toString());
         }
 
-        if (Utility.isEmptyString(time)
-                || Utility.isEmptyString(content)
-                || Utility.isEmptyString(schedule)) {
+        if (TextUtils.isEmpty(time)
+                || TextUtils.isEmpty(content)
+                || TextUtils.isEmpty(schedule)) {
             return Constant.VALIDATE_EMPTY;
         }
         if (mTimeValue.after(mScheduleValue)) {

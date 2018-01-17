@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 
 import com.example.dainq.smilenotes.common.Utility;
-import com.example.dainq.smilenotes.controller.realm.RealmController;
+import com.example.dainq.smilenotes.controllers.realm.RealmController;
 import com.example.dainq.smilenotes.model.NotificationObject;
 
 import java.util.Calendar;

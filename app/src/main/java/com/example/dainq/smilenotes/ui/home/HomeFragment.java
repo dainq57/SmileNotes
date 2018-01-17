@@ -19,8 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.dainq.smilenotes.common.Constant;
-import com.example.dainq.smilenotes.common.Utility;
-import com.example.dainq.smilenotes.controller.realm.RealmController;
+import com.example.dainq.smilenotes.controllers.realm.RealmController;
+import com.example.dainq.smilenotes.common.SessionManager;
 import com.example.dainq.smilenotes.model.ProductObject;
 import com.example.dainq.smilenotes.ui.common.spinner.OnSpinnerItemSelectedListener;
 import com.example.dainq.smilenotes.ui.common.spinner.SingleSpinnerLayout;
@@ -69,14 +69,13 @@ public class HomeFragment extends Fragment implements OnSpinnerItemSelectedListe
     private int distribution;
 
     private SharedPreferences mPref;
+    private SessionManager mSession;
 
-    public HomeFragment(Context context) {
+    public HomeFragment(Context context, SessionManager session) {
         mContext = context;
+        mSession = session;
     }
 
-    public TextView getmNameUser() {
-        return mNameUser;
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @SuppressLint("InflateParams")
@@ -134,6 +133,10 @@ public class HomeFragment extends Fragment implements OnSpinnerItemSelectedListe
 
         mAvatarUser = (CircleImageView) view.findViewById(R.id.home_avatar_user);
         mNameUser = (TextView) view.findViewById(R.id.home_name_user);
+
+        //get name user from session afrer login
+        mNameUser.setText(mSession.getUserDetails().getFullName());
+
         mPref = getActivity().getSharedPreferences(Constant.PREF_USER, Context.MODE_PRIVATE);
     }
 
@@ -260,10 +263,12 @@ public class HomeFragment extends Fragment implements OnSpinnerItemSelectedListe
         mRealmController = new RealmController(mContext);
         mSpinner.setSelection(0);
 
-        String avatar = mPref.getString(Constant.USER_AVATAR, "");
-        mAvatarUser.setImageBitmap(Utility.decodeImage(avatar));
+        //reset avatar and name after change information
 
-        String name = mPref.getString(Constant.USER_NAME, "");
+//        String avatar = mPref.getString(Constant.USER_AVATAR, "");
+//        mAvatarUser.setImageBitmap(Utility.decodeImage(avatar));
+
+        String name = mSession.getUserDetails().getFullName();
         mNameUser.setText(name);
 
         calculatorPercent();

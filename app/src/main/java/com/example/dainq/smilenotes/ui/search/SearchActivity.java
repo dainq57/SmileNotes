@@ -8,12 +8,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import com.example.dainq.smilenotes.common.Utility;
-import com.example.dainq.smilenotes.controller.realm.RealmController;
+import com.example.dainq.smilenotes.controllers.realm.RealmController;
 import com.example.dainq.smilenotes.model.CustomerObject;
 import com.example.dainq.smilenotes.ui.profile.customer.CustomerAdapter;
 import com.example.dainq.smilenotes.ui.profile.customer.RealmCustomerAdapter;
@@ -69,7 +70,7 @@ public class SearchActivity extends AppCompatActivity {
     private SearchView.OnQueryTextListener mOnQueryTextListener = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String query) {
-            if (query.length() > 0 && !Utility.isEmptyString(query)) {
+            if (query.length() > 0 && !TextUtils.isEmpty(query)) {
                 mRealmResult = mRealmController.searchCustomers(query);
                 if (mRealmResult.isEmpty()) {
                     mTextNotResult.setVisibility(View.VISIBLE);

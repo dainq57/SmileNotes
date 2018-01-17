@@ -3,7 +3,6 @@ package com.example.dainq.smilenotes.ui.profile.customer;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.dainq.smilenotes.common.Constant;
-import com.example.dainq.smilenotes.controller.realm.RealmController;
+import com.example.dainq.smilenotes.controllers.realm.RealmController;
 import com.example.dainq.smilenotes.model.CustomerObject;
 import com.example.dainq.smilenotes.model.MeetingObject;
 import com.example.dainq.smilenotes.model.NotificationObject;

@@ -13,20 +13,20 @@ public class Constant {
     public static int VALIDATE_ADA = 3;
     public static int VALIDATE_SCHEDULE_TIME = 4;
 
-    /*Customer type*/
+    /*CustomerRequest type*/
     public static int CUSTOMER_TYPE_NEW = 0;
     public static int CUSTOMER_TYPE_NEW_MONTH = 1;
     public static int CUSTOMER_TYPE_CONSUMER = 2;
     public static int CUSTOMER_TYPE_DISTRIBUTION = 3;
 
-    /*Customer level*/
+    /*CustomerRequest level*/
     public static int CUSTOMER_LEVEL_0 = 0; //tiem nang
     public static int CUSTOMER_LEVEL_1 = 1; //tieu dung
     public static int CUSTOMER_LEVEL_2 = 2; //tdtc
     public static int CUSTOMER_LEVEL_3 = 3; //npp
     public static int CUSTOMER_LEVEL_4 = 4; //npptc
 
-    /*Customer field*/
+    /*CustomerRequest field*/
     public static String CUSTOMER_NAME = "name";
     public static String CUSTOMER_DATE_CREATE = "datecreate";
     public static String CUSTOMER_ADA = "ada";
@@ -90,4 +90,9 @@ public class Constant {
     public static int DIALOG_CREATE = 10;
     public static int DIALOG_VIEW = 11;
     public static int DIALOG_EDIT = 12;
+
+    //CONSTANT FOR LOGIN REGISTER
+    public static int RESPONSE_SUCCESS = 1;
+    public static int RESPONSE_USER_EXIT = 3;
+    public static int RESPONSE_WRONG_PASSWORD = 7;
 }

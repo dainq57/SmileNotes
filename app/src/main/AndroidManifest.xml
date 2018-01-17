@@ -21,6 +21,10 @@
             android:name="com.example.dainq.smilenotes.ui.MainActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name="com.example.dainq.smilenotes.ui.create.CreateActivity"
@@ -36,17 +40,14 @@
             android:screenOrientation="portrait"
             android:theme="@style/CustomTheme" />
         <activity
-            android:name="com.example.dainq.smilenotes.ui.settings.UpdateInfoActivity"
+            android:name="com.example.dainq.smilenotes.ui.settings.InfoActivity"
             android:screenOrientation="portrait" />
         <!-- Register the Alarm Receiver -->
         <receiver android:name="com.example.dainq.smilenotes.ui.notifications.NotificationReceiver" />
 
-        <activity android:name="com.example.dainq.smilenotes.ui.LoginActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity
+            android:name="com.example.dainq.smilenotes.ui.LoginActivity"/>
+
         <activity
             android:name="com.example.dainq.smilenotes.ui.search.SearchActivity"
             android:screenOrientation="portrait" />

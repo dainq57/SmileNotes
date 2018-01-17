@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_change_pass"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/edit_old_pass"
+        style="@style/EditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="20dp"
+        android:gravity="start"
+        android:hint="Mật khẩu cũ"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/edit_new_pass"
+        style="@style/EditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="20dp"
+        android:gravity="start"
+        android:hint="Mật khẩu mới"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/edit_new_pass_again"
+        style="@style/EditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="20dp"
+        android:gravity="start"
+        android:hint="Nhập lại mật khẩu mới"
+        android:inputType="textPassword" />
+
+</LinearLayout>

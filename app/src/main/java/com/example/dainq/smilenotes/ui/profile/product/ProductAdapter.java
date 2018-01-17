@@ -15,7 +15,7 @@ import android.widget.DatePicker;
 
 import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.common.Utility;
-import com.example.dainq.smilenotes.controller.realm.RealmController;
+import com.example.dainq.smilenotes.controllers.realm.RealmController;
 import com.example.dainq.smilenotes.model.CustomerObject;
 import com.example.dainq.smilenotes.model.ProductObject;
 import com.example.dainq.smilenotes.ui.common.realm.RealmRecyclerViewAdapter;

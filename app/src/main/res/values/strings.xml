@@ -1,12 +1,12 @@
 <resources>
-    <string name="app_name">Smile Note</string>
+    <string name="app_name">Smile N3S</string>
 
     <!--Setting-->
-    <string name="setting_type_birthday">Thông báo sinh nhật</string>
-    <string name="setting_type_event">Thông báo sự kiện</string>
-    <string name="setting_type_setting">Thay đổi thông tin</string>
+    <string name="setting_type_change_info">Thay đổi thông tin</string>
+    <string name="setting_type_change_pass">Đổi mật khẩu</string>
     <string name="setting_type_backup">Sao lưu dữ liệu</string>
     <string name="setting_type_information">Giới thiệu</string>
+    <string name="setting_type_logout">Đăng xuất</string>
 
     <!--Spinner-->
     <string name="home_spinner_position_0">1 tuần</string>
@@ -146,6 +146,4 @@
     <string name="re_password">Nhập lại mật khẩu</string>
     <string name="sign_up">ĐĂNG KÍ</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="array_setting_list">
-        <!--<item>@string/setting_type_birthday</item>-->
-        <!--<item>@string/setting_type_event</item>-->
-        <item>@string/setting_type_setting</item>
+        <item>@string/setting_type_change_info</item>
+        <item>@string/setting_type_change_pass</item>
         <item>@string/setting_type_backup</item>
         <item>@string/setting_type_information</item>
+        <item>@string/setting_type_logout</item>
     </string-array>
 
     <string-array name="array_spinner_home">

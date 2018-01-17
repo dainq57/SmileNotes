@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.common.Utility;
-import com.example.dainq.smilenotes.controller.realm.RealmController;
+import com.example.dainq.smilenotes.controllers.realm.RealmController;
 import com.example.dainq.smilenotes.model.CustomerObject;
 import com.example.dainq.smilenotes.model.MeetingObject;
 import com.example.dainq.smilenotes.model.NotificationObject;

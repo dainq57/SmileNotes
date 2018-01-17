@@ -15,7 +15,6 @@ import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.dainq.smilenotes.model.CustomerObject;
 import com.example.dainq.smilenotes.model.MeetingObject;
@@ -45,10 +44,6 @@ public class Utility {
     public static final String fileName = "smilenote.txt";
     private static SimpleDateFormat dateFormat = new SimpleDateFormat(Constant.FORMAT_DATE, Locale.US);
 
-    public static boolean isEmptyString(String string) {
-        return string.trim().isEmpty();
-    }
-
     public static int createId(int id) {
         return id + 1;
     }
@@ -63,11 +58,13 @@ public class Utility {
 
     /*---------Image---------*/
 
+    //decode from String to image
     public static Bitmap decodeImage(String imageString) {
         byte[] imageBytes = Base64.decode(imageString, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
     }
 
+    //encode bitmap to string
     private static String encodeImage(Bitmap bm) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.JPEG, 10, baos);
@@ -249,9 +246,28 @@ public class Utility {
             e.printStackTrace();
         }
     }
+
     //COLOR
     //GREEN - VIOLET - BLUE - ORANGE
     public static final int[] MATERIAL_COLORS = {
             rgb("#49b800"), rgb("#b541b5"), rgb("#00a1c9"), rgb("#ed6c02")
     };
+
+    /**
+     * check valid password
+     * param String password
+     **/
+    public static boolean isPasswordValid(String password) {
+        //password need more than 5
+        return password.length() > 5;
+    }
+
+    /**
+     * check valid email
+     * param String email
+     **/
+    public static boolean isEmailValid(String email) {
+        //here check format of email need @ and .
+        return (email.contains("@") && (email.contains(".")));
+    }
 }

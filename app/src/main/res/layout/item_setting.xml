@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -13,25 +12,27 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
+        <ImageView
+            android:id="@+id/setting_image"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="12dp" />
+
         <TextView
             android:id="@+id/setting_type"
+            style="@style/TextAppearance"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="12dp"
             android:layout_marginEnd="7dp"
-            android:layout_toStartOf="@+id/setting_switch"
+            android:layout_marginStart="2dp"
             android:layout_weight="1"
             android:ellipsize="end"
-            style="@style/TextAppearance"
-            android:maxLines="1"/>
+            android:maxLines="1" />
 
-        <android.support.v7.widget.SwitchCompat
-            android:id="@+id/setting_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="12dp"/>
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/icon_app_next" />
     </LinearLayout>
 
     <FrameLayout
@@ -39,6 +40,6 @@
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:layout_marginEnd="12dp"
-        android:layout_marginStart="12dp"
-        android:background="@color/listview_divider_color"/>
+        android:layout_marginStart="50dp"
+        android:background="@color/listview_divider_color" />
 </LinearLayout>

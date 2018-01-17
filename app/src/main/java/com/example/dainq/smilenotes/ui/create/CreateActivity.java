@@ -14,6 +14,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,11 +28,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.dainq.smilenotes.common.BaseURL;
 import com.example.dainq.smilenotes.common.Constant;
+import com.example.dainq.smilenotes.common.SessionManager;
 import com.example.dainq.smilenotes.common.Utility;
-import com.example.dainq.smilenotes.controller.realm.RealmController;
+import com.example.dainq.smilenotes.controllers.api.APICustomer;
+import com.example.dainq.smilenotes.controllers.api.APIUser;
+import com.example.dainq.smilenotes.controllers.realm.RealmController;
 import com.example.dainq.smilenotes.model.CustomerObject;
 import com.example.dainq.smilenotes.model.NotificationObject;
+import com.example.dainq.smilenotes.model.request.CustomerRequest;
+import com.example.dainq.smilenotes.model.response.CustomerResponse;
 import com.example.dainq.smilenotes.ui.common.spinner.OnSpinnerItemSelectedListener;
 import com.example.dainq.smilenotes.ui.common.spinner.SingleSpinnerLayout;
 import com.example.dainq.smilenotes.ui.common.spinner.SpinnerItem;
@@ -46,6 +53,11 @@ import java.util.Date;
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.realm.RealmResults;
 import nq.dai.smilenotes.R;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CreateActivity extends AppCompatActivity implements View.OnClickListener, OnSpinnerItemSelectedListener {
     private static final String TAG = "CreateActivity";
@@ -96,6 +108,9 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
     private RealmResults<NotificationObject> mNotification;
 
+    private SessionManager mSession;
+    private APICustomer mService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,6 +121,10 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
     private void initView() {
         initToolBar();
+        //create session manager and api interface
+        mSession = new SessionManager(this);
+        initRetrofit();
+
         isSave = false;
         mAction = getAction();
 
@@ -189,6 +208,15 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         Log.d("dainqid ", "Create getIdNoti from pref " + mIdNotiKey);
     }
 
+    private void initRetrofit() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BaseURL.URL_CUSTOMER)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        mService = retrofit.create(APICustomer.class);
+    }
+
     private int getAction() {
         Bundle extras = getIntent().getExtras();
         mCustomerId = extras.getInt(Constant.KEY_ID);
@@ -233,7 +261,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
                 if (mAction == Constant.ACTION_CREATE) {
                     saveCustomer();
                 } else {
-                    editCustomer();
+//                    editCustomer();
                 }
                 break;
 
@@ -287,10 +315,14 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
                         dialog.dismiss();
                     }
                 })
-                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setIcon(getDrawable(R.drawable.icn_alert_128))
                 .show();
     }
 
+    /**
+     * validate before create of update
+     * return int value
+     */
     private int validate() {
         if (isEmpty()) {
             return Constant.VALIDATE_EMPTY;
@@ -320,9 +352,9 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         String phone = mPhoneNumber.getText().toString();
         String address = mAddress.getText().toString();
 
-        return (Utility.isEmptyString(name)
-                || Utility.isEmptyString(phone)
-                || Utility.isEmptyString(address));
+        return (TextUtils.isEmpty(name)
+                || TextUtils.isEmpty(phone)
+                || TextUtils.isEmpty(address));
 
     }
 
@@ -418,18 +450,89 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
     public void onNothingSelected() {
     }
 
+    /*
+    * do call validate and save customer if calidate is success
+    * */
     private void saveCustomer() {
         int val = validate();
         if (val == Constant.VALIDATE_SUCCESS) {
-            save();
-            isSave = true;
-        } else {
-            isSave = false;
+//            save();
+            CustomerRequest customer = createDataCustomer();
+            processCreateCustomer(customer);
         }
         makeToast(val);
-        if (isSave) {
-            CreateActivity.this.finish();
+    }
+
+    /*
+    * create object customer
+    * set data
+    * */
+    private CustomerRequest createDataCustomer() {
+        CustomerRequest customer = new CustomerRequest();
+
+        customer.setUserId(mSession.getUserDetails().getId());
+        customer.setLevel(mLevel);
+
+        //customer has adaCode if level > level 2
+        if (mLevel > Constant.CUSTOMER_LEVEL_2) {
+            String ada = mADA.getText().toString();
+            if (!TextUtils.isEmpty(ada)) {
+                customer.setAdaCode(mADA.getText().toString());
+            }
         }
+
+        if (mUri != null) {
+            String avatar = Utility.convertImage(this, mUri);
+            //TODO set avatar to customer, waiting api from server..
+//            customer.setAvatar(avatar);
+        }
+        String name = mName.getText().toString();
+
+        customer.setName(name);
+        if (dateOfBirth != null) {
+            customer.setDateOfBirth(dateOfBirth);
+        }
+        customer.setPhone(mPhoneNumber.getText().toString());
+        customer.setAddress(mAddress.getText().toString());
+        customer.setReason(mReason.getText().toString());
+//        customer.setProblemType(mProblem.getText().toString());
+        customer.setSolution(mSolution.getText().toString());
+        customer.setSuggestProduct(mProductNeed.getText().toString());
+        customer.setJob(mJob.getText().toString());
+
+        int index = mGender.indexOfChild(findViewById(mGender.getCheckedRadioButtonId()));
+        customer.setGender(index);
+
+        return customer;
+    }
+
+    /*
+    * process saveCustomer
+    * params customer request
+    * */
+    private void processCreateCustomer(CustomerRequest customer) {
+        //alaways add token into request to server
+        String token = mSession.getUserDetails().getToken();
+
+        Call<CustomerResponse> response = mService.createCustomer(customer, token);
+        response.enqueue(new Callback<CustomerResponse>() {
+            @Override
+            public void onResponse(Call<CustomerResponse> call, Response<CustomerResponse> response) {
+                CustomerResponse serverRespone = response.body();
+                int code = serverRespone.getCode();
+
+                Log.d(TAG, "--->[create-customer] response " + response.code());
+                if (code == 1) {
+                    //TODO somthing
+                    finish();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CustomerResponse> call, Throwable t) {
+                Log.d(TAG, "--->[create-customer] onFailure: " + t.getMessage());
+            }
+        });
     }
 
     private void save() {
@@ -476,7 +579,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         object.setLevel(mLevel);
         if (mLevel > Constant.CUSTOMER_LEVEL_2) {
             String ada = mADA.getText().toString();
-            if (!Utility.isEmptyString(ada)) {
+            if (!TextUtils.isEmpty(ada)) {
                 object.setAda(mADA.getText().toString());
             }
         }
