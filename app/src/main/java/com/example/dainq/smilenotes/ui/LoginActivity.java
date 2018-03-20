@@ -96,6 +96,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mSession = new SessionManager(LoginActivity.this);
     }
 
+    /**
+     * create service with retrofit*
+     */
     private void initRetrofit() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BaseURL.URL_USER)
@@ -204,7 +207,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     String token = response.headers().get("Authorization");
                     int version = userRequest.getVersion();
 
-                    Log.d(TAG, "--->[login] getversion: "+ userRequest.getVersion());
+                    Log.d(TAG, "--->[login] getversion: " + userRequest.getVersion());
                     //create session
                     mSession.createLoginSession(nameUser, emailUser, idUser, token, password, version);
 
@@ -213,9 +216,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                     //finish activity login
                     finish();
-                } else if (code == Constant.RESPONSE_WRONG_PASSWORD) {
+                } else if (code == Constant.RESPONSE_WRONG_PASSWORD || code == Constant.RESPONSE_USER_NOT_EXIT) {
                     Snackbar.make(relativeLayout, "Tài khoản hoặc mật khẩu không chính xác!", Snackbar.LENGTH_SHORT).show();
                 } else {
+                    Log.d(TAG, "--->[login] error: " + code + " - " + userResponse.getMessage());
                     Snackbar.make(relativeLayout, "Unknown error! ", Snackbar.LENGTH_SHORT).show();
                 }
                 //dimiss progress bar
@@ -226,7 +230,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onFailure(Call<UserResponse> call, Throwable t) {
                 //connect failure
                 mProgressView.setVisibility(View.INVISIBLE);
-                Log.d("onFailure ", t.getMessage() + "\n" + t.getCause());
+                Log.d(TAG,"onFailure " + t.getMessage() + "\n" + t.getCause());
                 Snackbar snackbar = Snackbar.make(relativeLayout, "Kết nối lỗi!", Snackbar.LENGTH_INDEFINITE)
                         .setAction("THỬ LẠI", new View.OnClickListener() {
                             @Override

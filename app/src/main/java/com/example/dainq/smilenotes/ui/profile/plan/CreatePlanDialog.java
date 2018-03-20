@@ -24,8 +24,8 @@ import android.widget.Toast;
 import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.controllers.realm.RealmController;
-import com.example.dainq.smilenotes.model.MeetingObject;
-import com.example.dainq.smilenotes.model.NotificationObject;
+import com.example.dainq.smilenotes.model.object.MeetingObject;
+import com.example.dainq.smilenotes.model.object.NotificationObject;
 import com.example.dainq.smilenotes.ui.notifications.NotificationHelper;
 import com.example.dainq.smilenotes.ui.notifications.NotificationReceiver;
 

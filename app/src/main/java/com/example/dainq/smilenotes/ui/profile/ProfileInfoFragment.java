@@ -13,7 +13,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.example.dainq.smilenotes.common.Utility;
-import com.example.dainq.smilenotes.model.CustomerObject;
+import com.example.dainq.smilenotes.model.object.CustomerObject;
 
 import java.util.Date;
 

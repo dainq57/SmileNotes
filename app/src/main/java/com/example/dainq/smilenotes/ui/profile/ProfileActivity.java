@@ -18,7 +18,7 @@ import android.widget.TextView;
 import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.controllers.realm.RealmController;
-import com.example.dainq.smilenotes.model.CustomerObject;
+import com.example.dainq.smilenotes.model.object.CustomerObject;
 import com.example.dainq.smilenotes.ui.create.CreateActivity;
 
 import de.hdodenhof.circleimageview.CircleImageView;

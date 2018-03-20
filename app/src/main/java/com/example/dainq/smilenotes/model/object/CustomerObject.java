@@ -1,4 +1,4 @@
-package com.example.dainq.smilenotes.model;
+package com.example.dainq.smilenotes.model.object;
 
 import java.util.Date;
 

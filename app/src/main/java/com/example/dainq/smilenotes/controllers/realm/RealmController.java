@@ -6,10 +6,10 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 
 import com.example.dainq.smilenotes.common.Constant;
-import com.example.dainq.smilenotes.model.CustomerObject;
-import com.example.dainq.smilenotes.model.MeetingObject;
-import com.example.dainq.smilenotes.model.NotificationObject;
-import com.example.dainq.smilenotes.model.ProductObject;
+import com.example.dainq.smilenotes.model.object.CustomerObject;
+import com.example.dainq.smilenotes.model.object.MeetingObject;
+import com.example.dainq.smilenotes.model.object.NotificationObject;
+import com.example.dainq.smilenotes.model.object.ProductObject;
 
 import java.util.Date;
 

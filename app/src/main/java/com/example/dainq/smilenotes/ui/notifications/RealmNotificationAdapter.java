@@ -2,7 +2,7 @@ package com.example.dainq.smilenotes.ui.notifications;
 
 import android.content.Context;
 
-import com.example.dainq.smilenotes.model.NotificationObject;
+import com.example.dainq.smilenotes.model.object.NotificationObject;
 import com.example.dainq.smilenotes.ui.common.realm.RealmModelAdapter;
 
 import io.realm.RealmResults;

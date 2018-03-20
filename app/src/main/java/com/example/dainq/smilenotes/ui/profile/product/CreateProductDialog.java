@@ -25,7 +25,7 @@ import android.widget.Toast;
 import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.controllers.realm.RealmController;
-import com.example.dainq.smilenotes.model.ProductObject;
+import com.example.dainq.smilenotes.model.object.ProductObject;
 
 import java.util.Calendar;
 import java.util.Date;

@@ -94,5 +94,12 @@ public class Constant {
     //CONSTANT FOR LOGIN REGISTER
     public static int RESPONSE_SUCCESS = 1;
     public static int RESPONSE_USER_EXIT = 3;
+    public static int RESPONSE_USER_NOT_EXIT = 2;
     public static int RESPONSE_WRONG_PASSWORD = 7;
+
+    //CONSTANT FOR CREATE CUSTOMER
+    public static int RESPONSE_CREATE_SUCCESS = 1;
+    public static int RESPONSE_CREATE_EXIT = 2;
+    public static int RESPONSE_CREATE_ERROR = 3;
+
 }

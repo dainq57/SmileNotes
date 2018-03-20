@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-import com.example.dainq.smilenotes.model.CustomerObject;
+import com.example.dainq.smilenotes.model.object.CustomerObject;
 
 import nq.dai.smilenotes.R;
 

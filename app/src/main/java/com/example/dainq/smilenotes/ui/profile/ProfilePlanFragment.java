@@ -13,8 +13,8 @@ import android.widget.TextView;
 
 import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.controllers.realm.RealmController;
-import com.example.dainq.smilenotes.model.CustomerObject;
-import com.example.dainq.smilenotes.model.MeetingObject;
+import com.example.dainq.smilenotes.model.object.CustomerObject;
+import com.example.dainq.smilenotes.model.object.MeetingObject;
 import com.example.dainq.smilenotes.ui.profile.plan.CreatePlanDialog;
 import com.example.dainq.smilenotes.ui.profile.plan.PlanAdapter;
 import com.example.dainq.smilenotes.ui.profile.plan.RealmMeetingAdapter;

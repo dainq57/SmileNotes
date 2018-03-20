@@ -33,10 +33,9 @@ import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.common.SessionManager;
 import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.controllers.api.APICustomer;
-import com.example.dainq.smilenotes.controllers.api.APIUser;
 import com.example.dainq.smilenotes.controllers.realm.RealmController;
-import com.example.dainq.smilenotes.model.CustomerObject;
-import com.example.dainq.smilenotes.model.NotificationObject;
+import com.example.dainq.smilenotes.model.object.CustomerObject;
+import com.example.dainq.smilenotes.model.object.NotificationObject;
 import com.example.dainq.smilenotes.model.request.CustomerRequest;
 import com.example.dainq.smilenotes.model.response.CustomerResponse;
 import com.example.dainq.smilenotes.ui.common.spinner.OnSpinnerItemSelectedListener;
@@ -163,7 +162,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
         mPref = this.getSharedPreferences(Constant.PREF_NAME, Context.MODE_PRIVATE);
         mIdKey = mPref.getInt(Constant.KEY_ID, Constant.PREF_ID_DEFAULT);
-        Log.d(CreateActivity.class.getSimpleName() + "-dainq", " pref id: " + mIdKey);
+        Log.d(TAG, "---> [initView] pref id: " + mIdKey);
 
         if (mAction == Constant.ACTION_CREATE) {
             mButtonSave.setText(R.string.save);
@@ -205,7 +204,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
         mPrefNoti = getSharedPreferences(Constant.PREF_USER, Context.MODE_PRIVATE);
         mIdNotiKey = mPrefNoti.getInt(Constant.USER_NOTIFICATION, Constant.PREF_ID_DEFAULT);
-        Log.d("dainqid ", "Create getIdNoti from pref " + mIdNotiKey);
+        Log.d(TAG, "-->>[initView] Create getIdNoti from pref " + mIdNotiKey);
     }
 
     private void initRetrofit() {
@@ -217,10 +216,12 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         mService = retrofit.create(APICustomer.class);
     }
 
+    //get action of user to create or update infomation of customer
     private int getAction() {
+        //get data pass from MainActivity via bundle
         Bundle extras = getIntent().getExtras();
         mCustomerId = extras.getInt(Constant.KEY_ID);
-        Log.d(CreateActivity.class.getSimpleName() + "-dainq", " action: " + mAction);
+        Log.d(TAG, " -->[getAction]: " + mAction);
         return extras.getInt(Constant.KEY_ACTION, Constant.ACTION_CREATE);
     }
 
@@ -460,7 +461,9 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
             CustomerRequest customer = createDataCustomer();
             processCreateCustomer(customer);
         }
-        makeToast(val);
+
+        //convert to snackbar
+        //makeToast(val);
     }
 
     /*
@@ -470,13 +473,18 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
     private CustomerRequest createDataCustomer() {
         CustomerRequest customer = new CustomerRequest();
 
+        //setId
         customer.setUserId(mSession.getUserDetails().getId());
+        Log.d(TAG, "-->[createDataCustomer] idUser: " + mSession.getUserDetails().getId());
+
+        //setLevel
         customer.setLevel(mLevel);
 
         //customer has adaCode if level > level 2
         if (mLevel > Constant.CUSTOMER_LEVEL_2) {
             String ada = mADA.getText().toString();
             if (!TextUtils.isEmpty(ada)) {
+                //setAda
                 customer.setAdaCode(mADA.getText().toString());
             }
         }
@@ -486,20 +494,38 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
             //TODO set avatar to customer, waiting api from server..
 //            customer.setAvatar(avatar);
         }
-        String name = mName.getText().toString();
 
+        //setName
+        String name = mName.getText().toString();
         customer.setName(name);
+
         if (dateOfBirth != null) {
+            //setDOB
             customer.setDateOfBirth(dateOfBirth);
         }
+
+        //setPhonenumber
         customer.setPhone(mPhoneNumber.getText().toString());
+
+        //setAddress
         customer.setAddress(mAddress.getText().toString());
+
+        //setReason
         customer.setReason(mReason.getText().toString());
+
+        //setProblemType
 //        customer.setProblemType(mProblem.getText().toString());
+
+        //setSolution
         customer.setSolution(mSolution.getText().toString());
+
+        //setSuggestProduct
         customer.setSuggestProduct(mProductNeed.getText().toString());
+
+        //setJob
         customer.setJob(mJob.getText().toString());
 
+        //setGender
         int index = mGender.indexOfChild(findViewById(mGender.getCheckedRadioButtonId()));
         customer.setGender(index);
 
@@ -512,33 +538,50 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
     * */
     private void processCreateCustomer(CustomerRequest customer) {
         //alaways add token into request to server
+        //getToken from user session
         String token = mSession.getUserDetails().getToken();
 
+        //create response with info of customer and token
         Call<CustomerResponse> response = mService.createCustomer(customer, token);
         response.enqueue(new Callback<CustomerResponse>() {
             @Override
             public void onResponse(Call<CustomerResponse> call, Response<CustomerResponse> response) {
                 CustomerResponse serverRespone = response.body();
-                int code = serverRespone.getCode();
+                //TODO check any case when create
+                if (serverRespone != null) {
+                    int code = serverRespone.getCode();
 
-                Log.d(TAG, "--->[create-customer] response " + response.code());
-                if (code == 1) {
-                    //TODO somthing
-                    finish();
+                    Log.d(TAG, "-->[process-create-customer] response " + response.code());
+                    if (code == Constant.RESPONSE_CREATE_SUCCESS) {
+                        finish();
+                        makeToast(0);
+                    } else if (code == Constant.RESPONSE_CREATE_EXIT) {
+
+                    } else {
+
+                    }
+                } else {
+                    Log.d(TAG, "-->>[processCreate] Error server!");
                 }
             }
 
             @Override
             public void onFailure(Call<CustomerResponse> call, Throwable t) {
-                Log.d(TAG, "--->[create-customer] onFailure: " + t.getMessage());
+                Log.d(TAG, "--->[process-create-customer] onFailure: " + t.getMessage());
             }
         });
     }
 
+
+    /*
+    **
+    refactor to save in local
+    **
+    */
     private void save() {
         CustomerObject customer = new CustomerObject();
         mId = Utility.createId(mIdKey);
-        Log.d(CreateActivity.class.getSimpleName() + "-dainq", " put id: " + mId);
+        Log.d(TAG, " -->>[save] put id: " + mId);
         mPref.edit().putInt(Constant.KEY_ID, mId).apply();
 
         Calendar dateCreate = Calendar.getInstance();
@@ -605,7 +648,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
         int index = mGender.indexOfChild(findViewById(mGender.getCheckedRadioButtonId()));
         object.setGender(index);
-        Log.d("dainq", " gender:" + index);
+        Log.d(TAG, " -->[setData] gender:" + index);
 
         if (mAction == Constant.ACTION_CREATE) {
             int id = mIdNotiKey + 1;
@@ -614,13 +657,13 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
                     setNotification(dateOfBirthValue[i], id);
                     id++;
                 }
-                Log.d("dainqid ", "id noti put " + id);
+                Log.d(TAG, "-->[setData] id noti put " + id);
             } else {
                 for (int i = 0; i < NUM_BIRTHDAY; i++) {
                     createNotification(dateOfBirthValue[i], id);
                     id++;
                 }
-                Log.d("dainqid ", "id noti put " + id);
+                Log.d(TAG, "-->>[setData] id noti put " + id);
             }
             mPrefNoti.edit().putInt(Constant.USER_NOTIFICATION, id).apply();
         }

@@ -2,7 +2,7 @@ package com.example.dainq.smilenotes.ui.profile.plan;
 
 import android.content.Context;
 
-import com.example.dainq.smilenotes.model.MeetingObject;
+import com.example.dainq.smilenotes.model.object.MeetingObject;
 import com.example.dainq.smilenotes.ui.common.realm.RealmModelAdapter;
 
 import io.realm.RealmResults;

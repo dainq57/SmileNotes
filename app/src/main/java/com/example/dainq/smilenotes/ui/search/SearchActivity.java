@@ -13,9 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.controllers.realm.RealmController;
-import com.example.dainq.smilenotes.model.CustomerObject;
+import com.example.dainq.smilenotes.model.object.CustomerObject;
 import com.example.dainq.smilenotes.ui.profile.customer.CustomerAdapter;
 import com.example.dainq.smilenotes.ui.profile.customer.RealmCustomerAdapter;
 

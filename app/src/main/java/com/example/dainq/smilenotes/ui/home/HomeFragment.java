@@ -21,7 +21,7 @@ import android.widget.TextView;
 import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.controllers.realm.RealmController;
 import com.example.dainq.smilenotes.common.SessionManager;
-import com.example.dainq.smilenotes.model.ProductObject;
+import com.example.dainq.smilenotes.model.object.ProductObject;
 import com.example.dainq.smilenotes.ui.common.spinner.OnSpinnerItemSelectedListener;
 import com.example.dainq.smilenotes.ui.common.spinner.SingleSpinnerLayout;
 import com.example.dainq.smilenotes.ui.common.spinner.SpinnerItem;

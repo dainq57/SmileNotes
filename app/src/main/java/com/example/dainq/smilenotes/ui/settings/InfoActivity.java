@@ -209,6 +209,7 @@ public class InfoActivity extends AppCompatActivity implements View.OnClickListe
 
         //get token from session in pref
         String token = mSession.getUserDetails().getToken();
+        Log.d(TAG, "--->[update-info] token used - " + token);
 
         //create response
         Call<UserResponse> response = mService.updateInfo(request, token);

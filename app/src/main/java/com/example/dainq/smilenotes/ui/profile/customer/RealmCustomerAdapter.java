@@ -2,7 +2,7 @@ package com.example.dainq.smilenotes.ui.profile.customer;
 
 import android.content.Context;
 
-import com.example.dainq.smilenotes.model.CustomerObject;
+import com.example.dainq.smilenotes.model.object.CustomerObject;
 import com.example.dainq.smilenotes.ui.common.realm.RealmModelAdapter;
 
 import io.realm.RealmResults;

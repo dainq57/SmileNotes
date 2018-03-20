@@ -23,9 +23,9 @@ import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.controllers.api.APIUser;
 import com.example.dainq.smilenotes.controllers.realm.RealmController;
 import com.example.dainq.smilenotes.common.SessionManager;
-import com.example.dainq.smilenotes.model.CustomerObject;
-import com.example.dainq.smilenotes.model.MeetingObject;
-import com.example.dainq.smilenotes.model.ProductObject;
+import com.example.dainq.smilenotes.model.object.CustomerObject;
+import com.example.dainq.smilenotes.model.object.MeetingObject;
+import com.example.dainq.smilenotes.model.object.ProductObject;
 import com.example.dainq.smilenotes.model.request.UserChangePassRequest;
 import com.example.dainq.smilenotes.model.response.UserChangePassResponse;
 
@@ -101,7 +101,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingViewHolder> {
                         aboutUs();
                         break;
                     case LOG_OUT:
-                        dialogLogout();
+                        dialogLogout("Bạn có chắc chắn muốn thoát?");
                         break;
                     default:
                         break;
@@ -175,9 +175,9 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingViewHolder> {
         alertDialog.show();
     }
 
-    private void dialogLogout() {
+    private void dialogLogout(String title) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        builder.setMessage("Bạn có chắc chắn muốn thoát?")
+        builder.setMessage(title)
                 .setIcon(mContext.getDrawable(R.drawable.icn_power_off_128))
                 .setTitle("THOÁT ỨNG DỤNG")
                 .setCancelable(false)
@@ -277,6 +277,9 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingViewHolder> {
         } else if (!newPass.equals(newPassAgain)) {
             Snackbar.make(rootLayout, "Mật khẩu mới chưa khớp!", Snackbar.LENGTH_SHORT).show();
             return false;
+        } else if (newPass.equals(oldPass)) {
+            Snackbar.make(rootLayout, "Mật khẩu mới phải khác mật khẩu cũ!", Snackbar.LENGTH_SHORT).show();
+            return false;
         }
         return true;
     }
@@ -304,7 +307,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingViewHolder> {
                 int code = serverResponse.getCode();
 
                 if (code == 1) {
-                    Toast.makeText(mContext, "Thành công!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Đã đổi mật khẩu!", Toast.LENGTH_SHORT).show();
                     //version change, get old version
                     int version = mSession.getUserDetails().getVersion();
                     version += 1;
@@ -312,6 +315,8 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingViewHolder> {
                     //update session with new password and increase version data in Pref
                     mSession.updateSession(SessionManager.KEY_PASSWORD, newPass, version);
                     dialog.dismiss();
+
+                    dialogLogout("Bạn có muốn đăng nhập lại?");
                 } else {
                     Snackbar.make(rootLayout, "Lỗi!", Snackbar.LENGTH_SHORT).show();
                     Log.d(TAG, "--->[change-pass] error: " + status + "/" + code + "/" + serverResponse.getMessage());
