@@ -1,9 +1,9 @@
 package com.example.dainq.smilenotes.controllers.api;
 
-import com.example.dainq.smilenotes.model.request.UserChangePassRequest;
-import com.example.dainq.smilenotes.model.request.UserRequest;
-import com.example.dainq.smilenotes.model.response.UserChangePassResponse;
-import com.example.dainq.smilenotes.model.response.UserResponse;
+import com.example.dainq.smilenotes.model.request.user.UserChangePassRequest;
+import com.example.dainq.smilenotes.model.request.user.UserRequest;
+import com.example.dainq.smilenotes.model.response.user.UserChangePassResponse;
+import com.example.dainq.smilenotes.model.response.user.UserResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

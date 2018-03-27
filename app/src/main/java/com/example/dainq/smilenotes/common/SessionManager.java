@@ -5,34 +5,48 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-import com.example.dainq.smilenotes.model.request.UserRequest;
+import com.example.dainq.smilenotes.model.request.user.UserRequest;
 import com.example.dainq.smilenotes.ui.LoginActivity;
 
 public class SessionManager {
     // Shared Preferences
     SharedPreferences mPref;
+
     // Editor for Shared preferences
     SharedPreferences.Editor mEditor;
+
     // Context
     Context mContext;
+
     // Shared mPref mode
     int PRIVATE_MODE = 0;
+
     // Sharedpref file name
     private static final String PREF_NAME = "pref_user_session";
+
     // All Shared Preferences Keys
     private static final String IS_LOGIN = "user_isLogged";
+
     // UserRequest name (make variable public to access from outside)
     public static final String KEY_NAME = "user_name";
+
     // Email address (make variable public to access from outside)
     public static final String KEY_EMAIL = "user_email";
+
     // id (make variable public to access from outside)
     public static final String KEY_ID = "user_id";
+
     // token (make variable public to access from outside)
     public static final String KEY_TOKEN = "user_token";
+
     // password (make variable public to access from outside)
     public static final String KEY_PASSWORD = "user_password";
+
     // version (make variable public to access from outside)
     public static final String KEY_VERSION = "user_version";
+
+    // avatar (make variable public to access from outside)
+    public static final String KEY_AVATAR = "user_avatar";
 
     // Constructor
     @SuppressLint("CommitPrefEdits")
@@ -45,7 +59,7 @@ public class SessionManager {
     /**
      * Create login session
      */
-    public void createLoginSession(String name, String email, String id, String token, String password, int version) {
+    public void createLoginSession(String name, String email, String id, String token, String password, int version, String avatar) {
         // Storing login value as TRUE
         mEditor.putBoolean(IS_LOGIN, true);
 
@@ -67,11 +81,14 @@ public class SessionManager {
         // Storing version in mPref
         mEditor.putInt(KEY_VERSION, version);
 
+        // Storing avatar in mPref
+        mEditor.putString(KEY_AVATAR, avatar);
+
         // commit changes
         mEditor.commit();
     }
 
-    public void updateSession(String key, String value, int version){
+    public void updateSession(String key, String value, int version) {
         //update version to session
         mEditor.putInt(KEY_VERSION, version);
 
@@ -125,6 +142,9 @@ public class SessionManager {
 
         //version
         userRequest.setVersion(mPref.getInt(KEY_VERSION, 0));
+
+        //avatar
+        userRequest.setPathAvatar(mPref.getString(KEY_AVATAR, null));
 
         // return userRequest
         return userRequest;

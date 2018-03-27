@@ -11,28 +11,23 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.dainq.smilenotes.common.BaseURL;
 import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.common.SessionManager;
 import com.example.dainq.smilenotes.controllers.api.APICustomer;
-import com.example.dainq.smilenotes.controllers.api.APIUser;
-import com.example.dainq.smilenotes.controllers.realm.RealmController;
-import com.example.dainq.smilenotes.model.object.CustomerObject;
-import com.example.dainq.smilenotes.model.request.CustomerRequest;
-import com.example.dainq.smilenotes.model.request.UserRequest;
-import com.example.dainq.smilenotes.model.response.ListCustomerResponse;
-import com.example.dainq.smilenotes.ui.LoginActivity;
+import com.example.dainq.smilenotes.model.request.customer.CustomerRequest;
+import com.example.dainq.smilenotes.model.request.customer.ListCustomerRequest;
+import com.example.dainq.smilenotes.model.response.customer.ListCustomerResponse;
 import com.example.dainq.smilenotes.ui.common.spinner.OnSpinnerItemSelectedListener;
 import com.example.dainq.smilenotes.ui.common.spinner.SingleSpinnerLayout;
 import com.example.dainq.smilenotes.ui.common.spinner.SpinnerItem;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
-import io.realm.RealmResults;
 import nq.dai.smilenotes.R;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,15 +45,11 @@ public class ListCustomerActivity extends AppCompatActivity implements OnSpinner
     private SingleSpinnerLayout mSpinner;
     private TextView mTextNotResults;
 
-    //old adapter customer
-//    private CustomerAdapter mAdapter;
-//    private RealmController mRealmController;
-
     //list customer
     private RecyclerView mListCustomer;
 
     //new adapter customer
-    private CCustomerAdapter mCustomerAdapter;
+    private CustomerAdapter mCustomerAdapter;
 
     //type of spinner
     private int mType;
@@ -70,13 +61,20 @@ public class ListCustomerActivity extends AppCompatActivity implements OnSpinner
     private SessionManager mSession;
 
     //data customer get from server
-    private CustomerRequest[] mData;
+    private List<CustomerRequest> mData;
 
     //id of user, get from session
     private String mUserId;
 
     //token create by server help user do anything
     private String mToken;
+
+    //progressbar
+    private ProgressBar mProgressView;
+
+    //list level
+    private ArrayList<String> mListLevel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +91,10 @@ public class ListCustomerActivity extends AppCompatActivity implements OnSpinner
         //get userId and Token from session
         mUserId = mSession.getUserDetails().getId();
         mToken = mSession.getUserDetails().getToken();
+
+        mProgressView = (ProgressBar) findViewById(R.id.progress_bar);
+
+        mListLevel = new ArrayList<String>();
 
         Log.d(TAG, "-->[initView] userId - token: " + mUserId + " - " + mToken);
 
@@ -126,21 +128,10 @@ public class ListCustomerActivity extends AppCompatActivity implements OnSpinner
 
         mTextNotResults = (TextView) findViewById(R.id.list_not_results);
 
-        // create an empty adapter and add it to the recycler view
-//        mAdapter = new CustomerAdapter(this);
-//        mAdapter.setHasStableIds(true);
-//        mListCustomer.setAdapter(mAdapter);
-
-        /*---create adapter, new adapter---*/
-
-        //get list customer from server
         initRetrofit();
 
-        mCustomerAdapter = new CCustomerAdapter();
+        mCustomerAdapter = new CustomerAdapter();
         mCustomerAdapter.setHasStableIds(true);
-
-        //getall customer
-        processGetListCustomer(0, false);
     }
 
     @Override
@@ -153,24 +144,15 @@ public class ListCustomerActivity extends AppCompatActivity implements OnSpinner
         return super.onOptionsItemSelected(item);
     }
 
-//    public void setRealmAdapter(RealmResults<CustomerObject> customer) {
-//        RealmCustomerAdapter realmAdapter = new RealmCustomerAdapter(this.getApplicationContext(), customer, true);
-//        // Set the data and tell the RecyclerView to draw
-//        mAdapter.setRealmAdapter(realmAdapter);
-//        mAdapter.notifyDataSetChanged();
-//    }
-
-
     /*
     * this funtion to pass data into adapter to show in recycler view
     * */
     private void getListCustomer() {
         Bundle mExtras = getIntent().getExtras();
-//        mRealmController = RealmController.with(this);
         if (mExtras != null) {
             mType = mExtras.getInt(Constant.CUSTOMER_LEVEL);
         }
-//        Log.d(TAG, "dainq mType List " + mType);
+
         mSpinner.setSelection(mType);
     }
 
@@ -187,38 +169,41 @@ public class ListCustomerActivity extends AppCompatActivity implements OnSpinner
 
     @Override
     public void onItemSelected(int position) {
-//        RealmResults<CustomerObject> mRealmResults;
-        if (position == 1) {
-            //Calculator num day of month
-            //get Current date
-            Calendar calendar = Calendar.getInstance();
-            Date end = calendar.getTime();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd");
-            String day = dateFormat.format(end);
-            int temp = Integer.parseInt(day);
+        mProgressView.setVisibility(View.VISIBLE);
 
-            //get start date before from today
-            calendar.add(Calendar.DAY_OF_MONTH, -(temp - 1));
-            Date start = calendar.getTime();
+        //get customers is level 0
+        if (position == Constant.CUSTOMER_TYPE_NEW || position == Constant.CUSTOMER_TYPE_NEW_MONTH) {
+            mListLevel.clear();
+            mListLevel.add("0");
 
-//            Log.d(TAG, "dainq start/end day " + start + "  //  " + end);
-//            mRealmResults = mRealmController.queryedCustomers(Constant.CUSTOMER_DATE_CREATE, start, end);
-        } else {
-//            mRealmResults = mRealmController.queryedCustomers(position);
+            ListCustomerRequest request = createDataRequest(mListLevel, mUserId);
+            processGetListCustomer(request, false);
         }
-//        Log.d(TAG, "dainq position spinner " + position);
 
-        //check list customer is Empty or not
+        //get list customers in level 1 & 2
+        if (position == Constant.CUSTOMER_TYPE_CONSUMER) {
+            mListLevel.clear();
+            mListLevel.add("1");
+            mListLevel.add("2");
 
-        //TODO
-//        if (true) {
-//            mTextNotResults.setVisibility(View.VISIBLE);
-//        } else {
-//            mTextNotResults.setVisibility(View.GONE);
-////            setRealmAdapter(mRealmResults);
-//
-//            //TODO set adatapter here
-//        }
+            ListCustomerRequest request = createDataRequest(mListLevel, mUserId);
+            processGetListCustomer(request, false);
+        }
+
+        //get listcustomer in level 3 & 4
+        if (position == Constant.CUSTOMER_TYPE_DISTRIBUTION) {
+            mListLevel.clear();
+            mListLevel.add("3");
+            mListLevel.add("4");
+
+            ListCustomerRequest request = createDataRequest(mListLevel, mUserId);
+            processGetListCustomer(request, false);
+        }
+
+        //get all customer
+        if (position == Constant.CUSTOMER_TYPE_ALL) {
+            processGetListCustomer(null, true);
+        }
     }
 
     @Override
@@ -227,7 +212,8 @@ public class ListCustomerActivity extends AppCompatActivity implements OnSpinner
 
     @Override
     protected void onResume() {
-//        mAdapter.notifyDataSetChanged();
+        //need notifyDataSetChange in here to update data view
+        //todo
         super.onResume();
     }
 
@@ -246,13 +232,13 @@ public class ListCustomerActivity extends AppCompatActivity implements OnSpinner
     /**
      * this funtion is process to get list customer by userId
      */
-    private void processGetListCustomer(int level, boolean getAll) {
+    private void processGetListCustomer(ListCustomerRequest request, boolean getAll) {
         Call<ListCustomerResponse> response;
         //if getAll -> get all customer, else get by level by user chosen
-        if (!getAll) {
+        if (getAll) {
             response = mService.getListCustomerByUserId(mUserId, mToken);
         } else {
-            response = mService.getListCustomerByLevel(mUserId, level, mToken);
+            response = mService.getListCustomerByLevel(request, mToken);
         }
 
         response.enqueue(new Callback<ListCustomerResponse>() {
@@ -261,16 +247,24 @@ public class ListCustomerActivity extends AppCompatActivity implements OnSpinner
                 //getbody of response from server
                 ListCustomerResponse customerResponse = response.body();
 
+                //hide progressbar
+                mProgressView.setVisibility(View.INVISIBLE);
+
                 //check response from server is null or not
                 if (customerResponse != null) {
-                    Log.d(TAG, "-->>[processGetList] onResponse: " + customerResponse.getCode() + " - " + customerResponse.getMessage());
+                    int code = customerResponse.getCode();
+                    if (code == Constant.RESPONSE_SUCCESS) {
+                        Log.d(TAG, "-->>[processGetList] onResponse: " + customerResponse.getCode() + " - " + customerResponse.getMessage());
 
-                    //getInformation from json array
-                    mData = customerResponse.getData();
-                    mCustomerAdapter = new CCustomerAdapter(ListCustomerActivity.this, mData);
-                    mListCustomer.setAdapter(mCustomerAdapter);
+                        //getInformation from json array
+                        mData = customerResponse.getData();
+                        mCustomerAdapter = new CustomerAdapter(ListCustomerActivity.this, mData);
+                        mListCustomer.setAdapter(mCustomerAdapter);
 
-                    Log.d(TAG, "-->[processGetList] lenght data: " + mData.length);
+                        Log.d(TAG, "-->[processGetList] lenght data: " + mData.size());
+                    } else {
+                        Log.d(TAG, "-->>[processGetList] onResponse: " + customerResponse.getCode() + " - " + customerResponse.getMessage());
+                    }
                 } else {
                     //TODO: do something when respone is null
                     Log.d(TAG, "-->[processGetlist] respone null!");
@@ -280,7 +274,22 @@ public class ListCustomerActivity extends AppCompatActivity implements OnSpinner
             @Override
             public void onFailure(@NonNull Call<ListCustomerResponse> call, @NonNull Throwable t) {
                 Log.d(TAG, "-->>[processGetList] onFailure: " + t.getMessage() + " - " + t.getCause());
+
+                //hide progress bar
+                mProgressView.setVisibility(View.INVISIBLE);
             }
         });
+    }
+
+    /**
+     * create data request to get list
+     */
+    private ListCustomerRequest createDataRequest(ArrayList<String> listLevel, String idUser) {
+        ListCustomerRequest request = new ListCustomerRequest();
+
+        request.setUserId(idUser);
+        request.setListLevel(listLevel);
+
+        return request;
     }
 }

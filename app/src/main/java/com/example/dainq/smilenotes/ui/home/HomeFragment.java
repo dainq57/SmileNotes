@@ -3,7 +3,6 @@ package com.example.dainq.smilenotes.ui.home;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,35 +17,35 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.dainq.smilenotes.common.BaseURL;
 import com.example.dainq.smilenotes.common.Constant;
-import com.example.dainq.smilenotes.controllers.realm.RealmController;
+import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.common.SessionManager;
-import com.example.dainq.smilenotes.model.object.ProductObject;
+import com.example.dainq.smilenotes.controllers.api.APICustomer;
+import com.example.dainq.smilenotes.model.response.customer.LevelData;
+import com.example.dainq.smilenotes.model.response.customer.NumberCustomerResponse;
 import com.example.dainq.smilenotes.ui.common.spinner.OnSpinnerItemSelectedListener;
 import com.example.dainq.smilenotes.ui.common.spinner.SingleSpinnerLayout;
 import com.example.dainq.smilenotes.ui.common.spinner.SpinnerItem;
 import com.example.dainq.smilenotes.ui.profile.customer.ListCustomerActivity;
 import com.example.dainq.smilenotes.ui.profile.product.ProductAdapter;
-import com.example.dainq.smilenotes.ui.profile.product.RealmProductAdapter;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import im.dacer.androidcharts.PieHelper;
 import im.dacer.androidcharts.PieView;
-import io.realm.RealmResults;
-import io.realm.Sort;
 import nq.dai.smilenotes.R;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class HomeFragment extends Fragment implements OnSpinnerItemSelectedListener, View.OnClickListener {
     private String TAG = "HomeFragment";
 
     private Context mContext;
     private ProductAdapter mAdapter;
-    private RealmController mRealmController;
 
     private TextView mCPotentialMonth;
     private TextView mCPotential;
@@ -63,13 +62,16 @@ public class HomeFragment extends Fragment implements OnSpinnerItemSelectedListe
     private TextView mTxtSumary;
     private TextView mTxtPie;
 
-    private int potetialMonth;
-    private int potetial;
+    private int potentialMonth;
+    private int potential;
     private int consumer;
-    private int distribution;
+    private int distributor;
 
-    private SharedPreferences mPref;
+    //session of user
     private SessionManager mSession;
+
+    //interface service
+    private APICustomer mService;
 
     public HomeFragment(Context context, SessionManager session) {
         mContext = context;
@@ -83,7 +85,12 @@ public class HomeFragment extends Fragment implements OnSpinnerItemSelectedListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, null);
+
+        Retrofit retrofit = Utility.initRetrofit(BaseURL.URL_CUSTOMER);
+        mService = retrofit.create(APICustomer.class);
+
         initView(view);
+        processGetNumberCustomer();
         return view;
     }
 
@@ -96,10 +103,9 @@ public class HomeFragment extends Fragment implements OnSpinnerItemSelectedListe
         mListCustomer.setHasFixedSize(true);
         mListCustomer.setLayoutManager(new LinearLayoutManager(mContext));
 
-        mAdapter = new ProductAdapter(mContext);
-        mListCustomer.setAdapter(mAdapter);
+//        mAdapter = new ProductAdapter(mContext);
+//        mListCustomer.setAdapter(mAdapter);
 
-        mRealmController = RealmController.with(this);
         initSpinner(view);
 
         mTextNotResults = (TextView) view.findViewById(R.id.home_list_not_results);
@@ -132,22 +138,26 @@ public class HomeFragment extends Fragment implements OnSpinnerItemSelectedListe
         mCDistribution = (TextView) view.findViewById(R.id.home_customer_distribution_number);
 
         mAvatarUser = (CircleImageView) view.findViewById(R.id.home_avatar_user);
+        String pathAvatar = mSession.getUserDetails().getPathAvatar();
+
+        //if path != null, set avatar for user
+        if (pathAvatar != null) {
+            mAvatarUser.setImageBitmap(Utility.decodeImage(pathAvatar));
+        }
+
         mNameUser = (TextView) view.findViewById(R.id.home_name_user);
 
         //get name user from session afrer login
         mNameUser.setText(mSession.getUserDetails().getFullName());
-
-        mPref = getActivity().getSharedPreferences(Constant.PREF_USER, Context.MODE_PRIVATE);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private void setDataPieView(PieView pieView) {
-        int sum = potetial + consumer + distribution;
+    private void setDataPieView(PieView pieView, int poten, int consum, int distribu) {
+        int sum = poten + consum + distribu;
         float pote = 0, cons = 0, dis = 0;
         if (sum != 0) {
-            pote = 100 * potetial / sum;
-            cons = 100 * consumer / sum;
-            dis = 100 * distribution / sum;
+            pote = 100 * poten / sum;
+            cons = 100 * consum / sum;
+            dis = 100 * distribu / sum;
         }
         ArrayList<PieHelper> pieHelperArrayList = new ArrayList<>();
         pieHelperArrayList.add(new PieHelper(pote, mContext.getResources().getColor(R.color.color_piechart_level_1, null)));
@@ -173,31 +183,11 @@ public class HomeFragment extends Fragment implements OnSpinnerItemSelectedListe
         });
     }
 
-    private void setDataSumary() {
-        mCPotentialMonth.setText(potetialMonth > 10 ? ("" + potetialMonth) : ("0" + potetialMonth));
-        mCPotential.setText(potetial > 10 ? ("" + potetial) : ("0" + potetial));
-        mCConsumer.setText(consumer > 10 ? ("" + consumer) : ("0" + consumer));
-        mCDistribution.setText(distribution > 10 ? ("" + distribution) : ("0" + distribution));
-    }
-
-    private void calculatorPercent() {
-        //Need change to potential of month
-        Calendar calendar = Calendar.getInstance();
-        Date end = calendar.getTime();
-
-        @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd");
-        String day = dateFormat.format(end);
-        int temp = Integer.parseInt(day);
-
-        //get start date before from today
-        calendar.add(Calendar.DAY_OF_MONTH, -(temp - 1));
-        Date start = calendar.getTime();
-
-        potetialMonth = mRealmController.getCountCustomer(Constant.CUSTOMER_DATE_CREATE, start, end);
-        potetial = mRealmController.getCountCustomer(Constant.CUSTOMER_TYPE_NEW);
-        consumer = mRealmController.getCountCustomer(Constant.CUSTOMER_TYPE_CONSUMER);
-        distribution = mRealmController.getCountCustomer(Constant.CUSTOMER_TYPE_DISTRIBUTION);
+    private void setDataSumary(int poten, int potenMonth, int consum, int distribu) {
+        mCPotentialMonth.setText(potenMonth > 10 ? ("" + potenMonth) : ("0" + potenMonth));
+        mCPotential.setText(poten > 10 ? ("" + poten) : ("0" + poten));
+        mCConsumer.setText(consum > 10 ? ("" + consum) : ("0" + consum));
+        mCDistribution.setText(distribu > 10 ? ("" + distribu) : ("0" + distribu));
     }
 
     private void openListCustomer(int id) {
@@ -231,49 +221,16 @@ public class HomeFragment extends Fragment implements OnSpinnerItemSelectedListe
     }
 
     private void sortCustomerBetween(int type) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        Date start = calendar.getTime();
 
-        //Seclect list in 1 week or 1 month from today
-        if (type == 0) {
-            calendar.add(Calendar.DAY_OF_MONTH, 8);
-        } else {
-            calendar.add(Calendar.DAY_OF_MONTH, 31);
-        }
-        Date end = calendar.getTime();
-        RealmResults<ProductObject> mRealmResult = mRealmController.getProductBetween(start, end, Sort.ASCENDING);
-        Log.d(TAG, "realmResult: " + mRealmResult.size());
-
-        if (!mRealmResult.isEmpty()) {
-            RealmProductAdapter realmAdapter = new RealmProductAdapter(mContext, mRealmResult, true);
-            mAdapter.setRealmAdapter(realmAdapter);
-            mAdapter.notifyDataSetChanged();
-            mTextNotResults.setVisibility(View.GONE);
-        } else {
-            mTextNotResults.setVisibility(View.VISIBLE);
-        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onResume() {
         super.onResume();
-        mRealmController = new RealmController(mContext);
-        mSpinner.setSelection(0);
-
-        //reset avatar and name after change information
-
-//        String avatar = mPref.getString(Constant.USER_AVATAR, "");
-//        mAvatarUser.setImageBitmap(Utility.decodeImage(avatar));
 
         String name = mSession.getUserDetails().getFullName();
         mNameUser.setText(name);
-
-        calculatorPercent();
-        setDataSumary();
-        setDataPieView(mPieView);
 
         sortCustomerBetween(0);
     }
@@ -328,9 +285,42 @@ public class HomeFragment extends Fragment implements OnSpinnerItemSelectedListe
         super.onActivityCreated(savedInstanceState);
     }
 
-    @Override
-    public void onDestroy() {
-        mRealmController.close();
-        super.onDestroy();
+    /*
+     ** get number of customer by level
+     */
+    private void processGetNumberCustomer() {
+        String userId = mSession.getUserDetails().getId();
+        String token = mSession.getUserDetails().getToken();
+
+        Call<NumberCustomerResponse> response = mService.getNumberCustomer(userId, token);
+        response.enqueue(new Callback<NumberCustomerResponse>() {
+            @Override
+            public void onResponse(Call<NumberCustomerResponse> call, Response<NumberCustomerResponse> response) {
+                NumberCustomerResponse serverResponse = response.body();
+
+                if (serverResponse != null) {
+                    Log.d(TAG, "-->[process-get-number-customer] onResponse sucess: " + serverResponse.getCode() + ": " + serverResponse.getMessage());
+
+                    LevelData numberCustomer = serverResponse.getData();
+                    potential = numberCustomer.getPotential();
+                    potentialMonth = numberCustomer.getPotentialMonth();
+                    consumer = numberCustomer.getConsumer();
+                    distributor = numberCustomer.getDistributor();
+
+                    //set number text in home screen
+                    setDataSumary(potential, potentialMonth, consumer, distributor);
+
+                    //set data of pieView in home screen
+                    setDataPieView(mPieView, potential, consumer, distributor);
+                } else {
+                    Log.d(TAG, "-->[process-get-number-customer] onResponse: " + response.code() + ": " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<NumberCustomerResponse> call, Throwable t) {
+                Log.d(TAG, "-->[process-get-number-customer] onFailure: " + t.getMessage());
+            }
+        });
     }
 }

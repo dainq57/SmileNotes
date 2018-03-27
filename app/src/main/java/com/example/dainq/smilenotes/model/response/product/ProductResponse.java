@@ -1,14 +1,10 @@
-package com.example.dainq.smilenotes.model.response;
+package com.example.dainq.smilenotes.model.response.product;
 
-import com.example.dainq.smilenotes.model.request.UserRequest;
+import com.example.dainq.smilenotes.model.request.product.ProductRequest;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Response use for api: login, sign-up, update-info
- **/
-public class UserResponse {
-
+public class ProductResponse {
     @SerializedName("code")
     @Expose
     private int code;
@@ -19,7 +15,7 @@ public class UserResponse {
 
     @SerializedName("data")
     @Expose
-    private UserRequest data;
+    private ProductRequest data;
 
     public int getCode() {
         return code;
@@ -37,11 +33,11 @@ public class UserResponse {
         this.message = message;
     }
 
-    public UserRequest getData() {
+    public ProductRequest getData() {
         return data;
     }
 
-    public void setData(UserRequest data) {
+    public void setData(ProductRequest data) {
         this.data = data;
     }
 }

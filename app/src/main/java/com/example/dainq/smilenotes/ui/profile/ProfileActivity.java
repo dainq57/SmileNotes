@@ -12,85 +12,101 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.example.dainq.smilenotes.common.BaseURL;
 import com.example.dainq.smilenotes.common.Constant;
+import com.example.dainq.smilenotes.common.SessionManager;
 import com.example.dainq.smilenotes.common.Utility;
-import com.example.dainq.smilenotes.controllers.realm.RealmController;
-import com.example.dainq.smilenotes.model.object.CustomerObject;
+import com.example.dainq.smilenotes.controllers.api.APICustomer;
+import com.example.dainq.smilenotes.model.request.customer.CustomerRequest;
+import com.example.dainq.smilenotes.model.response.customer.CustomerResponse;
 import com.example.dainq.smilenotes.ui.create.CreateActivity;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import nq.dai.smilenotes.R;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
-    private Bundle mExtras;
-    private int mId;
-    private CustomerObject mCustomer;
-    private RealmController mRealmController;
+    private String TAG = "ProfileActivity";
 
-    private String mName;
+    private CustomerRequest mCustomer;
+
     private TextView mAda;
     private RatingBar mRating;
-    private FrameLayout mButtonEdit;
     private TextView mDateCreate;
     private CircleImageView mAvatar;
 
+    //progress view
+    private ProgressBar mProgressView;
 
+    //type tab open profile
     private int type;
+
+    //session of User
+    private SessionManager mSession;
+
+    //interface api of customer
+    private APICustomer mService;
+
+    //id of customer
+    private String mIdCustomer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        initRetrofit();
         initView();
     }
 
+    private void initRetrofit() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BaseURL.URL_CUSTOMER)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        mService = retrofit.create(APICustomer.class);
+    }
+
     private void initView() {
+        //create new session of customer
+        mSession = new SessionManager(this);
+
         mAda = (TextView) findViewById(R.id.profile_ada);
         mRating = (RatingBar) findViewById(R.id.profile_rating);
-        mButtonEdit = (FrameLayout) findViewById(R.id.profile_btn_edit);
+
+        FrameLayout mButtonEdit = (FrameLayout) findViewById(R.id.profile_btn_edit);
+        mButtonEdit.setOnClickListener(this);
+
         mDateCreate = (TextView) findViewById(R.id.profile_date_create);
         mAvatar = (CircleImageView) findViewById(R.id.profile_avatar);
+        mProgressView = (ProgressBar) findViewById(R.id.progress_bar);
     }
 
     private void onUpdate() {
-        getCustomerObject();
-        if (mCustomer.getLevel() > Constant.CUSTOMER_LEVEL_2) {
-            String ada = mCustomer.getAda();
-            if (ada == null) {
-                mAda.setText(getResources().getString(R.string.ada_code, ""));
-            } else {
-                mAda.setText(getResources().getString(R.string.ada_code, mCustomer.getAda()));
-            }
-            mAda.setVisibility(View.VISIBLE);
-        } else {
-            mAda.setVisibility(View.GONE);
-        }
-        mRating.setRating(mCustomer.getLevel() + 1);
-        mButtonEdit.setOnClickListener(this);
-        String date = Utility.dateToString(mCustomer.getDatecreate());
-        mDateCreate.setText(getResources().getString(R.string.date_create, date));
+        //show progress bar
+        mProgressView.setVisibility(View.VISIBLE);
 
-        String avatar = mCustomer.getAvatar();
-        if (avatar != null) {
-            mAvatar.setImageBitmap(Utility.decodeImage(avatar));
-        }
+        //call get infomation of customer
+        processGetInfoCustomer();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        //call this in onResume to get new update data after edit, and back to activity profile
+        //from activity edit/create
         onUpdate();
         initToolBar();
-        initViewPager();
-
-//        RealmResults<NotificationObject> notificationObjects = mRealmController.getNotificationOfCustomer(mCustomer.getId());
-//        Log.d("dainq size notification ", "" + notificationObjects.size());
-//        for (int i = 0; i < notificationObjects.size(); i++) {
-//            Log.d("dainq noti: ", notificationObjects.get(i).getDatevalue() + "");
-//        }
     }
 
     @Override
@@ -103,15 +119,47 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         return super.onOptionsItemSelected(item);
     }
 
-    private void getCustomerObject() {
-        mExtras = getIntent().getExtras();
-        if (mExtras != null) {
-            mId = mExtras.getInt(Constant.KEY_ID);
-            type = mExtras.getInt(Constant.KEY_TYPE_PRODILE);
-            Log.d(ProfileActivity.class.getSimpleName() + "-dainq", "mId: " + mId);
-            mRealmController = RealmController.with(this);
-            mCustomer = mRealmController.getCustomer(mId);
-        }
+    /*
+    funtion to get information of customer
+    */
+    private void processGetInfoCustomer() {
+        Bundle extras = getIntent().getExtras();
+        String idCustomer = extras.getString(Constant.KEY_ID);
+        type = extras.getInt(Constant.KEY_TYPE_PRODILE);
+
+        String token = mSession.getUserDetails().getToken();
+        String idUser = mSession.getUserDetails().getId();
+
+        Call<CustomerResponse> response = mService.getCustomer(idUser, idCustomer, token);
+        response.enqueue(new Callback<CustomerResponse>() {
+            @Override
+            public void onResponse(Call<CustomerResponse> call, Response<CustomerResponse> response) {
+                //hide progress bar
+                mProgressView.setVisibility(View.INVISIBLE);
+
+                //getbody of response
+                CustomerResponse serverRespone = response.body();
+
+                if (serverRespone != null) {
+                    mCustomer = serverRespone.getData();
+                    mIdCustomer = mCustomer.getId();
+
+                    Log.d(TAG, "-->[get-info] response: " + serverRespone.getCode() + " - " + serverRespone.getMessage());
+                    Log.d(TAG, "-->[get-info] id: " + serverRespone.getData().getId());
+
+                    initProfileBanner(mCustomer);
+
+                    initViewPager(mCustomer);
+                } else {
+                    Log.d(TAG, "-->[get-info] response: data null");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CustomerResponse> call, Throwable t) {
+                Log.d(TAG, "-->[failure] mess: " + t.getMessage());
+            }
+        });
     }
 
     private void initToolBar() {
@@ -119,16 +167,45 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         setSupportActionBar(mToolbar);
         mToolbar.setNavigationIcon(R.drawable.tw_ic_ab_back_mtrl);
         mToolbar.getNavigationIcon().setColorFilter(ContextCompat.getColor(this, R.color.colorAccent), PorterDuff.Mode.MULTIPLY);
+    }
 
-        if (mExtras != null) {
-            mName = mCustomer.getName();
-            if (getSupportActionBar() != null) getSupportActionBar().setTitle(mName);
+    //set header profile
+    private void initProfileBanner(CustomerRequest customer) {
+        //set title in toolbar
+        if (getSupportActionBar() != null) getSupportActionBar().setTitle(customer.getName());
+
+        //check level of customer to set ada view or invisible
+        if (customer.getLevel() > Constant.CUSTOMER_LEVEL_2) {
+            String ada = customer.getAdaCode();
+            if (ada == null) {
+                mAda.setText(getResources().getString(R.string.ada_code, ""));
+            } else {
+                mAda.setText(getResources().getString(R.string.ada_code, mCustomer.getAdaCode()));
+            }
+            mAda.setVisibility(View.VISIBLE);
+        } else {
+            mAda.setVisibility(View.GONE);
+        }
+
+        //set level
+        mRating.setRating(customer.getLevel() + 1);
+        Log.d(TAG, "-->[init-profile] level: " + customer.getLevel());
+
+        //get dateCreate and set
+        String date = customer.getCreateDate();
+        mDateCreate.setText(getResources().getString(R.string.date_create, date));
+        Log.d(TAG, "-->[init-profile] create-date: " + date);
+
+        //get avatar
+        String avatar = customer.getPathAvatar();
+        if (avatar != null) {
+            mAvatar.setImageBitmap(Utility.decodeImage(avatar));
         }
     }
 
-    private void initViewPager() {
+    private void initViewPager(CustomerRequest customer) {
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
+        setupViewPager(viewPager, customer);
         if (type == Constant.PROFILE_TYPE_PRODUCT) {
             viewPager.setCurrentItem(3);
         }
@@ -140,12 +217,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         tabLayout.setupWithViewPager(viewPager);
     }
 
-    private void setupViewPager(ViewPager viewPager) {
+    private void setupViewPager(ViewPager viewPager, CustomerRequest customer) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new ProfileInfoFragment(this, mCustomer), getString(R.string.tab_info));
-        adapter.addFragment(new ProfileProblemFragment(this, mCustomer), getString(R.string.tab_problem));
-        adapter.addFragment(new ProfilePlanFragment(this, mCustomer), getString(R.string.tab_plan));
-        ProfileProductFragment fragmentProduct = new ProfileProductFragment(this, mCustomer);
+        adapter.addFragment(new ProfileInfoFragment(this, customer), getString(R.string.tab_info));
+        adapter.addFragment(new ProfileProblemFragment(this, customer), getString(R.string.tab_problem));
+//        adapter.addFragment(new ProfilePlanFragment(this, customer), getString(R.string.tab_plan));
+
+        //if customer is level biggest than lv0, add product fragment
+        ProfileProductFragment fragmentProduct = new ProfileProductFragment(this, customer);
         if (mCustomer.getLevel() > Constant.CUSTOMER_LEVEL_0) {
             adapter.addFragment(fragmentProduct, getString(R.string.tab_product));
         }
@@ -156,26 +235,23 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.profile_btn_edit:
-                startEdit();
+                startEdit(mIdCustomer);
                 break;
             default:
                 break;
         }
     }
 
-    private void startEdit() {
+    /**
+     * start edit customer with idCustomer
+     */
+    private void startEdit(String idCustomer) {
         Bundle bundle = new Bundle();
         bundle.putInt(Constant.KEY_ACTION, Constant.ACTION_EDIT);
-        bundle.putInt(Constant.KEY_ID, mId);
+        bundle.putString(Constant.KEY_ID, idCustomer);
 
         Intent intent = new Intent(this, CreateActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
-    }
-
-    @Override
-    protected void onDestroy() {
-        mRealmController.close();
-        super.onDestroy();
     }
 }

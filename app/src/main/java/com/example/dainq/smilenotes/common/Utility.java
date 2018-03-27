@@ -10,12 +10,15 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
+import com.example.dainq.smilenotes.controllers.api.APICustomer;
 import com.example.dainq.smilenotes.model.object.CustomerObject;
 import com.example.dainq.smilenotes.model.object.MeetingObject;
 import com.example.dainq.smilenotes.model.object.ProductObject;
@@ -30,6 +33,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -37,6 +41,9 @@ import java.util.Date;
 import java.util.Locale;
 
 import io.realm.RealmResults;
+import nq.dai.smilenotes.R;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.github.mikephil.charting.utils.ColorTemplate.rgb;
 
@@ -269,5 +276,22 @@ public class Utility {
     public static boolean isEmailValid(String email) {
         //here check format of email need @ and .
         return (email.contains("@") && (email.contains(".")));
+    }
+
+    /*
+    * make snack bar
+    * */
+    public static void makeSnackbar(View rootLayout, String string) {
+        Snackbar.make(rootLayout, string, Snackbar.LENGTH_SHORT).show();
+    }
+
+    /*
+     ** create service interface
+     */
+    public static Retrofit initRetrofit(String url) {
+        return new Retrofit.Builder()
+                .baseUrl(url)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
     }
 }

@@ -108,49 +108,8 @@ public class MainActivity extends AppCompatActivity implements OnTabSelectListen
         FloatingActionButton mFabSearch = (FloatingActionButton) findViewById(R.id.fab_search);
         mFabSearch.setOnClickListener(this);
 
-//        mPref = this.getSharedPreferences(Constant.PREF_USER, Context.MODE_PRIVATE);
-//        boolean isFirst = mPref.getBoolean(Constant.USER_FIRST_USE, true);
-//        Log.d("dainq ", "isFirst " + isFirst);
-//        if (isFirst) {
-//            inputUserName();
-//        }
         mReamController = new RealmController(this);
     }
-
-//    private void inputUserName() {
-//        final View view = getLayoutInflater().inflate(R.layout.dialog_change_pass, null);
-//        final AlertDialog.Builder builder;
-//        final EditText editName = (EditText) view.findViewById(R.id.dialog_change_pass);
-//
-//        builder = new AlertDialog.Builder(this);
-//        builder.setPositiveButton("Đồng ý", null);
-//        builder.setView(view);
-//        builder.setCancelable(false);
-//        builder.setTitle("Nhập tên của bạn");
-//
-//        final AlertDialog alertDialog = builder.create();
-//        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-//            @Override
-//            public void onShow(final DialogInterface dialog) {
-//                Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-//                button.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        String name = editName.getText().toString();
-//                        if (!Utility.isEmptyString(name)) {
-//                            mPref.edit().putString(Constant.USER_NAME, name).apply();
-//                            mPref.edit().putBoolean(Constant.USER_FIRST_USE, false).apply();
-//                            mHomeFragment.getmNameUser().setText(name);
-//                            dialog.dismiss();
-//                        } else {
-//                            Toast.makeText(getApplicationContext(), R.string.enter_your_name_touse_app, Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
-//            }
-//        });
-//        alertDialog.show();
-//    }
 
     private void initBottomView() {
         BottomBar mBottomBar = (BottomBar) findViewById(R.id.bottomBar);

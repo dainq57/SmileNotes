@@ -17,15 +17,14 @@ import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.common.SessionManager;
 import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.controllers.api.APIUser;
-import com.example.dainq.smilenotes.model.request.UserRequest;
-import com.example.dainq.smilenotes.model.response.UserResponse;
+import com.example.dainq.smilenotes.model.request.user.UserRequest;
+import com.example.dainq.smilenotes.model.response.user.UserResponse;
 
 import nq.dai.smilenotes.R;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "LoginActivity";
@@ -89,7 +88,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mPassSignUp = (EditText) findViewById(R.id.id_signup_edit_pass);
         mRePassSignUp = (EditText) findViewById(R.id.id_signup_edit_re_pass);
 
-        mProgressView = (ProgressBar) findViewById(R.id.login_progressbar);
+        mProgressView = (ProgressBar) findViewById(R.id.progress_bar);
         relativeLayout = (RelativeLayout) findViewById(R.id.relative_login);
 
         //create new session manager
@@ -100,11 +99,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      * create service with retrofit*
      */
     private void initRetrofit() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BaseURL.URL_USER)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
+        Retrofit retrofit = Utility.initRetrofit(BaseURL.URL_USER);
         mService = retrofit.create(APIUser.class);
     }
 
@@ -193,7 +188,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 UserResponse userResponse = response.body();
 
                 int code = userResponse.getCode();
-                Log.d(TAG, "--->[login] header: " + response.headers().get("Authorization"));
+                Log.d(TAG, "--->[process-login] header: " + response.headers().get("Authorization"));
                 //login success
                 if (code == Constant.RESPONSE_SUCCESS) {
                     //create intent MainActivity
@@ -205,21 +200,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     String nameUser = userRequest.getFullName();
                     String idUser = userRequest.getId();
                     String token = response.headers().get("Authorization");
+                    String pathAvatar = userRequest.getPathAvatar();
                     int version = userRequest.getVersion();
 
-                    Log.d(TAG, "--->[login] getversion: " + userRequest.getVersion());
+                    Log.d(TAG, "--->[process-login] getversion: " + userRequest.getVersion());
                     //create session
-                    mSession.createLoginSession(nameUser, emailUser, idUser, token, password, version);
+                    mSession.createLoginSession(nameUser, emailUser, idUser, token, password, version, pathAvatar);
 
+                    Log.d(TAG, "--->[process-login] userId: " + idUser);
                     //start MainActivity
                     startActivity(intent);
 
                     //finish activity login
                     finish();
-                } else if (code == Constant.RESPONSE_WRONG_PASSWORD || code == Constant.RESPONSE_USER_NOT_EXIT) {
-                    Snackbar.make(relativeLayout, "Tài khoản hoặc mật khẩu không chính xác!", Snackbar.LENGTH_SHORT).show();
+                } else if (code == Constant.RESPONSE_WRONG_PASSWORD) {
+                    Utility.makeSnackbar(relativeLayout, "Tài khoản hoặc mật khẩu không chính xác!");
+                } else if (code == Constant.RESPONSE_USER_NOT_EXIT) {
+                    Utility.makeSnackbar(relativeLayout, "Tài khoản không tồn tại!");
                 } else {
-                    Log.d(TAG, "--->[login] error: " + code + " - " + userResponse.getMessage());
+                    Log.d(TAG, "--->[process-login] error: " + code + " - " + userResponse.getMessage());
                     Snackbar.make(relativeLayout, "Unknown error! ", Snackbar.LENGTH_SHORT).show();
                 }
                 //dimiss progress bar
@@ -230,8 +229,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onFailure(Call<UserResponse> call, Throwable t) {
                 //connect failure
                 mProgressView.setVisibility(View.INVISIBLE);
-                Log.d(TAG,"onFailure " + t.getMessage() + "\n" + t.getCause());
-                Snackbar snackbar = Snackbar.make(relativeLayout, "Kết nối lỗi!", Snackbar.LENGTH_INDEFINITE)
+                Log.d(TAG, "onFailure " + t.getMessage() + "\n" + t.getCause());
+                Snackbar snackbar = Snackbar.make(relativeLayout, "Lỗi kết nối!", Snackbar.LENGTH_INDEFINITE)
                         .setAction("THỬ LẠI", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {

@@ -26,8 +26,8 @@ import com.example.dainq.smilenotes.common.SessionManager;
 import com.example.dainq.smilenotes.model.object.CustomerObject;
 import com.example.dainq.smilenotes.model.object.MeetingObject;
 import com.example.dainq.smilenotes.model.object.ProductObject;
-import com.example.dainq.smilenotes.model.request.UserChangePassRequest;
-import com.example.dainq.smilenotes.model.response.UserChangePassResponse;
+import com.example.dainq.smilenotes.model.request.user.UserChangePassRequest;
+import com.example.dainq.smilenotes.model.response.user.UserChangePassResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;

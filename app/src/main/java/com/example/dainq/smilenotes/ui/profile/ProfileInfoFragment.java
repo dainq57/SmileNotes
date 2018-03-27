@@ -12,10 +12,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.example.dainq.smilenotes.common.Utility;
-import com.example.dainq.smilenotes.model.object.CustomerObject;
-
-import java.util.Date;
+import com.example.dainq.smilenotes.model.request.customer.CustomerRequest;
 
 import nq.dai.smilenotes.R;
 
@@ -29,13 +26,13 @@ public class ProfileInfoFragment extends Fragment {
     private RadioButton mMale, mFemale;
     private EditText mJob;
 
-    private CustomerObject mCustomer;
+    private CustomerRequest mCustomer;
 
     public ProfileInfoFragment(Context context) {
         mContext = context;
     }
 
-    public ProfileInfoFragment(Context context, CustomerObject object) {
+    public ProfileInfoFragment(Context context, CustomerRequest object) {
         mContext = context;
         mCustomer = object;
     }
@@ -54,12 +51,11 @@ public class ProfileInfoFragment extends Fragment {
     }
 
     private void onUpdate() {
-        Date birth = mCustomer.getDateofbirth();
-        if (birth != null) {
-            String date = Utility.dateToString(mCustomer.getDateofbirth());
-            mDateOfBirth.setText(date);
+        String dob = mCustomer.getDateOfBirth();
+        if (dob != null) {
+            mDateOfBirth.setText(dob);
         }
-        mPhoneNumber.setText(mCustomer.getPhonenumber());
+        mPhoneNumber.setText(mCustomer.getPhone());
         mAddress.setText(mCustomer.getAddress());
         mReason.setText(mCustomer.getReason());
         mJob.setText(mCustomer.getJob());

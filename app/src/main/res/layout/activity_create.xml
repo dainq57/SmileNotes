@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -13,12 +13,25 @@
         android:background="@color/color_new_white"
         app:contentInsetLeft="0dp"
         app:contentInsetStart="0dp"
-        app:contentInsetStartWithNavigation="0dp"/>
+        app:contentInsetStartWithNavigation="0dp" />
+
+    <FrameLayout
+        android:id="@+id/layout_divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar">
+
+        <include layout="@layout/divider" />
+    </FrameLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="2px"
-        android:background="@color/listview_divider_color"/>
+        android:layout_height="match_parent"
+        android:layout_below="@+id/layout_divider">
 
-    <include layout="@layout/content_create"/>
-</LinearLayout>
+        <include layout="@layout/content_create" />
+    </FrameLayout>
+
+    <include layout="@layout/progress_bar" />
+
+</RelativeLayout>

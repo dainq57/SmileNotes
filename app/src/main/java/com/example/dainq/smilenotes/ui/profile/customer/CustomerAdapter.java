@@ -11,27 +11,54 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.dainq.smilenotes.common.BaseURL;
 import com.example.dainq.smilenotes.common.Constant;
-import com.example.dainq.smilenotes.controllers.realm.RealmController;
-import com.example.dainq.smilenotes.model.object.CustomerObject;
-import com.example.dainq.smilenotes.model.object.MeetingObject;
-import com.example.dainq.smilenotes.model.object.NotificationObject;
-import com.example.dainq.smilenotes.model.object.ProductObject;
-import com.example.dainq.smilenotes.ui.common.realm.RealmRecyclerViewAdapter;
+import com.example.dainq.smilenotes.common.SessionManager;
+import com.example.dainq.smilenotes.common.Utility;
+import com.example.dainq.smilenotes.controllers.api.APICustomer;
+import com.example.dainq.smilenotes.model.request.customer.CustomerRequest;
+import com.example.dainq.smilenotes.model.response.RemoveResponse;
 import com.example.dainq.smilenotes.ui.create.CreateActivity;
 import com.example.dainq.smilenotes.ui.profile.ProfileActivity;
 
-import io.realm.RealmResults;
-import nq.dai.smilenotes.R;
+import java.util.List;
 
-public class CustomerAdapter extends RealmRecyclerViewAdapter<CustomerObject> {
+import nq.dai.smilenotes.R;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+
+public class CustomerAdapter extends RecyclerView.Adapter<CustomerViewHolder> {
     private String TAG = "CustomerAdapter";
 
-    private Context mContext;
-    private RealmController mRealmController;
+    //data customer to pass into adapter
+    private List<CustomerRequest> mData;
 
-    public CustomerAdapter(Context context) {
+    //context using in adapter
+    private Context mContext;
+
+    //session
+    private SessionManager mSession;
+
+    //service api
+    private APICustomer mService;
+
+    //contructor
+    public CustomerAdapter() {
+    }
+
+    public CustomerAdapter(Context context, List<CustomerRequest> data) {
         mContext = context;
+        mData = data;
+        mSession = new SessionManager(mContext);
+        initRetrofit();
+    }
+
+    private void initRetrofit() {
+        Retrofit retrofit = Utility.initRetrofit(BaseURL.URL_CUSTOMER);
+
+        mService = retrofit.create(APICustomer.class);
     }
 
     @Override
@@ -46,20 +73,22 @@ public class CustomerAdapter extends RealmRecyclerViewAdapter<CustomerObject> {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
-        mRealmController = new RealmController(mContext);
+    public void onBindViewHolder(CustomerViewHolder holder, final int position) {
 
-        final CustomerObject customer = getItem(position);
-        CustomerViewHolder holder = (CustomerViewHolder) viewHolder;
+        final CustomerRequest customer = mData.get(position);
+        final String idCustomer = customer.getId();
+        Log.d(TAG, "-->[onBindVH] lenght data: " + mData.size());
 
         holder.mName.setText(customer.getName());
         holder.mRating.setRating(customer.getLevel() + 1);
         holder.mContentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG, "-->[Item customer] onClick item customer: " + customer.getName());
+
                 Bundle bundle = new Bundle();
-                bundle.putInt(Constant.KEY_ID, customer.getId());
-                Log.d(TAG, "customer id: " + customer.getId());
+                bundle.putString(Constant.KEY_ID, idCustomer);
+
                 Intent intent = new Intent(mContext, ProfileActivity.class);
                 intent.putExtras(bundle);
                 mContext.startActivity(intent);
@@ -70,68 +99,84 @@ public class CustomerAdapter extends RealmRecyclerViewAdapter<CustomerObject> {
             holder.mDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d(TAG, "remove customer: " + customer.getName());
-                    confirmDelete(customer.getId());
+                    Log.d(TAG, "-->[Item customer] remove customer: " + customer.getName());
+                    confirmDelete(idCustomer, position);
                 }
             });
 
             holder.mEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startEdit(customer.getId());
+                    Log.d(TAG, "-->[Item customer] edit customer: " + customer.getName());
+                    startEditCustomer(idCustomer);
                 }
             });
         }
+
     }
 
     @Override
     public int getItemCount() {
-        if (getRealmAdapter() != null) {
-            return getRealmAdapter().getCount();
+        if (mData != null) {
+            return mData.size();
         }
         return 0;
     }
 
-    private void startEdit(int id) {
+    /* edit funtion*/
+    private void startEditCustomer(String idCustomer) {
         Bundle bundle = new Bundle();
         bundle.putInt(Constant.KEY_ACTION, Constant.ACTION_EDIT);
-        bundle.putInt(Constant.KEY_ID, id);
+        bundle.putString(Constant.KEY_ID, idCustomer);
 
         Intent intent = new Intent(mContext, CreateActivity.class);
         intent.putExtras(bundle);
         mContext.startActivity(intent);
     }
 
-    private void confirmDelete(final int id) {
+    // confirm before delete customer
+    private void confirmDelete(final String idCustomer, final int position) {
         final AlertDialog.Builder builder;
         builder = new AlertDialog.Builder(mContext);
         builder.setTitle(R.string.title_dialog_delete)
                 .setMessage(R.string.dialog_delete_content)
                 .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        mRealmController.deleteCustomer(id);
-                        deleteAllOfCustomer(id);
-                        notifyDataSetChanged();
+                        processDeleteCustomer(idCustomer, position);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        // do nothing
                         dialog.dismiss();
                     }
                 })
-                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setIcon(mContext.getDrawable(R.drawable.icn_alert_128))
                 .show();
     }
 
-    private void deleteAllOfCustomer(int id) {
-        RealmResults<ProductObject> productList = mRealmController.getProductOfCustomer(id);
-        RealmResults<MeetingObject> meetingList = mRealmController.getMeetingOfCustomer(id);
-        RealmResults<NotificationObject> notificationList = mRealmController.getNotificationOfCustomer(id);
+    /*
+    process deleted customer
+    */
+    //todo check response from server
+    private void processDeleteCustomer(String idCustomer, final int position) {
+        String idUser = mSession.getUserDetails().getId();
+        String token = mSession.getUserDetails().getToken();
 
-        Log.d(TAG, "dainq product/meeting: " + productList.size() + "/" + meetingList.size());
-        mRealmController.removeAllProduct(productList);
-        mRealmController.removeAllPlan(meetingList);
-        mRealmController.removeAllNotification(notificationList);
+        Call<RemoveResponse> response = mService.removeCustomer(idUser, idCustomer, token);
+        response.enqueue(new Callback<RemoveResponse>() {
+            @Override
+            public void onResponse(Call<RemoveResponse> call, Response<RemoveResponse> response) {
+                RemoveResponse responseServer = response.body();
+                Log.d(TAG, "--[process-delete] response: " + responseServer.getCode() + " | " + responseServer.getMessage());
+
+                mData.remove(position);
+                notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<RemoveResponse> call, Throwable t) {
+                Log.d(TAG, "--[process-delete] failure: " + t.getMessage());
+            }
+        });
     }
 }

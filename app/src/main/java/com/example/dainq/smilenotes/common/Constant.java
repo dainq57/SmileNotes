@@ -18,6 +18,7 @@ public class Constant {
     public static int CUSTOMER_TYPE_NEW_MONTH = 1;
     public static int CUSTOMER_TYPE_CONSUMER = 2;
     public static int CUSTOMER_TYPE_DISTRIBUTION = 3;
+    public static int CUSTOMER_TYPE_ALL = 4;
 
     /*CustomerRequest level*/
     public static int CUSTOMER_LEVEL_0 = 0; //tiem nang
@@ -84,7 +85,7 @@ public class Constant {
     public static String NOTIFICATION_ID_CUSTOMER = "idcustomer";
 
     /*create*/
-    public static String FORMAT_DATE = "dd-MM-yyyy";
+    public static String FORMAT_DATE = "dd/MM/yyyy";
 
     /*dialog*/
     public static int DIALOG_CREATE = 10;
@@ -99,7 +100,6 @@ public class Constant {
 
     //CONSTANT FOR CREATE CUSTOMER
     public static int RESPONSE_CREATE_SUCCESS = 1;
-    public static int RESPONSE_CREATE_EXIT = 2;
-    public static int RESPONSE_CREATE_ERROR = 3;
-
+    public static int RESPONSE_CREATE_EXIT = 3;
+    public static int RESPONSE_CREATE_ERROR = 99;
 }

@@ -74,9 +74,9 @@
     <!--Dialog-->
     <string name="title_dialog_delete">Xoá khách hàng</string>
     <string name="title_dialog_delete_notification">Xoá thông báo</string>
-    <string name="title_dialog_back_create">Huỷ tạo khách hàng</string>
+    <string name="title_dialog_back_create">Thoát</string>
     <string name="title_dialog_back_edit">Huỷ chỉnh sửa</string>
-    <string name="dialog_content_create">Khách hàng sẽ không được tạo mới</string>
+    <string name="dialog_content_create">Kết thúc tạo khách hàng mới?</string>
     <string name="dialog_content_edit">Thông tin sẽ được khôi phục như ban đầu</string>
     <string name="dialog_delete_content">Thông tin về khách hàng sẽ bị xoá, bạn có chắc chắn xoá khách hàng này?</string>
     <string name="dialog_delete_content_notification">Xoá tất cả thông báo của bạn?</string>
@@ -106,6 +106,7 @@
     <string name="empty_info">Thông tin còn trống!</string>
     <string name="validate_schedule_time">Ngày dự kiến không được trước ngày đã gặp!</string>
     <string name="type_product">Loại sản phẩm</string>
+    <string name="memo_product">Ghi chú</string>
     <string name="time_use">Dự kiến thời gian dùng hết</string>
     <string name="add_success">Đã thêm mới!</string>
 

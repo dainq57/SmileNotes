@@ -1,4 +1,4 @@
-package com.example.dainq.smilenotes.model.request;
+package com.example.dainq.smilenotes.model.request.customer;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -20,7 +20,7 @@ public class CustomerRequest {
 
     @SerializedName("customerId")
     @Expose
-    private String customerId;
+    private String customerId; //using in local
 
     @SerializedName("adaCode")
     @Expose
@@ -40,11 +40,11 @@ public class CustomerRequest {
 
     @SerializedName("dateOfBirth")
     @Expose
-    private Date dateOfBirth;
+    private String dateOfBirth;
 
     @SerializedName("createDate")
     @Expose
-    private Date createDate;
+    private String createDate;
 
     @SerializedName("job")
     @Expose
@@ -73,6 +73,10 @@ public class CustomerRequest {
     @SerializedName("phone")
     @Expose
     private String phone;
+
+    @SerializedName("pathAvatar")
+    @Expose
+    private String pathAvatar;
 
     public int getVersion() {
         return version;
@@ -122,19 +126,19 @@ public class CustomerRequest {
         this.adaCode = adaCode;
     }
 
-    public Date getDateOfBirth() {
+    public String getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public Date getCreateDate() {
+    public String getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(Date createDate) {
+    public void setCreateDate(String createDate) {
         this.createDate = createDate;
     }
 
@@ -208,5 +212,13 @@ public class CustomerRequest {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getPathAvatar() {
+        return pathAvatar;
+    }
+
+    public void setPathAvatar(String pathAvatar) {
+        this.pathAvatar = pathAvatar;
     }
 }

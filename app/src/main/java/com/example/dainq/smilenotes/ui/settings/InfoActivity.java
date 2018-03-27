@@ -26,8 +26,8 @@ import com.example.dainq.smilenotes.common.BaseURL;
 import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.common.SessionManager;
 import com.example.dainq.smilenotes.controllers.api.APIUser;
-import com.example.dainq.smilenotes.model.request.UserRequest;
-import com.example.dainq.smilenotes.model.response.UserResponse;
+import com.example.dainq.smilenotes.model.request.user.UserRequest;
+import com.example.dainq.smilenotes.model.response.user.UserResponse;
 import com.soundcloud.android.crop.Crop;
 
 import java.io.File;
@@ -38,7 +38,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class InfoActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "InfoActivity";
@@ -76,6 +75,11 @@ public class InfoActivity extends AppCompatActivity implements View.OnClickListe
 
         mAvatar = (CircleImageView) findViewById(R.id.setting_update_avatar);
         mAvatar.setOnClickListener(this);
+        //get avatar from session
+        String avatar = mSession.getUserDetails().getPathAvatar();
+        if (avatar != null) {
+            mAvatar.setImageBitmap(Utility.decodeImage(avatar));
+        }
 
         mEditName = (EditText) findViewById(R.id.setting_update_edit_name);
         mEditEmail = (EditText) findViewById(R.id.setting_update_edit_email);
@@ -90,14 +94,6 @@ public class InfoActivity extends AppCompatActivity implements View.OnClickListe
         mCancel.setOnClickListener(this);
 
         mProgressView = (ProgressBar) findViewById(R.id.setting_progress_bar);
-
-//        mPref = getSharedPreferences(Constant.PREF_USER, Context.MODE_PRIVATE);
-
-//        String name = mPref.getString(Constant.USER_NAME, "");
-//        mEditName.setText(name);
-
-//        String avatar = mPref.getString(Constant.USER_AVATAR, "");
-//        mAvatar.setImageBitmap(Utility.decodeImage(avatar));
     }
 
     private void initToolBar() {
@@ -109,10 +105,7 @@ public class InfoActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initRetrofit() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BaseURL.URL_USER)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        Retrofit retrofit = Utility.initRetrofit(BaseURL.URL_USER);
 
         mService = retrofit.create(APIUser.class);
     }
@@ -130,9 +123,19 @@ public class InfoActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.setting_update_btn_save:
                 String name = mEditName.getText().toString();
+
                 if (!TextUtils.isEmpty(name)) {
-//                    save(name);
-                    processUpdateInfo(name);
+                    //change passAvatar
+                    String mAvatarPath = null;
+                    if (mUri != null) {
+                        mAvatarPath = Utility.convertImage(this, mUri);
+                        Log.d(TAG, "-->[update-info] patchAvatar user: " + mAvatarPath);
+                    }
+
+                    //call update Infomation
+                    processUpdateInfo(name, mAvatarPath);
+
+                    //show progressbar
                     mProgressView.setVisibility(View.VISIBLE);
                 } else {
                     Snackbar.make(rootLayout, "Không được để trống họ tên! ", Snackbar.LENGTH_SHORT).show();
@@ -180,20 +183,11 @@ public class InfoActivity extends AppCompatActivity implements View.OnClickListe
                 .show();
     }
 
-//    private void save(String name) {
-//        if (mUri != null) {
-//            String mAvatarEncoder = Utility.convertImage(this, mUri);
-////            mPref.edit().putString(Constant.USER_AVATAR, mAvatarEncoder).apply();
-//            Log.d("dainq", " pref avatar user: " + mAvatarEncoder);
-//        }
-////        mPref.edit().putString(Constant.USER_NAME, name).apply();
-//    }
-
-    private void processUpdateInfo(final String name) {
+    private void processUpdateInfo(final String name, final String pathAvatar) {
         //get id and email paramester from userdetail of session
         String id = mSession.getUserDetails().getId();
         String email = mSession.getUserDetails().getEmail();
-        String password = mSession.getUserDetails().getPassword();
+        final String password = mSession.getUserDetails().getPassword();
         final int version = mSession.getUserDetails().getVersion();
 
         Log.d(TAG, "--->[update-info] update name - " + name);
@@ -205,7 +199,7 @@ public class InfoActivity extends AppCompatActivity implements View.OnClickListe
         request.setFullName(name);
         request.setEmail(email);
         request.setPassword(password);
-        request.setPathAvatar("");
+        request.setPathAvatar(pathAvatar);
 
         //get token from session in pref
         String token = mSession.getUserDetails().getToken();
@@ -221,16 +215,18 @@ public class InfoActivity extends AppCompatActivity implements View.OnClickListe
                 mProgressView.setVisibility(View.INVISIBLE);
                 int code = userResponse.getCode();
                 if (code == 1) {
-                    Snackbar.make(rootLayout, "Cập nhật thành công! ", Snackbar.LENGTH_SHORT).show();
+                    Utility.makeSnackbar(rootLayout, "Cập nhật thành công!");
                     //create value new version
                     int ver = version + 1;
                     Log.d(TAG, "--->[update-info] update version: " + ver);
-                    //update name and version into data in Pref
+                    //update name avatar and version into data in Pref
                     mSession.updateSession(SessionManager.KEY_NAME, name, ver);
+                    mSession.updateSession(SessionManager.KEY_AVATAR, pathAvatar, ver);
+
                     finish();
                 } else {
                     Log.d(TAG, "--->[update-info] response: " + code + " - " + userResponse.getMessage());
-                    Snackbar.make(rootLayout, "Lỗi!", Snackbar.LENGTH_SHORT).show();
+                    Utility.makeSnackbar(rootLayout, "Lỗi!");
                 }
             }
 
@@ -243,7 +239,7 @@ public class InfoActivity extends AppCompatActivity implements View.OnClickListe
                         .setAction("THỬ LẠI", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-
+                                processUpdateInfo(name, pathAvatar);
                             }
                         });
 

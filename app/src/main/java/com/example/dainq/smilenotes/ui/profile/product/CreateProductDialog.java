@@ -3,7 +3,6 @@ package com.example.dainq.smilenotes.ui.profile.product;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -18,39 +17,54 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.dainq.smilenotes.common.BaseURL;
 import com.example.dainq.smilenotes.common.Constant;
+import com.example.dainq.smilenotes.common.SessionManager;
 import com.example.dainq.smilenotes.common.Utility;
-import com.example.dainq.smilenotes.controllers.realm.RealmController;
-import com.example.dainq.smilenotes.model.object.ProductObject;
+import com.example.dainq.smilenotes.controllers.api.APIProduct;
+import com.example.dainq.smilenotes.model.request.product.ProductRequest;
+import com.example.dainq.smilenotes.model.response.product.ProductResponse;
 
 import java.util.Calendar;
 import java.util.Date;
 
 import nq.dai.smilenotes.R;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class CreateProductDialog extends DialogFragment implements OnClickListener {
-    private String TAG = "CreatePlanDialog";
+    private String TAG = "CreateProductDialog";
 
-    private int mIdcustomer;
     private TextView mTitle;
     private TextView mTime;
     private Date mTimeValue;
-    private EditText mContent;
+    private EditText mName;
+    private EditText mMemo;
 
     private TextView mSave;
     private TextView mCancel;
 
     private ProductAdapter mAdapter;
-    private RealmController mRealmController;
 
-    private SharedPreferences mPref;
-    private int mIdKey;
+    //session of user
+    private SessionManager mSession;
 
-    public CreateProductDialog(ProductAdapter adapter) {
+    //interface service
+    private APIProduct mService;
+
+    //id of customer
+    private String mIdcustomer;
+
+    //context
+    private Context mContext;
+
+    public CreateProductDialog(ProductAdapter adapter, Context context) {
+        mContext = context;
         mAdapter = adapter;
     }
 
@@ -63,7 +77,11 @@ public class CreateProductDialog extends DialogFragment implements OnClickListen
     }
 
     private void initView(View view) {
-        mRealmController = RealmController.getInstance();
+        //create session of user
+        mSession = new SessionManager(mContext);
+
+        //init retrofit
+        initRetrofit();
 
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         getDialog().setCanceledOnTouchOutside(false);
@@ -71,31 +89,45 @@ public class CreateProductDialog extends DialogFragment implements OnClickListen
         mTitle = (TextView) view.findViewById(R.id.dialog_title_text);
         mTitle.setText(R.string.add_new_product);
 
-        LinearLayout dialoTime = (LinearLayout) view.findViewById(R.id.dialog_time_lay);
-        dialoTime.setVisibility(View.GONE);
+        //rename title
+        TextView txtTitleName = (TextView) view.findViewById(R.id.dialog_txt_title_time);
+        txtTitleName.setText(R.string.type_product);
 
-        TextView txtTitleContent = (TextView) view.findViewById(R.id.dialog_txt_title_content);
-        txtTitleContent.setText(R.string.type_product);
+        TextView txtTitleMemo = (TextView) view.findViewById(R.id.dialog_txt_title_content);
+        txtTitleMemo.setText(R.string.memo_product);
 
         TextView txtTitleDate = (TextView) view.findViewById(R.id.dialog_txt_title_schedule);
         txtTitleDate.setText(R.string.time_use);
 
+        //button save
         mSave = (TextView) view.findViewById(R.id.dialog_btn_save);
         mSave.setOnClickListener(this);
 
+        //button cancel
         mCancel = (TextView) view.findViewById(R.id.dialog_btn_cancel);
         mCancel.setOnClickListener(this);
 
+        //edit date
         mTime = (TextView) view.findViewById(R.id.dialog_txt_schedule);
         mTime.setOnClickListener(this);
 
-        mContent = (EditText) view.findViewById(R.id.dialog_edit_conttent);
-        mContent.setOnClickListener(this);
-        mContent.setText("");
+        //edit name
+        mName = (EditText) view.findViewById(R.id.dialog_txt_time);
+        mName.setText("");
 
-        mIdcustomer = getArguments().getInt(Constant.KEY_ID_PRODUCT);
-        mPref = getActivity().getSharedPreferences(Constant.PREF_PLAN, Context.MODE_PRIVATE);
-        mIdKey = mPref.getInt(Constant.KEY_ID, Constant.PREF_ID_DEFAULT);
+        //edit memo
+        mMemo = (EditText) view.findViewById(R.id.dialog_edit_conttent);
+        mMemo.setText("");
+
+        mIdcustomer = getArguments().getString(Constant.KEY_ID_PRODUCT);
+    }
+
+    /*
+    create retrofit
+     */
+    private void initRetrofit() {
+        Retrofit retrofit = Utility.initRetrofit(BaseURL.URL_PRODUCT);
+        mService = retrofit.create(APIProduct.class);
     }
 
     @Override
@@ -104,10 +136,11 @@ public class CreateProductDialog extends DialogFragment implements OnClickListen
             case R.id.dialog_btn_save:
                 int val = validate();
                 if (val == Constant.VALIDATE_SUCCESS) {
-                    create();
-                    Toast.makeText(getActivity(), R.string.add_success, Toast.LENGTH_SHORT).show();
-                    mAdapter.notifyDataSetChanged();
-                    dismiss();
+                    String date = mTime.getText().toString();
+                    String name = mName.getText().toString();
+                    String memo = mMemo.getText().toString();
+
+                    processCreateProduct(name, date, memo);
                 } else {
                     Toast.makeText(getActivity(), R.string.empty_content_product, Toast.LENGTH_SHORT).show();
                 }
@@ -156,30 +189,13 @@ public class CreateProductDialog extends DialogFragment implements OnClickListen
         dialog.show();
     }
 
-    private void setData(ProductObject object) {
-        object.setUsedate(mTimeValue);
-        object.setName(mContent.getText().toString());
-    }
-
-    private void create() {
-        ProductObject product = new ProductObject();
-        int id = Utility.createId(mIdKey);
-        Log.d(TAG + "dialog", " put product id: " + id);
-        mPref.edit().putInt(Constant.KEY_ID, id).apply();
-
-        product.setId(id);
-        product.setIdcustomer(mIdcustomer);
-        setData(product);
-
-        mRealmController.addProduct(product);
-    }
-
     private int validate() {
         String time = mTime.getText().toString();
-        String content = mContent.getText().toString();
+        String name = mName.getText().toString();
+        String memo = mName.getText().toString();
 
         if (TextUtils.isEmpty(time)
-                || TextUtils.isEmpty(content)) {
+                || TextUtils.isEmpty(name) || TextUtils.isEmpty(memo)) {
             return Constant.VALIDATE_EMPTY;
         }
 
@@ -188,7 +204,58 @@ public class CreateProductDialog extends DialogFragment implements OnClickListen
 
     @Override
     public void onDismiss(DialogInterface dialog) {
+        mName.setText("");
+        mMemo.setText("");
         super.onDismiss(dialog);
-        mContent.setText("");
+    }
+
+    /*
+     * process to create new product of that customer
+     */
+    private void processCreateProduct(String name, String date, String memo) {
+        //get userId and token from session
+        String userId = mSession.getUserDetails().getId();
+        String token = mSession.getUserDetails().getToken();
+
+        //customerId get in arguments pass from fragment
+        String customerId = mIdcustomer;
+
+        //create request to send
+        final ProductRequest request = new ProductRequest();
+        request.setUserId(userId);
+        request.setCustomerId(customerId);
+        request.setName(name);
+        request.setExpireDate(date);
+        request.setMemo(memo);
+
+        //create response
+        Call<ProductResponse> response = mService.addNewProduct(request, token);
+        response.enqueue(new Callback<ProductResponse>() {
+            @Override
+            public void onResponse(Call<ProductResponse> call, Response<ProductResponse> response) {
+                ProductResponse serverRespone = response.body();
+
+                if (serverRespone != null) {
+                    int code = serverRespone.getCode();
+                    if (code == Constant.RESPONSE_SUCCESS) {
+                        Log.d(TAG, "-->[process-create-product] onResponse: " + serverRespone.getCode() + ": " + serverRespone.getMessage());
+
+                        Toast.makeText(mContext, "Đã thêm mới!", Toast.LENGTH_SHORT).show();
+
+                        //dismiss dialog
+                        dismiss();
+                    } else {
+                        Log.d(TAG, "-->[process-create-product] onResponse: " + serverRespone.getCode() + ": " + serverRespone.getMessage());
+                    }
+                } else {
+                    Log.d(TAG, "-->[process-create-product] onResponse: " + response.code() + ": " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ProductResponse> call, Throwable t) {
+                Log.d(TAG, "-->[process-create-product] failure: " + t.getMessage());
+            }
+        });
     }
 }

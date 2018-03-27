@@ -1,6 +1,6 @@
-package com.example.dainq.smilenotes.model.response;
+package com.example.dainq.smilenotes.model.response.customer;
 
-import com.example.dainq.smilenotes.model.request.CustomerRequest;
+import com.example.dainq.smilenotes.model.request.customer.CustomerRequest;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

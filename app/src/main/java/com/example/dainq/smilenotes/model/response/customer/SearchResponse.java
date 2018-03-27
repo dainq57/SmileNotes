@@ -1,11 +1,9 @@
-package com.example.dainq.smilenotes.model.response;
+package com.example.dainq.smilenotes.model.response.customer;
 
-import com.example.dainq.smilenotes.model.request.CustomerRequest;
-import com.example.dainq.smilenotes.model.request.UserRequest;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class ListCustomerResponse {
+public class SearchResponse {
     @SerializedName("code")
     @Expose
     private int code;
@@ -16,7 +14,7 @@ public class ListCustomerResponse {
 
     @SerializedName("data")
     @Expose
-    private CustomerRequest[] data;
+    private SearchData data;
 
     public int getCode() {
         return code;
@@ -34,11 +32,11 @@ public class ListCustomerResponse {
         this.message = message;
     }
 
-    public CustomerRequest[] getData() {
+    public SearchData getData() {
         return data;
     }
 
-    public void setData(CustomerRequest[] data) {
+    public void setData(SearchData data) {
         this.data = data;
     }
 }

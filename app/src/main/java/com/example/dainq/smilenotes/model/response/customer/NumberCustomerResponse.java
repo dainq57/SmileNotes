@@ -1,9 +1,10 @@
-package com.example.dainq.smilenotes.model.response;
+package com.example.dainq.smilenotes.model.response.customer;
+
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class RemoveCustomerResponse {
+public class NumberCustomerResponse {
     @SerializedName("code")
     @Expose
     private int code;
@@ -11,6 +12,10 @@ public class RemoveCustomerResponse {
     @SerializedName("message")
     @Expose
     private String message;
+
+    @SerializedName("data")
+    @Expose
+    private LevelData data;
 
     public int getCode() {
         return code;
@@ -26,5 +31,13 @@ public class RemoveCustomerResponse {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public LevelData getData() {
+        return data;
+    }
+
+    public void setData(LevelData data) {
+        this.data = data;
     }
 }

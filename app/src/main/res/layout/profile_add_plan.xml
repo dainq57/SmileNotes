@@ -16,13 +16,14 @@
 
         <TextView
             style="@style/TextAppearance"
+            android:id="@+id/dialog_txt_title_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawablePadding="5dp"
             android:drawableStart="@drawable/ic_see_s"
             android:text="Thời gian"/>
 
-        <TextView
+        <EditText
             android:id="@+id/dialog_txt_time"
             style="@style/EditText.Text"
             android:layout_width="match_parent"

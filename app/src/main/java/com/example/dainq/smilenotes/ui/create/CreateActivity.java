@@ -1,10 +1,8 @@
 package com.example.dainq.smilenotes.ui.create;
 
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
 import android.net.Uri;
@@ -21,9 +19,11 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,16 +33,11 @@ import com.example.dainq.smilenotes.common.Constant;
 import com.example.dainq.smilenotes.common.SessionManager;
 import com.example.dainq.smilenotes.common.Utility;
 import com.example.dainq.smilenotes.controllers.api.APICustomer;
-import com.example.dainq.smilenotes.controllers.realm.RealmController;
-import com.example.dainq.smilenotes.model.object.CustomerObject;
-import com.example.dainq.smilenotes.model.object.NotificationObject;
-import com.example.dainq.smilenotes.model.request.CustomerRequest;
-import com.example.dainq.smilenotes.model.response.CustomerResponse;
+import com.example.dainq.smilenotes.model.request.customer.CustomerRequest;
+import com.example.dainq.smilenotes.model.response.customer.CustomerResponse;
 import com.example.dainq.smilenotes.ui.common.spinner.OnSpinnerItemSelectedListener;
 import com.example.dainq.smilenotes.ui.common.spinner.SingleSpinnerLayout;
 import com.example.dainq.smilenotes.ui.common.spinner.SpinnerItem;
-import com.example.dainq.smilenotes.ui.notifications.NotificationHelper;
-import com.example.dainq.smilenotes.ui.notifications.NotificationReceiver;
 import com.soundcloud.android.crop.Crop;
 
 import java.io.File;
@@ -50,28 +45,26 @@ import java.util.Calendar;
 import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.realm.RealmResults;
 import nq.dai.smilenotes.R;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CreateActivity extends AppCompatActivity implements View.OnClickListener, OnSpinnerItemSelectedListener {
     private static final String TAG = "CreateActivity";
-    private static final int NUM_BIRTHDAY = 5;
 
     private int mLevel;
+
+    private Date dateOfBirth;
+
+    //string dob
+    private String mDob;
+
     //id to set object
-    private int mId;
     private EditText mADA;
     private EditText mName;
     private TextView mDateOfBirth;
-    //value date to view
-    private Date dateOfBirth;
-    //value date of birth to set notification
-    private Date[] dateOfBirthValue;
     private EditText mPhoneNumber;
     private EditText mAddress;
     private EditText mReason;
@@ -84,31 +77,46 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
     private EditText mJob;
     private RadioButton mMale, mFemale;
     private RadioGroup mGender;
+
     //uri of avatar
     private Uri mUri;
 
-    private boolean isSave;
-    private CustomerObject mCustomer;
-    private RealmController mRealmController;
+    //customer object get from server to update information
+    private CustomerRequest mCustomer;
+
+    //version data of customer
+    private int mVersion;
 
     private DatePickerDialog mDialogDateOfBirth;
+
     private RatingBar mRatingBar;
 
-    private SharedPreferences mPref, mPrefNoti;
     //value id get from pref
-    private int mIdKey;
     private int mAction;
+
+    //spinner select level
     private SingleSpinnerLayout mSpinner;
+
     //id customer when show profile of customer
-    private int mCustomerId;
+    private String mCustomerId;
 
-    //id get from pref of notification
-    private int mIdNotiKey;
-
-    private RealmResults<NotificationObject> mNotification;
-
+    //session of user
     private SessionManager mSession;
+
+    //interface service customer
     private APICustomer mService;
+
+    //progress view
+    private ProgressBar mProgressView;
+
+    //rootLayout of view
+    private RelativeLayout mRootLayout;
+
+    //id user
+    private String mIdUser;
+
+    //token user
+    private String mToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +132,10 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         mSession = new SessionManager(this);
         initRetrofit();
 
-        isSave = false;
+        //get id and token of user
+        mIdUser = mSession.getUserDetails().getId();
+        mToken = mSession.getUserDetails().getToken();
+
         mAction = getAction();
 
         mAdaLayout = (LinearLayout) findViewById(R.id.create_filter_ada);
@@ -136,92 +147,143 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
         mAvatar = (CircleImageView) findViewById(R.id.create_avatar);
         mAvatar.setOnClickListener(this);
+
         mADA = (EditText) findViewById(R.id.create_edit_ada);
+
         mName = (EditText) findViewById(R.id.create_edit_name);
+
         mDateOfBirth = (TextView) findViewById(R.id.create_edit_date_of_birth);
         mDateOfBirth.setOnClickListener(this);
+
         mPhoneNumber = (EditText) findViewById(R.id.create_edit_phonenumber);
+
         mAddress = (EditText) findViewById(R.id.create_edit_address);
+
         mReason = (EditText) findViewById(R.id.create_edit_reason);
+
         mProblem = (EditText) findViewById(R.id.create_edit_problem);
+
         mSolution = (EditText) findViewById(R.id.create_edit_solution);
+
         mNote = (EditText) findViewById(R.id.create_edit_note);
+
         mProductNeed = (EditText) findViewById(R.id.create_edit_product_need);
 
         mJob = (EditText) findViewById(R.id.create_edit_job);
+
         mGender = (RadioGroup) findViewById(R.id.create_gender);
+
         mMale = (RadioButton) mGender.findViewById(R.id.create_gender_male);
+
         mFemale = (RadioButton) mGender.findViewById(R.id.create_gender_female);
 
-        mRealmController = RealmController.with(this);
-
         mRatingBar = (RatingBar) findViewById(R.id.create_rating_bar);
-        dateOfBirthValue = new Date[NUM_BIRTHDAY + 1];
+
         initDialogDateOfBirth();
         initSpinner();
 
-        mPref = this.getSharedPreferences(Constant.PREF_NAME, Context.MODE_PRIVATE);
-        mIdKey = mPref.getInt(Constant.KEY_ID, Constant.PREF_ID_DEFAULT);
-        Log.d(TAG, "---> [initView] pref id: " + mIdKey);
+        mProgressView = (ProgressBar) findViewById(R.id.progress_bar);
+        mRootLayout = (RelativeLayout) findViewById(R.id.root_layout);
 
         if (mAction == Constant.ACTION_CREATE) {
             mButtonSave.setText(R.string.save);
             getSupportActionBar().setTitle(R.string.title_create_new_customer);
             mMale.setChecked(true);
         } else {
+            //change text of button
             mButtonSave.setText(R.string.update);
+
+            //change title
             getSupportActionBar().setTitle(R.string.update_info);
 
-            mCustomer = mRealmController.getCustomer(mCustomerId);
-
-            mSpinner.setSelection(mCustomer.getLevel());
-            mADA.setText(mCustomer.getAda());
-            mName.setText(mCustomer.getName());
-
-            String tempDate = Utility.dateToString(mCustomer.getDateofbirth());
-            mDateOfBirth.setText(tempDate);
-            mPhoneNumber.setText(mCustomer.getPhonenumber());
-            mAddress.setText(mCustomer.getAddress());
-            mReason.setText(mCustomer.getReason());
-            mProblem.setText(mCustomer.getProblem());
-            mSolution.setText(mCustomer.getSolution());
-            mNote.setText(mCustomer.getNote());
-            mProductNeed.setText(mCustomer.getProduct());
-            mJob.setText(mCustomer.getJob());
-            if (mCustomer.getGender() == 0) {
-                mFemale.setChecked(true);
-            } else {
-                mMale.setChecked(true);
-            }
-
-            String avatar = mCustomer.getAvatar();
-            if (avatar != null) {
-                mAvatar.setImageBitmap(Utility.decodeImage(avatar));
-            }
-
-            mNotification = mRealmController.getListNotificationBirthDay(mCustomerId);
+            //get Customer need edit
+            processGetCustomer(mCustomerId);
         }
-
-        mPrefNoti = getSharedPreferences(Constant.PREF_USER, Context.MODE_PRIVATE);
-        mIdNotiKey = mPrefNoti.getInt(Constant.USER_NOTIFICATION, Constant.PREF_ID_DEFAULT);
-        Log.d(TAG, "-->>[initView] Create getIdNoti from pref " + mIdNotiKey);
     }
 
     private void initRetrofit() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BaseURL.URL_CUSTOMER)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        Retrofit retrofit = Utility.initRetrofit(BaseURL.URL_CUSTOMER);
 
         mService = retrofit.create(APICustomer.class);
+    }
+
+    /*
+    get customer infomation before edit
+     */
+    private void processGetCustomer(String idCustomer) {
+        Call<CustomerResponse> response = mService.getCustomer(mIdUser, idCustomer, mToken);
+        response.enqueue(new Callback<CustomerResponse>() {
+            @Override
+            public void onResponse(Call<CustomerResponse> call, Response<CustomerResponse> response) {
+                CustomerResponse serverResponse = response.body();
+                //hide progress bar
+                mProgressView.setVisibility(View.INVISIBLE);
+
+                if (serverResponse != null) {
+                    int code = serverResponse.getCode();
+
+                    if (code == Constant.RESPONSE_SUCCESS) {
+                        Log.d(TAG, "-->[process-get-customer] onResponse-success: " + serverResponse.getMessage());
+                        mCustomer = serverResponse.getData();
+
+                        Log.d(TAG, "-->[get-data-customer] version: " + mCustomer.getVersion());
+                        //set data to customer before edit
+                        setDataToCustomer(mCustomer);
+                    } else {
+                        Log.d(TAG, "-->[process-get-customer] onResponse-not-success: " + serverResponse.getMessage());
+                    }
+                } else {
+                    Log.d(TAG, "-->[process-get-customer] onResponse-success: null");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CustomerResponse> call, Throwable t) {
+                Log.d(TAG, "-->[process-get-customer] failure!" + t.getMessage());
+            }
+        });
+    }
+
+    /*
+    set data to customer to show data of customer in action edit
+     */
+    private void setDataToCustomer(CustomerRequest customer) {
+        mSpinner.setSelection(customer.getLevel());
+        mADA.setText(customer.getAdaCode());
+        mName.setText(customer.getName());
+
+        String tempDate = customer.getDateOfBirth();
+        mDateOfBirth.setText(tempDate);
+
+        mPhoneNumber.setText(customer.getPhone());
+        mAddress.setText(customer.getAddress());
+        mReason.setText(customer.getReason());
+//      mProblem.setText(mCustomer.getProblemType());
+        mSolution.setText(customer.getSolution());
+        mProductNeed.setText(customer.getSuggestProduct());
+        mJob.setText(customer.getJob());
+
+        if (customer.getGender() == 0) {
+            mFemale.setChecked(true);
+        } else {
+            mMale.setChecked(true);
+        }
+
+        String avatar = customer.getPathAvatar();
+        if (avatar != null) {
+            mAvatar.setImageBitmap(Utility.decodeImage(avatar));
+        }
+
+        //get version
+        mVersion = customer.getVersion();
     }
 
     //get action of user to create or update infomation of customer
     private int getAction() {
         //get data pass from MainActivity via bundle
         Bundle extras = getIntent().getExtras();
-        mCustomerId = extras.getInt(Constant.KEY_ID);
-        Log.d(TAG, " -->[getAction]: " + mAction);
+        mCustomerId = extras.getString(Constant.KEY_ID);
+        Log.d(TAG, " -->[getAction] action: " + mAction);
         return extras.getInt(Constant.KEY_ACTION, Constant.ACTION_CREATE);
     }
 
@@ -260,9 +322,9 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         switch (view.getId()) {
             case R.id.create_btn_save:
                 if (mAction == Constant.ACTION_CREATE) {
-                    saveCustomer();
+                    createCustomer();
                 } else {
-//                    editCustomer();
+                    editCustomer();
                 }
                 break;
 
@@ -329,18 +391,6 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
             return Constant.VALIDATE_EMPTY;
         }
 
-        if (mLevel > Constant.CUSTOMER_LEVEL_2) {
-            String ada = mADA.getText().toString();
-            if (adaIsExit()) {
-                if (mAction == Constant.ACTION_EDIT) {
-                    if (!ada.equals(mCustomer.getAda())) {
-                        return Constant.VALIDATE_ADA;
-                    }
-                } else {
-                    return Constant.VALIDATE_ADA;
-                }
-            }
-        }
         String number = mPhoneNumber.getText().toString();
         if (!isPhoneNumber(number)) {
             return Constant.VALIDATE_PHONE;
@@ -359,81 +409,35 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
+    /*
+    *check number is phone number by regex
+     */
     private boolean isPhoneNumber(String string) {
         return string.matches(Constant.regexPhoneNumber);
     }
 
-    private boolean adaIsExit() {
-        String ada = mADA.getText().toString();
-        return mRealmController.isExit(ada);
-    }
-
-    private void makeToast(int val) {
-        if (val == Constant.VALIDATE_SUCCESS) {
-            Toast.makeText(this, R.string.save_success, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (val == Constant.VALIDATE_EMPTY) {
-            Toast.makeText(this, R.string.toast_validate_string, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (val == Constant.VALIDATE_PHONE) {
-            Toast.makeText(this, R.string.phone_number_is_wrong, Toast.LENGTH_SHORT).show();
-        }
-
-        if (val == Constant.VALIDATE_ADA) {
-            Toast.makeText(this, R.string.ada_is_exit, Toast.LENGTH_SHORT).show();
-        }
-    }
-
+    /**
+     * dialog to select date of birth
+     */
     public void initDialogDateOfBirth() {
         Calendar calendar = Calendar.getInstance();
         //reset hour to 0h
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         //get current year and current day
-        final int currentyear = calendar.get(Calendar.YEAR);
-        final int currentmonth = calendar.get(Calendar.MONTH);
-        final int currentday = calendar.get(Calendar.DAY_OF_MONTH);
 
         mDialogDateOfBirth = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
-                newDate.set(Calendar.HOUR_OF_DAY, 0);
 
                 dateOfBirth = newDate.getTime();
-                String dateSet = Utility.dateToString(dateOfBirth);
-                mDateOfBirth.setText(dateSet);
-
-                //Value to set notification birthday
-                //calculate real birthday
-                if (monthOfYear >= currentmonth) {
-                    if (dayOfMonth >= currentday) {
-                        Log.d("dainq setdate", "dayOfMonth >= currentday");
-                        newDate.add(Calendar.YEAR, (currentyear - year));
-                    } else {
-                        Log.d("dainq setdate", "dayOfMonth < currentday");
-                        newDate.add(Calendar.YEAR, (currentyear - year) + 1);
-                    }
-                } else {
-                    Log.d("dainq setdate", "monthOfYear < currentmonth");
-                    newDate.add(Calendar.YEAR, (currentyear - year) + 1);
-                }
-//                newDate.set(Calendar.HOUR_OF_DAY, 0);
-                dateOfBirthValue[0] = newDate.getTime();
-                Log.d("dainq year", "dateofBirth noti " + dateOfBirthValue[0]);
-                for (int i = 1; i < NUM_BIRTHDAY; i++) {
-                    newDate.add(Calendar.YEAR, 1);
-                    dateOfBirthValue[i] = newDate.getTime();
-                    Log.d("dainq year", "dateofBirth noti " + dateOfBirthValue[i]);
-                }
+                mDob = Utility.dateToString(dateOfBirth);
+                mDateOfBirth.setText(mDob);
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 
-        mDialogDateOfBirth.getDatePicker().
-
-                setLayoutMode(1);
+        mDialogDateOfBirth.getDatePicker().setLayoutMode(1);
     }
 
     @Override
@@ -451,24 +455,28 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
     public void onNothingSelected() {
     }
 
+    /*---------------------FUNTION-CREATE-CUSTOMER-------------------*/
+
     /*
     * do call validate and save customer if calidate is success
     * */
-    private void saveCustomer() {
+    private void createCustomer() {
         int val = validate();
         if (val == Constant.VALIDATE_SUCCESS) {
-//            save();
+            //create data customer
             CustomerRequest customer = createDataCustomer();
+
+            //show progress bar
+            mProgressView.setVisibility(View.VISIBLE);
+
+            //do create customer
             processCreateCustomer(customer);
         }
-
-        //convert to snackbar
-        //makeToast(val);
     }
 
     /*
     * create object customer
-    * set data
+    * set data before create in processCreate
     * */
     private CustomerRequest createDataCustomer() {
         CustomerRequest customer = new CustomerRequest();
@@ -491,17 +499,17 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
         if (mUri != null) {
             String avatar = Utility.convertImage(this, mUri);
-            //TODO set avatar to customer, waiting api from server..
-//            customer.setAvatar(avatar);
+            customer.setPathAvatar(avatar);
         }
 
         //setName
         String name = mName.getText().toString();
         customer.setName(name);
 
-        if (dateOfBirth != null) {
+        if (mDob != null) {
             //setDOB
-            customer.setDateOfBirth(dateOfBirth);
+
+            customer.setDateOfBirth(mDob);
         }
 
         //setPhonenumber
@@ -533,142 +541,155 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     /*
-    * process saveCustomer
+    * process createCustomer
     * params customer request
     * */
     private void processCreateCustomer(CustomerRequest customer) {
         //alaways add token into request to server
-        //getToken from user session
-        String token = mSession.getUserDetails().getToken();
 
         //create response with info of customer and token
-        Call<CustomerResponse> response = mService.createCustomer(customer, token);
+        Call<CustomerResponse> response = mService.createCustomer(customer, mToken);
         response.enqueue(new Callback<CustomerResponse>() {
             @Override
             public void onResponse(Call<CustomerResponse> call, Response<CustomerResponse> response) {
                 CustomerResponse serverRespone = response.body();
-                //TODO check any case when create
+
+                //hide progress
+                mProgressView.setVisibility(View.INVISIBLE);
+
                 if (serverRespone != null) {
+                    //get code from serverRespone
                     int code = serverRespone.getCode();
 
-                    Log.d(TAG, "-->[process-create-customer] response " + response.code());
+                    Log.d(TAG, "-->[process-create-customer] response: " + response.code() + " | " + code + ": " + serverRespone.getMessage());
+
+                    //check case with code
                     if (code == Constant.RESPONSE_CREATE_SUCCESS) {
-                        finish();
-                        makeToast(0);
+                        Utility.makeSnackbar(mRootLayout, "Tạo thành công");
+
+                        //remove date after create success
+                        formatField();
                     } else if (code == Constant.RESPONSE_CREATE_EXIT) {
-
-                    } else {
-
+                        Utility.makeSnackbar(mRootLayout, "SDT đã tồn tại");
                     }
                 } else {
-                    Log.d(TAG, "-->>[processCreate] Error server!");
+                    Utility.makeSnackbar(mRootLayout, "#error unknown");
+                    Log.d(TAG, "-->>[process-create-customer] Connect to server is error.");
                 }
             }
 
             @Override
             public void onFailure(Call<CustomerResponse> call, Throwable t) {
+                //hide progress
+                mProgressView.setVisibility(View.INVISIBLE);
+                Utility.makeSnackbar(mRootLayout, "Kiểm tra kết nối interet");
                 Log.d(TAG, "--->[process-create-customer] onFailure: " + t.getMessage());
             }
         });
     }
 
-
     /*
-    **
-    refactor to save in local
-    **
-    */
-    private void save() {
-        CustomerObject customer = new CustomerObject();
-        mId = Utility.createId(mIdKey);
-        Log.d(TAG, " -->>[save] put id: " + mId);
-        mPref.edit().putInt(Constant.KEY_ID, mId).apply();
-
-        Calendar dateCreate = Calendar.getInstance();
-        customer.setId(mId);
-        customer.setDatecreate(dateCreate.getTime());
-        setData(customer);
-
-        mRealmController.addCustomer(customer);
+     * reformat data after create success customer
+     */
+    private void formatField() {
+        mAvatar.setImageBitmap(null);
+        mRatingBar.setRating(0);
+        mADA.setText("");
+        mName.setText("");
+        mDateOfBirth.setText("");
+        mPhoneNumber.setText("");
+        mAddress.setText("");
+        mJob.setText("");
+        mReason.setText("");
+        mProblem.setText("");
+        mSolution.setText("");
+        mNote.setText("");
+        mProductNeed.setText("");
     }
 
+    /*----------------------END-FUNTION-CREATE-CUSTOMER----------------*/
+
+    /**
+     *
+     *
+     */
+
+    /*----------------------FUNTION-EDIT-CUSTOMER----------------*/
     private void editCustomer() {
         int val = validate();
         if (val == Constant.VALIDATE_SUCCESS) {
-            edit();
-            isSave = true;
-        } else {
-            isSave = false;
-        }
-        makeToast(val);
-        if (isSave) {
-            CreateActivity.this.finish();
-        }
-    }
+            //create data customer
+            CustomerRequest customerRequest = getDataUpdate();
 
-    private void edit() {
-        mRealmController.getRealm().beginTransaction();
-        setData(mCustomer);
-        mRealmController.getRealm().commitTransaction();
+            //show progress bar
+            mProgressView.setVisibility(View.VISIBLE);
 
-        for (int i = 0; i < NUM_BIRTHDAY; i++) {
-            if (dateOfBirthValue[i] != null) {
-                updateNotification(mNotification.get(i), dateOfBirthValue[i]);
-            }
+            //do create customer
+            processUpdateCustomer(customerRequest);
         }
     }
 
-    private void setData(CustomerObject object) {
-        object.setLevel(mLevel);
-        if (mLevel > Constant.CUSTOMER_LEVEL_2) {
-            String ada = mADA.getText().toString();
-            if (!TextUtils.isEmpty(ada)) {
-                object.setAda(mADA.getText().toString());
-            }
-        }
+    /**
+     * get data update before update to server
+     */
+    private CustomerRequest getDataUpdate() {
+        //get data from field
+        CustomerRequest customerRequest = createDataCustomer();
 
-        if (mUri != null) {
-            String avatar = Utility.convertImage(this, mUri);
-            object.setAvatar(avatar);
-        }
-        String tempName = mName.getText().toString();
+        //set id of customer
+        customerRequest.setId(mCustomerId);
 
-        object.setName(tempName);
-        if (dateOfBirth != null) {
-            object.setDateofbirth(dateOfBirth);
-        }
-        object.setPhonenumber(mPhoneNumber.getText().toString());
-        object.setAddress(mAddress.getText().toString());
-        object.setReason(mReason.getText().toString());
-        object.setProblem(mProblem.getText().toString());
-        object.setSolution(mSolution.getText().toString());
-        object.setNote(mNote.getText().toString());
-        object.setProduct(mProductNeed.getText().toString());
-        object.setJob(mJob.getText().toString());
+        //increase version of data
+//        int ver = mVersion + 1;
+        Log.d(TAG, "-->[get-data-update] version: " + mVersion);
+        customerRequest.setVersion(mVersion);
 
-        int index = mGender.indexOfChild(findViewById(mGender.getCheckedRadioButtonId()));
-        object.setGender(index);
-        Log.d(TAG, " -->[setData] gender:" + index);
+        return customerRequest;
+    }
 
-        if (mAction == Constant.ACTION_CREATE) {
-            int id = mIdNotiKey + 1;
-            if (dateOfBirth != null) {
-                for (int i = 0; i < NUM_BIRTHDAY; i++) {
-                    setNotification(dateOfBirthValue[i], id);
-                    id++;
+    /**
+     * process update information of customer
+     */
+    private void processUpdateCustomer(CustomerRequest customer) {
+        Call<CustomerResponse> response = mService.updateCustomer(customer, mToken);
+        response.enqueue(new Callback<CustomerResponse>() {
+            @Override
+            public void onResponse(Call<CustomerResponse> call, Response<CustomerResponse> response) {
+                CustomerResponse serverResponse = response.body();
+
+                //hide progress bar
+                mProgressView.setVisibility(View.INVISIBLE);
+
+                if (serverResponse != null) {
+                    int code = serverResponse.getCode();
+                    if (code == Constant.RESPONSE_SUCCESS) {
+                        Log.d(TAG, "--->[process-update-customer] response-sucess: " + serverResponse.getMessage());
+
+                        Utility.makeSnackbar(mRootLayout, "Cập nhật thành công!");
+                        finish();
+                    } else {
+                        Log.d(TAG, "--->[process-update-customer] response: " + serverResponse.getCode() + ":" + serverResponse.getMessage());
+                    }
+                } else {
+                    if (response.code() == 11) {
+                        //todo create dialog view
+                        Utility.makeSnackbar(mRootLayout, "Dữ liệu hiện tại chưa phải mới nhất!");
+                    } else {
+                        Log.d(TAG, "--->[process-update-customer] response null: " + response.code() + ":" + response.message());
+                    }
                 }
-                Log.d(TAG, "-->[setData] id noti put " + id);
-            } else {
-                for (int i = 0; i < NUM_BIRTHDAY; i++) {
-                    createNotification(dateOfBirthValue[i], id);
-                    id++;
-                }
-                Log.d(TAG, "-->>[setData] id noti put " + id);
             }
-            mPrefNoti.edit().putInt(Constant.USER_NOTIFICATION, id).apply();
-        }
+
+            @Override
+            public void onFailure(Call<CustomerResponse> call, Throwable t) {
+                Log.d(TAG, "--->[process-update-customer] failure " + t.getMessage());
+            }
+        });
     }
 
+    /**
+     * crop image to avatar
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -703,63 +724,5 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         } else if (resultCode == Crop.RESULT_ERROR) {
             Toast.makeText(this, Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
         }
-    }
-
-    @Override
-    protected void onResume() {
-        mRealmController = new RealmController(this);
-        super.onResume();
-    }
-
-    @Override
-    protected void onDestroy() {
-        mRealmController.close();
-        super.onDestroy();
-    }
-
-    private void setNotification(Date date, int id) {
-        //create notification to realm
-        createNotification(date, id);
-        //push notification use broadcast receiver
-        Intent intent = new Intent(this, NotificationReceiver.class);
-        Bundle bundle = new Bundle();
-
-        bundle.putInt(Constant.NOTIFICATION_ID, id);
-
-        intent.putExtras(bundle);
-
-        NotificationHelper.setRemindRTC(this, date, intent);
-        NotificationHelper.enableBootReceiver(this);
-    }
-
-    private void createNotification(Date date, int id) {
-        NotificationObject notification = new NotificationObject();
-
-        notification.setId(id);
-        if (mAction == Constant.ACTION_CREATE) {
-            notification.setIdcustomer(mId);
-        } else {
-            notification.setIdcustomer(mCustomerId);
-        }
-        notification.setIsread(false);
-        notification.setType(Constant.NOTIFICATION_BIRTH_DAY);
-        notification.setContent("Sinh nhật ");
-        notification.setDate(dateOfBirth);
-        notification.setDatevalue(date);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.get(Calendar.YEAR);
-
-        mRealmController.addNotification(notification);
-    }
-
-    private void updateNotification(NotificationObject notification, Date date) {
-        mRealmController.getRealm().beginTransaction();
-        notification.setDatevalue(date);
-        notification.setDate(dateOfBirth);
-        if (date != notification.getDatevalue()) {
-            notification.setIsread(false);
-        }
-        mRealmController.getRealm().commitTransaction();
     }
 }

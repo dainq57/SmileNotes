@@ -9,13 +9,13 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-import com.example.dainq.smilenotes.model.object.CustomerObject;
+import com.example.dainq.smilenotes.model.request.customer.CustomerRequest;
 
 import nq.dai.smilenotes.R;
 
 public class ProfileProblemFragment extends Fragment {
     private Context mContext;
-    private CustomerObject mCustomer;
+    private CustomerRequest mCustomer;
     private EditText mProblem;
     private EditText mSolution;
     private EditText mNote;
@@ -25,7 +25,7 @@ public class ProfileProblemFragment extends Fragment {
         mContext = context;
     }
 
-    public ProfileProblemFragment(Context context, CustomerObject customer) {
+    public ProfileProblemFragment(Context context, CustomerRequest customer) {
         mContext = context;
         mCustomer = customer;
     }
@@ -61,9 +61,8 @@ public class ProfileProblemFragment extends Fragment {
     }
 
     private void onUpdate() {
-        mProblem.setText(mCustomer.getProblem());
+        mProblem.setText("" + mCustomer.getProblemType());
         mSolution.setText(mCustomer.getSolution());
-        mNote.setText(mCustomer.getNote());
-        mProduct.setText(mCustomer.getProduct());
+        mProduct.setText(mCustomer.getSuggestProduct());
     }
 }
